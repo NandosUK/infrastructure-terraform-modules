@@ -1,4 +1,4 @@
-module "cloud-cloudbuild-trigger" {
+module "cloud-run" {
   source = "../../gcp/cloud-run-v1"
   project_id          = "test-project-id"
   name                = "test-service"
