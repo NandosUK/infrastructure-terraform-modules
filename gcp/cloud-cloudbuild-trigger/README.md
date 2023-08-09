@@ -23,30 +23,20 @@ module "trigger_main" {
 }
 ```
 
-## Inputs
+## Inputs
 
-name (String): The name of the trigger.
-
-description (String): The description of the trigger.
-
-filename (String): The path to the Cloud Build configuration file. Defaults to "cloudbuild.yaml".
-
-substitutions (Map): Key-value pairs to define substitutions during the build. Defaults to {\_LOCATION = "europe-west2"}.
-
-branch (String): The branch to trigger builds on. Defaults to "DEFAULT".
-
-invert_regex (Boolean): Whether to invert the regex on the branch. Defaults to false.
-
-repository_owner (String): Owner of the repository. Defaults to "NandosUK".
-
-repository_name (String): Name of the repository. Defaults to an empty string.
-
-include (List): Files to include in the build. Defaults to ["**"].
-
-exclude (List): Files to exclude from the build. Defaults to [].
-
-tags (List): Tags for the trigger. Defaults to [].
-
-disabled (Boolean): Whether the trigger is disabled. Defaults to false.
-
-project (String): The project where the trigger will be created. Defaults to an empty string.
+| Name               | Description                                    | Type         | Default                          |
+| ------------------ | ---------------------------------------------- | ------------ | -------------------------------- |
+| `name`             | The name of the trigger                        | string       |                                  |
+| `description`      | The description of the trigger                 | string       |                                  |
+| `filename`         | Path to the Cloud Build configuration file     | string       | `"cloudbuild.yaml"`              |
+| `substitutions`    | Key-value pairs for substitutions during build | map(string)  | `{ _LOCATION = "europe-west2" }` |
+| `branch`           | Branch to trigger builds on                    | string       | `"DEFAULT"`                      |
+| `invert_regex`     | Whether to invert the regex on the branch      | bool         | `false`                          |
+| `repository_owner` | Owner of the repository                        | string       | `"NandosUK"`                     |
+| `repository_name`  | Name of the repository                         | string       |                                  |
+| `include`          | Files to include in the build                  | list(string) | `["**"]`                         |
+| `exclude`          | Files to exclude from the build                | list(string) | `[]`                             |
+| `tags`             | Tags for the trigger                           | list         | `[]`                             |
+| `disabled`         | Whether the trigger is disabled                | bool         | `false`                          |
+| `project`          | The project where the trigger will be created  | string       |                                  |
