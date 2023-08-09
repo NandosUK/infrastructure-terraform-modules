@@ -1,0 +1,24 @@
+name: Terraform Module Versioning
+
+on:
+  push:
+    paths:
+      - "gcp/**/*"
+
+jobs:
+  tag:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Check changes in modules
+        run: |
+          git diff --name-only HEAD^ HEAD | grep -E "gcp/cloud-cloudbuild-trigger/|gcp/cloud-function-v1/|gcp/cloud-run-v1/" && echo "MODULE_CHANGED=true" >> $GITHUB_ENV || echo "No module changes detected"
+
+      - name: Create new version tag
+        if: env.MODULE_CHANGED == 'true'
+        run: |
+          # Logic for creating a new version tag (e.g., incrementing based on the previous tag, following semantic versioning)
+          git tag new_version
+          git push origin new_version
