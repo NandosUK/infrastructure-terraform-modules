@@ -52,6 +52,3 @@ disabled (Boolean): Whether the trigger is disabled. Defaults to false.
 create_for_dev (Boolean): Controls creation of triggers for the development environment. Defaults to true.
 
 project (String): The project where the trigger will be created. Defaults to an empty string.
-
-Outputs
-trigger_id: The unique identifier for the deployed trigger. Refer to outputs.tf for more details.
