@@ -1,6 +1,6 @@
 # Google Cloud Build Trigger Terraform Module
 
-This module creates a Google Cloud Build Trigger, allowing you to automatically run builds on source code changes. The trigger can be configured to listen for changes on specific branches, include or exclude specific files, and apply custom substitutions during the build.
+This module creates a Google Cloud Build Trigger, allowing you to automatically run builds on source code changes. The trigger can be configured to listen for changes on specific branches, include or exclude specific files, and apply custom substitutions during the build...
 
 ## Usage
 
