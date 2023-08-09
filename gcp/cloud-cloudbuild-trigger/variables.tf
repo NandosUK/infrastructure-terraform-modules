@@ -20,8 +20,6 @@ variable "invert_regex" {
   default = false
 }
 
-variable "environment" {}
-
 variable "repository_owner" {
   default = "NandosUK"
 }
