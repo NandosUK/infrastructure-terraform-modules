@@ -23,4 +23,4 @@ Refer to variables.tf for input parameters.
 
 ## Outputs
 
-Refer to outputs.tf for output values.
+Refer to outputs.tf for output values..
