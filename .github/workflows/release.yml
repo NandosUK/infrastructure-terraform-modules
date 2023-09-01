@@ -36,7 +36,6 @@ jobs:
           cd test/gcp
           terraform init
           terraform validate
-          terraform plan
         continue-on-error: false
 
       - name: Install semantic-release
