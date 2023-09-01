@@ -1,5 +1,6 @@
 # Nando's Terraform Modules
-![Alt text](assets/tflogo.png)
+![Terraform](assets/tflogo.png =x250)
+
 ## Description
 
 This repository contains Terraform modules for various infrastructure components. We use `semantic-release` to manage versioning and releases.
