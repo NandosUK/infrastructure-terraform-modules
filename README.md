@@ -6,6 +6,29 @@
 
 This repository contains Terraform modules for various infrastructure components. We use `semantic-release` to manage versioning and releases.
 
+## Use of modules
+
+You can find specific examples inside [each module folder](gcp). Here is an example on how to use cloud run v1 module:
+
+```hcl
+module "cloud_run" {
+  source                = "github.com/NandosUK/infrastructure/terraform-modules/gcp/cloud-run-v1"
+
+  project_id                 = "your-gcp-project-id"
+  name                       = "my-cloud-run-service"
+  project_region             = "europe-west2"
+  domains                    = ["example.com"]
+  cloud_run_service_account  = "service-account-email"
+  allow_public_access        = true
+  sql_connection             = "connection-string"
+  sharedVpcConnector         = "vpc-connector-name"
+  environment                = "staging"
+  branching_strategy         = {}
+  artifact_repository        = "your-artifact-repository"
+  create_trigger             = true
+}
+```
+
 ## Semantic Release and Commit Message Guidelines
 
 This project uses [semantic-release](https://github.com/semantic-release/semantic-release) for automated versioning and package publishing. To ensure that the version numbers are updated correctly, we adhere to [Conventional Commits](https://www.conventionalcommits.org/) guidelines for commit messages.
