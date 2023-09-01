@@ -1,0 +1,15 @@
+openapi: "3.0.0"
+info:
+  title: "Nandos API"
+  version: "1.0"
+paths:
+  /{path}*:
+    x-google-backend:
+      address: "${cloud_run_url}"
+      protocol: "https"
+    get:
+      summary: "Proxy GET requests"
+      operationId: "getOperation"
+    post:
+      summary: "Proxy POST requests"
+      operationId: "getOperation"
