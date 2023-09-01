@@ -34,7 +34,6 @@ output "external_ip" {
 }
 
 ```
-
 ### Inputs
 
 | Name                         | Description                                                                   | Type          | Default                                                 |
