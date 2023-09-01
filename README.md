@@ -1,5 +1,6 @@
 # Nando's Terraform Modules
-![Terraform](assets/tflogo.png =x250)
+<img src="assets/tflogo.png" alt="Terraform" width="300"/>
+
 
 ## Description
 

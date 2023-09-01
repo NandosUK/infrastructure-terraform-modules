@@ -15,7 +15,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '18'
+          node-version: "18"
 
       - name: Check Node.js version
         run: node --version
@@ -35,5 +35,5 @@ jobs:
         run: semantic-release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GIT_COMMITTER_EMAIL: 'action@github.com'
-          GIT_COMMITTER_NAME: 'GitHub Action'
+          GIT_COMMITTER_EMAIL: "action@github.com"
+          GIT_COMMITTER_NAME: "GitHub Action"
