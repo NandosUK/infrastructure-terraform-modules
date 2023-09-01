@@ -1,9 +1,3 @@
-locals {
-  openapi_contents = filebase64(var.openapi_spec_file_path)
-  config_hash      = md5(local.openapi_contents)
-}
-
-
 # Create a service account for the API Gateway
 resource "google_service_account" "api_gateway_sa" {
   account_id   = "${var.api_name}-api-gateway-sa"
@@ -36,7 +30,7 @@ resource "google_api_gateway_api" "nandos_api" {
 resource "google_api_gateway_api_config" "nandos_api_config" {
   provider      = google-beta
   api           = google_api_gateway_api.nandos_api.api_id
-  api_config_id = "my-api-config-${local.config_hash}"
+  api_config_id = "${var.api_name}-config"
   project       = var.project_id
 
   openapi_documents {
