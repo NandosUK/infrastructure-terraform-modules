@@ -5,6 +5,20 @@ resource "google_service_account" "api_gateway_sa" {
   project      = var.project_id
 }
 
+# Add permission for service account to invoke the Cloud Run service
+resource "google_project_iam_member" "cloud_run_invoker" {
+  role    = "roles/run.invoker"
+  member  = "serviceAccount:${google_service_account.api_gateway_sa.email}"
+  project = var.project_id
+}
+
+# Add permission for service account to invoke the Cloud Function
+resource "google_project_iam_member" "cloud_function_invoker" {
+  role    = "roles/cloudfunctions.invoker"
+  member  = "serviceAccount:${google_service_account.api_gateway_sa.email}"
+  project = var.project_id
+}
+
 # API Gateway API Resource
 resource "google_api_gateway_api" "nandos_api" {
   provider = google-beta

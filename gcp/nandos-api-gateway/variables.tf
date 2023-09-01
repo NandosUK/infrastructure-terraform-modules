@@ -8,11 +8,6 @@ variable "project_region" {
   type        = string
 }
 
-variable "cloud_run_url" {
-  description = "The URL for the Cloud Run service."
-  type        = string
-}
-
 variable "api_name" {
   description = "The name for the API Gateway API."
   type        = string

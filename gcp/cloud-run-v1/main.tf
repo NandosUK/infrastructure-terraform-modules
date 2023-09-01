@@ -1,3 +1,4 @@
+
 # Resource configuration for deploying a Google Cloud Run service
 resource "google_cloud_run_service" "default" {
   name                       = var.name           # Service name
@@ -106,7 +107,7 @@ module "lb-http" {
 }
 
 # Cloud Build trigger configuration
-module "trigger_okta_provision" {
+module "trigger_provision" {
   count        = var.create_trigger == true ? 1 : 0
   source       = "../cloud-cloudbuild-trigger"
   name         = "service-${var.name}-provision"
