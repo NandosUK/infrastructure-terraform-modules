@@ -6,7 +6,7 @@ This Terraform module provisions a complete API environment on Google Cloud Plat
 
 ```hcl
 module "nandos_api" {
-  source              = "github.com/NandosUK/infrastructure-terraform-modules//gcp/api-gateway-v1"
+  source              = "github.com/NandosUK/infrastructure-terraform-modules//gcp/nandos-api-gateway"
   project_id          = "test-project-id"
   api_name            = "test-api"
   openapi_spec_file_path = "./path/to/spec.yaml"
