@@ -6,7 +6,8 @@ This Terraform module deploys a Google Cloud Run service, configures public acce
 
 ```hcl
 module "cloud_run" {
-  source                     = "./path/to/module"
+  source                = "github.com/NandosUK/infrastructure/terraform-modules/gcp/cloud-run-v1"
+
   project_id                 = "your-gcp-project-id"
   name                       = "my-cloud-run-service"
   project_region             = "europe-west2"

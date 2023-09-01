@@ -1,6 +1,6 @@
 # Google Cloud Function Terraform Module
 
-This module provisions a basic Google Cloud Function.
+This module provisions a basic Google Cloud Function version 1
 
 ## Usage
 
@@ -17,7 +17,7 @@ module "gcp_cloud_function" {
 }
 ```
 
-## Inputs
+## Inputs
 
 Refer to variables.tf for input parameters.
 
