@@ -6,9 +6,9 @@
 
 This repository contains Terraform modules for various infrastructure components. We use `semantic-release` to manage versioning and releases.
 
-## Use of modules
+# Contribute
 
-You can find specific examples inside [each module folder](gcp). Here is an example on how to use cloud run v1 module:
+You can find specific examples and available variables inside [each module folder](gcp). Here is an example on how to use cloud run v1 module:
 
 ```hcl
 module "cloud_run" {
@@ -28,6 +28,8 @@ module "cloud_run" {
   create_trigger             = true
 }
 ```
+
+# Contribute
 
 ## Semantic Release and Commit Message Guidelines
 

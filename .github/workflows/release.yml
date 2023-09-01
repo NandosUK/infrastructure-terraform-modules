@@ -28,6 +28,17 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
 
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+
+      - name: Terraform Commands in test/gcp
+        run: |
+          cd test/gcp
+          terraform init
+          terraform validate
+          terraform plan
+        continue-on-error: false
+
       - name: Install semantic-release
         run: npm install --global semantic-release
 
