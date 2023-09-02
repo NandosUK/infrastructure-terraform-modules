@@ -59,7 +59,26 @@ resource "google_api_gateway_gateway" "nandos_api_gateway" {
   region     = var.project_region
 }
 
+# Create a managed SSL certificate
+resource "google_compute_managed_ssl_certificate" "custom_ssl_cert" {
+  name = "custom-ssl-cert"
+  managed {
+    domains = [var.custom_domain]
+  }
+}
 
+# Update your API Gateway to use the custom domain and SSL certificate
+# NOTE: This part depends on how your actual infrastructure is set up; the syntax might vary
+resource "some_resource_to_attach_domain_and_ssl" "example" {
+  ssl_certificate = google_compute_managed_ssl_certificate.custom_ssl_cert.self_link
+  custom_domain   = var.custom_domain
+  api_gateway_id  = google_api_gateway_gateway.nandos_api_gateway.gateway_id
+}
+
+# Print the API Gateway URL
 output "api_gateway_url_text" {
   value = "Your API Gateway URL is: ${google_api_gateway_gateway.nandos_api_gateway.default_hostname}"
+}
+output "api_gateway_custom_domain_text" {
+  value = "Your API Gateway URL is: ${var.custom_domain}"
 }
