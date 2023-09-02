@@ -74,6 +74,6 @@ resource "google_api_gateway_gateway" "nandos_api_gateway" {
   region     = var.project_region
 }
 
-output "api_gateway_url" {
+output "api_gateway_url_text" {
   value = "Your API Gateway URL is: ${google_api_gateway_gateway.nandos_api_gateway.default_hostname}"
 }
