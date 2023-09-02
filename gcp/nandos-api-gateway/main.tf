@@ -1,5 +1,20 @@
 locals {
-  openapi_contents = filebase64(var.openapi_spec_file_path)
+  host              = google_api_gateway_gateway.nandos_api_gateway.gateway_id # Replace with actual host value
+  openapi_template  = templatefile(var.openapi_spec_file_path, { host = local.host })
+  temp_openapi_path = "${path.module}/temp_openapi.yaml"
+}
+
+resource "null_resource" "write_temp_openapi" {
+  provisioner "local-exec" {
+    command = "echo '${local.openapi_template}' > ${local.temp_openapi_path}"
+  }
+  triggers = {
+    openapi_contents = local.openapi_template
+  }
+}
+
+locals {
+  openapi_contents = filebase64(local.temp_openapi_path)
   config_hash      = md5(local.openapi_contents)
 }
 
@@ -57,4 +72,8 @@ resource "google_api_gateway_gateway" "nandos_api_gateway" {
   api_config = google_api_gateway_api_config.nandos_api_config.id
   project    = var.project_id
   region     = var.project_region
+}
+
+output "api_gateway_url" {
+  value = "Your API Gateway URL is: ${google_api_gateway_gateway.nandos_api_gateway.default_hostname}"
 }
