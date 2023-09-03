@@ -51,6 +51,8 @@ See the code for all available variables.
 
 To use this module, include it in your Terraform script and fill in the required variables. Check out the example folder for a sample Terraform script that uses this module.
 
+Example of use:
+
 [test/gcp/cloud-run-v2.tf](../../test/gcp/cloud-run-v2.tf)
 
 ## Contribution
