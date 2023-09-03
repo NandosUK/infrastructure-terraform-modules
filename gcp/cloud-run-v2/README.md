@@ -4,6 +4,8 @@
 
 This Terraform module provides a set of reusable configurations for deploying services to Google Cloud Run, a fully managed serverless platform for running containerized applications. The module is designed for flexibility and ease-of-use, allowing users to deploy Cloud Run services with customized probes, environment variables, and even secrets from Google Cloud Secret Manager.
 
+Once the service is created it will become available on `https://MY_SERVICE.api.nandos.services`
+
 ## Features
 
 ### Google Cloud Run Service
