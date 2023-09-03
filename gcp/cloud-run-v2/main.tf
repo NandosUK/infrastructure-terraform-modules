@@ -1,3 +1,25 @@
+resource "google_secret_manager_secret" "dummy_secrets" {
+  count     = length(var.secrets)
+  secret_id = var.secrets[count.index]
+  labels = {
+    environment = var.environment
+  }
+  replication {
+    automatic = true
+  }
+  lifecycle {
+    ignore_changes = [labels]
+  }
+}
+
+resource "google_secret_manager_secret_version" "dummy_secret_versions" {
+  count       = length(var.secrets)
+  secret      = google_secret_manager_secret.dummy_secrets[count.index].name
+  secret_data = "dummy_value"
+  lifecycle {
+    ignore_changes = [secret_data]
+  }
+}
 
 # Resource configuration for deploying a Google Cloud Run service
 resource "google_cloud_run_v2_service" "default" {
@@ -42,7 +64,6 @@ resource "google_cloud_run_v2_service" "default" {
           memory = var.memory_limit
         }
       }
-
       # Conditional secrets
       dynamic "env" {
         for_each = var.secrets
@@ -51,11 +72,12 @@ resource "google_cloud_run_v2_service" "default" {
           value_source {
             secret_key_ref {
               secret  = env.value
-              version = "1"
+              version = "latest"
             }
           }
         }
       }
+
       # Conditional volume_mounts
       dynamic "volume_mounts" {
         for_each = var.sql_connection != null ? [1] : []
@@ -121,11 +143,11 @@ module "lb-http" {
   source  = "GoogleCloudPlatform/lb-http/google//modules/serverless_negs"
   project = var.project_id
   name    = "${var.name}-lb"
-  version = "9.1.0"
+  version = "~> 9.0"
 
   # SSL and domain configuration
-  managed_ssl_certificate_domains = var.domains != null ? var.domains : []
-  ssl                             = var.domains != null ? true : false
+  managed_ssl_certificate_domains = ["${var.name}.api.nandos.services"]
+  ssl                             = true
   https_redirect                  = true # Enable HTTPS redirect
   random_certificate_suffix       = true
 

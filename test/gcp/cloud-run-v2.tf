@@ -1,7 +1,7 @@
 module "cloud-run" {
   source              = "../../gcp/cloud-run-v2"
   project_id          = "test-project-id"
-  name                = "test-service"
+  name                = "my-awesome-api"
   project_region      = "europe-west2"
   allow_public_access = true
   create_trigger      = false
@@ -12,4 +12,9 @@ module "cloud-run" {
     "DEBUG"       = "true"
     # ... add more as needed
   }
+  secrets = [
+    "SECRET_ONE",
+    "SECRET_TWO"
+
+  ]
 }

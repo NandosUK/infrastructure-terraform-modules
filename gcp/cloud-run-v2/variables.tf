@@ -4,19 +4,30 @@ variable "project_id" {
 }
 
 variable "name" {
-  description = "(Required) Name must be unique within a namespace, within a Cloud Run region."
+  description = "(Required) Name must be unique within a namespace, within a Cloud Run region. No spaces or special characters allowed."
   type        = string
-}
 
+  validation {
+    condition     = can(regex("^[a-zA-Z0-9-_]+$", var.name))
+    error_message = "The name can only contain alphanumeric characters, hyphens, and underscores."
+  }
+}
 variable "project_region" {
   description = "(Required) The location of the cloud run instance. eg europe-west2"
   type        = string
 }
 
-variable "domains" {
-  description = "(Optional) "
+variable "domain" {
+  description = "(Optional)"
   type        = list(string)
   default     = null
+
+  /* validation {
+      condition = alltrue([
+        for domain in var.domains : can(regex("^(api[0-9]*\\.api\\.nandos\\.services)$", domain))
+      ])
+      error_message = "All domain names must start with 'api' and be under 'nandos.services'. For example, 'api1.api.nandos.services'."
+    } */
 }
 
 variable "cloud_run_service_account" {
@@ -28,7 +39,7 @@ variable "cloud_run_service_account" {
 variable "allow_public_access" {
   description = "(Optional) Enable/disable public access to the service."
   type        = bool
-  default     = true
+  default     = false
 }
 
 variable "sql_connection" {
@@ -82,12 +93,12 @@ variable "env_vars" {
   type        = map(string)
   default     = {}
 }
-
 variable "secrets" {
-  description = "Secrets from Secret Manager"
-  type        = map(string)
-  default     = {}
+  description = "List of secrets to be used from Secret Manager"
+  type        = list(string)
+  default     = []
 }
+
 
 
 # Corresponding variables for startup probe and liveness probe
