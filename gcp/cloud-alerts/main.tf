@@ -8,7 +8,8 @@ resource "google_monitoring_alert_policy" "error_rate_alert" {
     display_name = "5xx Errors"
 
     condition_threshold {
-      filter = "resource.type=\"cloud_run_revision\" AND metric.type=\"run.googleapis.com/request_count\" AND response_code_class=\"5xx\" AND resource.labels.service_name=\"${var.service_name}\""
+      filter = "metric.type=\"run.googleapis.com/request_count\" AND metric.response_code_class=\"5xx\" AND resource.type=\"cloud_run_revision\" AND resource.labels.service_name=\"${var.service_name}\""
+
 
 
       comparison      = "COMPARISON_GT"
@@ -64,7 +65,8 @@ resource "google_monitoring_alert_policy" "client_error_rate_alert" {
     display_name = "4xx Errors"
 
     condition_threshold {
-      filter = "resource.type=\"cloud_run_revision\" AND metric.type=\"run.googleapis.com/request_count\" AND response_code_class=\"4xx\" AND resource.labels.service_name=\"${var.service_name}\""
+      filter = "metric.type=\"run.googleapis.com/request_count\" AND metric.response_code_class=\"4xx\" AND resource.type=\"cloud_run_revision\" AND resource.labels.service_name=\"${var.service_name}\""
+
 
       comparison      = "COMPARISON_GT"
       threshold_value = var.client_error_rate_threshold
@@ -119,7 +121,8 @@ resource "google_monitoring_alert_policy" "cpu_utilization_alert" {
     display_name = "CPU Utilization"
 
     condition_threshold {
-      filter = "resource.type=\"cloud_run_revision\" AND metric.type=\"run.googleapis.com/container/cpu/utilization\" AND resource.labels.service_name=\"${var.service_name}\""
+      filter = "metric.type=\"run.googleapis.com/container/cpu/utilization\" AND resource.type=\"cloud_run_revision\" AND resource.labels.service_name=\"${var.service_name}\""
+
 
       comparison      = "COMPARISON_GT"
       threshold_value = var.cpu_utilization_threshold
