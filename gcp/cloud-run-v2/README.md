@@ -6,6 +6,11 @@ This Terraform module provides a set of reusable configurations for deploying se
 
 Once the service is created it will become available on `https://MY_SERVICE.api.nandos.services`
 
+
+## Branching strategy
+
+[Details about the branching strategy](../cloud-cloudbuild-trigger/README.md)
+
 ## Features
 
 ### Google Cloud Run Service

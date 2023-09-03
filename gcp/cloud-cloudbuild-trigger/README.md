@@ -2,41 +2,73 @@
 
 This module creates a Google Cloud Build Trigger, allowing you to automatically run builds on source code changes... The trigger can be configured to listen for changes on specific branches, include or exclude specific files, and apply custom substitutions during the build.
 
-## Usage
+# Branching Strategy Details for Cloud Build Trigger
 
-```hcl
-module "trigger_main" {
-  source            = "github.com/NandosUK/infrastructure-terraform-modules//gcp/cloud-build-trigger-v1"
-  name              = "my-trigger"
-  description       = "A sample Google Cloud Build Trigger."
-  repository_owner  = "NandosUK"
-  repository_name   = "my-repo"
-  branch            = "main"
-  invert_regex      = false
-  substitutions     = {
-    _LOCATION = "europe-west2"
-  }
-  include           = ["**"]
-  exclude           = []
-  disabled          = false
-  tags              = ["example-tag"]
-}
-```
+This document provides an in-depth explanation of the `branching_strategy` variable in our Terraform configuration for Google Cloud Build triggers.
 
-## Inputs
+## Environments and Stages
 
-| Name               | Description                                    | Type         | Default                          |
-| ------------------ | ---------------------------------------------- | ------------ | -------------------------------- |
-| `name`             | The name of the trigger                        | string       |                                  |
-| `description`      | The description of the trigger                 | string       |                                  |
-| `filename`         | Path to the Cloud Build configuration file     | string       | `"cloudbuild.yaml"`              |
-| `substitutions`    | Key-value pairs for substitutions during build | map(string)  | `{ _LOCATION = "europe-west2" }` |
-| `branch`           | Branch to trigger builds on                    | string       | `"DEFAULT"`                      |
-| `invert_regex`     | Whether to invert the regex on the branch      | bool         | `false`                          |
-| `repository_owner` | Owner of the repository                        | string       | `"NandosUK"`                     |
-| `repository_name`  | Name of the repository                         | string       |                                  |
-| `include`          | Files to include in the build                  | list(string) | `["**"]`                         |
-| `exclude`          | Files to exclude from the build                | list(string) | `[]`                             |
-| `tags`             | Tags for the trigger                           | list         | `[]`                             |
-| `disabled`         | Whether the trigger is disabled                | bool         | `false`                          |
-| `project`          | The project where the trigger will be created  | string       |                                  |
+The strategy is defined for three different environments:
+
+- Preview
+- Preprod
+- Prod
+
+In each environment, there are two stages:
+
+- `validate`: Checks to perform before the actual build
+- `provision`: The build process itself
+
+## Preview Environment
+
+### Validate Stage
+
+- **branch**: `^NOT_USED_PREVIEW$`
+  - The preview environment doesn't use any branches for validation.
+  
+- **invert_regex**: `false`
+  - Don't invert the regex, so the branch pattern is used as-is.
+
+### Provision Stage
+
+- **branch**: `.*`
+  - Any branch can trigger provisioning.
+
+- **invert_regex**: `false`
+  - Don't invert the regex.
+
+## Preprod Environment
+
+### Validate Stage
+
+- **branch**: `^main$|^preprod$|^release/(.*)$`
+  - The `main`, `preprod`, and `release/*` branches can be used for validation.
+
+- **invert_regex**: `true`
+  - Invert the regex, so these branches will not trigger the validate step.
+
+### Provision Stage
+
+- **branch**: `^main$|^preprod$|^release/(.*)$`
+  - The `main`, `preprod`, and `release/*` branches can trigger provisioning.
+
+- **invert_regex**: `false`
+  - Don't invert the regex.
+
+## Prod Environment
+
+### Validate Stage
+
+- **branch**: `^main$`
+  - Only the `main` branch is used for validation.
+
+- **invert_regex**: `true`
+  - Invert the regex, so this branch will not trigger the validate step.
+
+### Provision Stage
+
+- **branch**: `^main$`
+  - Only the `main` branch can trigger provisioning.
+
+- **invert_regex**: `false`
+  - Don't invert the regex.
