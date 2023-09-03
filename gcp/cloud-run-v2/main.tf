@@ -1,29 +1,7 @@
-resource "google_secret_manager_secret" "dummy_secrets" {
-  count     = length(var.secrets)
-  secret_id = var.secrets[count.index]
-  labels = {
-    environment = var.environment
-  }
-  replication {
-    user_managed {
-      replicas {
-        location = var.project_region
-      }
-    }
-  }
-  lifecycle {
-    ignore_changes = [labels]
-  }
+locals {
+  secrets_map = { for s in var.secrets : s => s }
 }
 
-resource "google_secret_manager_secret_version" "dummy_secret_versions" {
-  count       = length(var.secrets)
-  secret      = google_secret_manager_secret.dummy_secrets[count.index].name
-  secret_data = "dummy_value"
-  lifecycle {
-    ignore_changes = [secret_data]
-  }
-}
 
 # Resource configuration for deploying a Google Cloud Run service
 resource "google_cloud_run_v2_service" "default" {
@@ -61,6 +39,18 @@ resource "google_cloud_run_v2_service" "default" {
           value = env.value
         }
       }
+      dynamic "env" {
+        for_each = length(var.secrets) > 0 ? tomap({ for s in var.secrets : s => s }) : {}
+        content {
+          name = env.key
+          value_source {
+            secret_key_ref {
+              secret  = "projects/${var.project_id}/secrets/${env.key}"
+              version = "latest"
+            }
+          }
+        }
+      }
 
       resources {
         limits = {
@@ -68,19 +58,8 @@ resource "google_cloud_run_v2_service" "default" {
           memory = var.memory_limit
         }
       }
-      # Conditional secrets
-      dynamic "env" {
-        for_each = var.secrets
-        content {
-          name = env.key
-          value_source {
-            secret_key_ref {
-              secret  = env.value
-              version = "latest"
-            }
-          }
-        }
-      }
+
+
 
       # Conditional volume_mounts
       dynamic "volume_mounts" {

@@ -15,6 +15,5 @@ module "cloud-run" {
   secrets = [
     "SECRET_ONE",
     "SECRET_TWO"
-
   ]
 }

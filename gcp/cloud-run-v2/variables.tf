@@ -94,7 +94,7 @@ variable "env_vars" {
   default     = {}
 }
 variable "secrets" {
-  description = "List of secrets to be used from Secret Manager"
+  description = "List of secret names from Secret Manager"
   type        = list(string)
   default     = []
 }
