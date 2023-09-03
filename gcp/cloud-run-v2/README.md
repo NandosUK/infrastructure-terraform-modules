@@ -18,10 +18,6 @@ Once the service is created it will become available on `https://MY_SERVICE.api.
 - **Scalability** : Set the minimum and maximum number of instances for your service.
 - **Volume Mounts** : Conditionally enable volume mounts, useful for SQL connections.
 
-### IAM Permissions
-
-- Allows public access to the Cloud Run service, conditionally based on the `var.allow_public_access` flag.
-
 ### Network Endpoint Group (NEG)
 
 - Creates a Network Endpoint Group for the Cloud Run service for Load Balancer integration.
