@@ -45,13 +45,13 @@ Once the service is created it will become available on `https://MY_SERVICE.api.
 - `var.allow_public_access`: Flag to control public access.
 - `var.project_id`: Google Cloud project ID.
 
-... and many more. See the code for all available variables.
+See the code for all available variables.
 
 ## Usage
 
 To use this module, include it in your Terraform script and fill in the required variables. Check out the example folder for a sample Terraform script that uses this module.
 
-`test/gcp/cloud-run-v2.tf`
+[test/gcp/cloud-run-v2.tf](../../test/gcp/cloud-run-v2.tf)
 
 ## Contribution
 
