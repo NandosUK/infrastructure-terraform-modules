@@ -63,3 +63,71 @@ variable "create_trigger" {
   type        = bool
   default     = true
 }
+
+
+
+variable "min_scale" {
+  description = "Minimum number of instances for autoscaling"
+  default     = 1
+}
+
+variable "max_scale" {
+  description = "Maximum number of instances for autoscaling"
+  default     = null
+}
+
+# Declare new variables
+variable "env_vars" {
+  description = "Environment variables"
+  type        = map(string)
+  default     = {}
+}
+
+variable "secrets" {
+  description = "Secrets from Secret Manager"
+  type        = map(string)
+  default     = {}
+}
+
+
+# Corresponding variables for startup probe and liveness probe
+variable "startup_probe_initial_delay" {
+  description = "Initial delay seconds for the startup probe"
+  default     = 0
+}
+
+variable "startup_probe_timeout" {
+  description = "Timeout seconds for the startup probe"
+  default     = 1
+}
+
+variable "startup_probe_period" {
+  description = "Period seconds for the startup probe"
+  default     = 3
+}
+
+variable "startup_probe_failure_threshold" {
+  description = "Failure threshold for the startup probe"
+  default     = 1
+}
+
+variable "startup_probe_port" {
+  description = "Port for the startup probe"
+  default     = 8080
+}
+
+variable "liveness_probe_path" {
+  description = "Path for the liveness probe"
+  default     = "/"
+}
+variable "cpu_limit" {
+  description = "CPU limit for the Cloud Run container"
+  type        = string
+  default     = "1000m" # Default to 1000 milliCPU
+}
+
+variable "memory_limit" {
+  description = "Memory limit for the Cloud Run container"
+  type        = string
+  default     = "512Mi" # Default to 512 MiB
+}

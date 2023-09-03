@@ -4,5 +4,5 @@ module "nandos_api" {
   api_name               = "test-api"
   openapi_spec_file_path = "../assets/api-gateway-example.yml"
   project_region         = "europe-west2"
-  custom_domain          = "api-test.nandos.dev"
+  /* custom_domain          = "api-test.nandos.dev" */
 }
