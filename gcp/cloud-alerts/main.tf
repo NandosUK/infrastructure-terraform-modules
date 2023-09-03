@@ -52,3 +52,86 @@ resource "google_monitoring_alert_policy" "latency_alert" {
   notification_channels = var.alert_notification_channels
   enabled               = true
 }
+
+
+# 4xx Error Rate Alert
+resource "google_monitoring_alert_policy" "client_error_rate_alert" {
+  project      = var.project_id
+  display_name = "4xx Error Rate Alert for ${var.service_name}"
+  combiner     = "OR"
+
+  conditions {
+    display_name = "4xx Errors"
+
+    condition_threshold {
+      filter = "resource.type=\"cloud_run_revision\" AND metric.type=\"run.googleapis.com/request_count\" AND response_code_class=\"4xx\" AND resource.labels.service_name=\"${var.service_name}\""
+
+      comparison      = "COMPARISON_GT"
+      threshold_value = var.client_error_rate_threshold
+      duration        = var.client_error_rate_duration
+
+      aggregations {
+        alignment_period   = "60s"
+        per_series_aligner = "ALIGN_RATE"
+      }
+    }
+  }
+
+  notification_channels = var.alert_notification_channels
+  enabled               = true
+}
+
+
+# Traffic Volume Alert
+resource "google_monitoring_alert_policy" "traffic_volume_alert" {
+  project      = var.project_id
+  display_name = "Traffic Volume Alert for ${var.service_name}"
+  combiner     = "OR"
+
+  conditions {
+    display_name = "Traffic Volume"
+
+    condition_threshold {
+      filter = "resource.type=\"cloud_run_revision\" AND metric.type=\"run.googleapis.com/request_count\" AND resource.labels.service_name=\"${var.service_name}\""
+
+      comparison      = "COMPARISON_GT"
+      threshold_value = var.traffic_volume_threshold
+      duration        = var.traffic_volume_duration
+
+      aggregations {
+        alignment_period   = "60s"
+        per_series_aligner = "ALIGN_RATE"
+      }
+    }
+  }
+
+  notification_channels = var.alert_notification_channels
+  enabled               = true
+}
+
+# CPU Utilization Alert
+resource "google_monitoring_alert_policy" "cpu_utilization_alert" {
+  project      = var.project_id
+  display_name = "CPU Utilization Alert for ${var.service_name}"
+  combiner     = "OR"
+
+  conditions {
+    display_name = "CPU Utilization"
+
+    condition_threshold {
+      filter = "resource.type=\"cloud_run_revision\" AND metric.type=\"run.googleapis.com/container/cpu/utilization\" AND resource.labels.service_name=\"${var.service_name}\""
+
+      comparison      = "COMPARISON_GT"
+      threshold_value = var.cpu_utilization_threshold
+      duration        = var.cpu_utilization_duration
+
+      aggregations {
+        alignment_period   = "60s"
+        per_series_aligner = "ALIGN_RATE"
+      }
+    }
+  }
+
+  notification_channels = var.alert_notification_channels
+  enabled               = true
+}
