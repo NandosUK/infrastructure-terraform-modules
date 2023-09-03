@@ -5,7 +5,11 @@ resource "google_secret_manager_secret" "dummy_secrets" {
     environment = var.environment
   }
   replication {
-    automatic = true
+    user_managed {
+      replicas {
+        location = var.project_region
+      }
+    }
   }
   lifecycle {
     ignore_changes = [labels]
