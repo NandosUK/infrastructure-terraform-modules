@@ -134,3 +134,49 @@ variable "service_path" {
   description = "Location for the main code and where the cloudbuild.yaml exists, for example /services/myapi"
   type        = string
 }
+
+
+variable "trigger_config" {
+  description = "Configuration for the Cloud Build Trigger"
+  type = object({
+    name            = string
+    repository_name = string
+    description     = string
+    filename        = string
+    include         = list(string)
+    exclude         = list(string)
+    environment     = string
+    substitutions   = map(string)
+    create_trigger  = bool
+  })
+  default = {
+    name            = "default-trigger-name"
+    repository_name = "default-repo-name"
+    description     = "default-description"
+    filename        = "cloudbuild.yaml"
+    include         = []
+    exclude         = []
+    environment     = null
+    substitutions   = {}
+    create_trigger  = true
+  }
+}
+
+
+variable "alert_config" {
+  description = "Configuration for alerts"
+  type = object({
+    alert_notification_channels = list(string)
+    error_rate_threshold        = number
+    error_rate_duration         = string
+    latency_threshold           = number
+    latency_duration            = string
+  })
+  default = {
+    alert_notification_channels = []
+    error_rate_threshold        = 10.0
+    error_rate_duration         = "300s"
+    latency_threshold           = 1000.0
+    latency_duration            = "300s"
+  }
+}

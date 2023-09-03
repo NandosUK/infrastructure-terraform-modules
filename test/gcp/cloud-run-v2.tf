@@ -17,4 +17,11 @@ module "cloud-run" {
     "SECRET_ONE",
     "SECRET_TWO"
   ]
+  alert_config = {
+    alert_notification_channels = ["your-notification-channel-id"]
+    error_rate_threshold        = 20.0
+    error_rate_duration         = "600s"
+    latency_threshold           = 2000.0
+    latency_duration            = "600s"
+  }
 }

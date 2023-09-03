@@ -181,9 +181,9 @@ module "cloud_run_alerts" {
   source                      = "../cloud-alerts"
   project_id                  = var.project_id
   service_name                = var.name
-  alert_notification_channels = []
-  error_rate_threshold        = 20.0
-  error_rate_duration         = "600s"
-  latency_threshold           = 2000.0
-  latency_duration            = "600s"
+  alert_notification_channels = var.alert_config.alert_notification_channels
+  error_rate_threshold        = var.alert_config.error_rate_threshold
+  error_rate_duration         = var.alert_config.error_rate_duration
+  latency_threshold           = var.alert_config.latency_threshold
+  latency_duration            = var.alert_config.latency_duration
 }
