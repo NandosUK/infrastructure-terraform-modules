@@ -73,7 +73,7 @@ variable "min_scale" {
 
 variable "max_scale" {
   description = "Maximum number of instances for autoscaling"
-  default     = null
+  default     = 100
 }
 
 # Declare new variables
