@@ -24,7 +24,7 @@ variable "cloud_run_service_account" {
 }
 
 variable "allow_public_access" {
-  description = "(Optional) Enable/disable public access to the service."
+  description = "(Optional) Enable/disable public access to the service's original run url."
   type        = bool
   default     = false
 }
