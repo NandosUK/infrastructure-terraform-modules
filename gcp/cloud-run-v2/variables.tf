@@ -162,7 +162,6 @@ variable "trigger_config" {
   }
 }
 
-
 variable "alert_config" {
   description = "Configuration for alerts"
   type = object({
@@ -171,6 +170,14 @@ variable "alert_config" {
     error_rate_duration         = string
     latency_threshold           = number
     latency_duration            = string
+
+    # Additional alert settings
+    client_error_rate_threshold = number
+    client_error_rate_duration  = string
+    traffic_volume_threshold    = number
+    traffic_volume_duration     = string
+    cpu_utilization_threshold   = number
+    cpu_utilization_duration    = string
   })
   default = {
     alert_notification_channels = []
@@ -178,5 +185,14 @@ variable "alert_config" {
     error_rate_duration         = "300s"
     latency_threshold           = 1000.0
     latency_duration            = "300s"
+
+    # Additional alert settings
+    client_error_rate_threshold = 50.0
+    client_error_rate_duration  = "300s"
+    traffic_volume_threshold    = 1000
+    traffic_volume_duration     = "300s"
+    cpu_utilization_threshold   = 90
+    cpu_utilization_duration    = "300s"
   }
 }
+ 
