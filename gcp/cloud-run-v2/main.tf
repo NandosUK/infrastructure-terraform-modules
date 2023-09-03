@@ -1,8 +1,3 @@
-locals {
-  secrets_map = { for s in var.secrets : s => s }
-}
-
-
 # Resource configuration for deploying a Google Cloud Run service
 resource "google_cloud_run_v2_service" "default" {
   name     = var.name           # Service name
@@ -163,18 +158,19 @@ module "trigger_provision" {
   source       = "../cloud-cloudbuild-trigger"
   name         = "service-${var.name}-provision"
   description  = "Provision ${var.name} Service (CI/CD)"
-  filename     = "services/${var.name}/cloudbuild.yaml"
-  include      = ["services/${var.name}/**"]
-  exclude      = ["services/${var.name}/functions/**"]
+  filename     = "${var.service_path}/cloudbuild.yaml"
+  include      = ["${var.service_path}/**"]
+  exclude      = ["${var.service_path}/functions/**"]
   branch       = var.branching_strategy.provision.branch
   invert_regex = var.branching_strategy.provision.invert_regex
-  # Substitution variables for Cloud Build
+
+  # Substitution variables for Cloud Build Trigger
   substitutions = {
     _STAGE                    = "provision"
     _BUILD_ENV                = var.environment
     _SERVICE_NAME             = var.name
     _DOCKER_ARTIFACT_REGISTRY = var.artifact_repository
-    _SERVICE_PATH             = "services/${var.name}"
+    _SERVICE_PATH             = var.service_path
     _LOCATION                 = var.project_region
     _SERVICE_ACCOUNT          = var.cloud_run_service_account
   }

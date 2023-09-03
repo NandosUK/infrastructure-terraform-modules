@@ -7,6 +7,7 @@ module "cloud-run" {
   create_trigger      = false
   environment         = "test"
   branching_strategy  = {} # Provide appropriate dummy values if needed
+  service_path        = "/services/my-awesome-api"
   env_vars = {
     "ENVIRONMENT" = "test"
     "DEBUG"       = "true"

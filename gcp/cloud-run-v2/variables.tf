@@ -17,19 +17,6 @@ variable "project_region" {
   type        = string
 }
 
-variable "domain" {
-  description = "(Optional)"
-  type        = list(string)
-  default     = null
-
-  /* validation {
-      condition = alltrue([
-        for domain in var.domains : can(regex("^(api[0-9]*\\.api\\.nandos\\.services)$", domain))
-      ])
-      error_message = "All domain names must start with 'api' and be under 'nandos.services'. For example, 'api1.api.nandos.services'."
-    } */
-}
-
 variable "cloud_run_service_account" {
   description = "(Optional) The SA that will be used as role/invoker."
   type        = string
@@ -74,8 +61,6 @@ variable "create_trigger" {
   type        = bool
   default     = true
 }
-
-
 
 variable "min_scale" {
   description = "Minimum number of instances for autoscaling"
@@ -141,4 +126,10 @@ variable "memory_limit" {
   description = "Memory limit for the Cloud Run container"
   type        = string
   default     = "512Mi" # Default to 512 MiB
+}
+
+
+variable "service_path" {
+  description = "Location for the main code and where the cloudbuild.yaml exists, for example /services/myapi"
+  type        = string
 }
