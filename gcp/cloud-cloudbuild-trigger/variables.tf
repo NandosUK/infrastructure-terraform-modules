@@ -26,19 +26,6 @@ variable "substitutions" {
   description = "Map of substitution variables to be used in the build process."
 }
 
-# Git Branch
-variable "branch" {
-  type        = string
-  default     = "DEFAULT"
-  description = "The name of the git branch for which to trigger the build."
-}
-
-# Invert Regex
-variable "invert_regex" {
-  type        = bool
-  default     = false
-  description = "If true, regex matching is inverted."
-}
 
 # Github Repository Owner
 variable "repository_owner" {
@@ -49,9 +36,9 @@ variable "repository_owner" {
 
 # Github Repository Name
 variable "repository_name" {
-  type        = string
-  default     = ""
-  description = "The name of the GitHub repository."
+  type = string
+
+  description = "The name of the GitHub repository where the service is located"
 }
 
 # Included Files
@@ -66,6 +53,53 @@ variable "exclude" {
   type        = list(string)
   default     = []
   description = "List of file paths that should be excluded from the build."
+}
+
+variable "environment" {
+  type        = string
+  description = "Environment that can be preview, preprod, or prod"
+
+  validation {
+    condition     = contains(["preview", "preprod", "prod"], var.environment)
+    error_message = "The environment must be one of: preview, preprod, or prod."
+  }
+}
+
+variable "branching_strategy" {
+  description = "Branching strategy for different environments"
+  type        = map(any)
+  default = {
+    preview = {
+      validate = {
+        branch       = "^NOT_USED_PREVIEW$"
+        invert_regex = false
+      }
+      provision = {
+        branch       = ".*"
+        invert_regex = false
+      }
+    },
+    preprod = {
+      validate = {
+        branch       = "^main$|^preprod$|^release/(.*)$"
+        invert_regex = true
+      }
+      provision = {
+        branch       = "^main$|^preprod$|^release/(.*)$"
+        invert_regex = false
+      }
+    },
+    prod = {
+      validate = {
+        branch       = "^main$"
+        invert_regex = true
+      }
+      provision = {
+        branch       = "^main$"
+        invert_regex = false
+      }
+    }
+  }
 }
 
 

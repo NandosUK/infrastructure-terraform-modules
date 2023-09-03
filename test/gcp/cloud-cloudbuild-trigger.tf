@@ -4,8 +4,7 @@ module "cloud-cloudbuild-trigger" {
   description      = "A sample Google Cloud Build Trigger."
   repository_owner = "NandosUK"
   repository_name  = "my-repo"
-  branch           = "main"
-  invert_regex     = false
+  environment      = "prod"
   substitutions = {
     _LOCATION = "europe-west2"
   }

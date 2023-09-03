@@ -6,8 +6,8 @@ resource "google_cloudbuild_trigger" "trigger_main" {
     owner = var.repository_owner
     name  = var.repository_name
     push {
-      branch       = var.branch
-      invert_regex = var.invert_regex
+      branch       = var.branching_strategy[var.environment]["provision"]["branch"]
+      invert_regex = var.branching_strategy[var.environment]["provision"]["invert_regex"]
     }
   }
   substitutions  = var.substitutions

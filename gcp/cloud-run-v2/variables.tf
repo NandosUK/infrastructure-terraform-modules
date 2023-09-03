@@ -47,14 +47,15 @@ variable "environment" {
   default     = null
 }
 
-variable "branching_strategy" {}
-
 variable "artifact_repository" {
   description = "Artifact repository to use for this service"
   type        = string
   default     = "europe-west2-docker.pkg.dev/mgt-build-56d2ff6b/nandos-central-docker"
 }
-
+variable "repository_name" {
+  description = "Repo name where the service is located (in GitHub)"
+  type        = string
+}
 
 variable "create_trigger" {
   description = "Create a cloudbuild trigger for this service"

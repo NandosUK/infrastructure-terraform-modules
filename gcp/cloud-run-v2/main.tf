@@ -154,15 +154,15 @@ module "lb-http" {
 
 # Cloud Build trigger configuration
 module "trigger_provision" {
-  count        = var.create_trigger == true ? 1 : 0
-  source       = "../cloud-cloudbuild-trigger"
-  name         = "service-${var.name}-provision"
-  description  = "Provision ${var.name} Service (CI/CD)"
-  filename     = "${var.service_path}/cloudbuild.yaml"
-  include      = ["${var.service_path}/**"]
-  exclude      = ["${var.service_path}/functions/**"]
-  branch       = var.branching_strategy.provision.branch
-  invert_regex = var.branching_strategy.provision.invert_regex
+  count           = var.create_trigger == true ? 1 : 0
+  source          = "../cloud-cloudbuild-trigger"
+  name            = "service-${var.name}-provision"
+  repository_name = var.repository_name
+  description     = "Provision ${var.name} Service (CI/CD)"
+  filename        = "${var.service_path}/cloudbuild.yaml"
+  include         = ["${var.service_path}/**"]
+  exclude         = ["${var.service_path}/functions/**"]
+  environment     = var.environment
 
   # Substitution variables for Cloud Build Trigger
   substitutions = {

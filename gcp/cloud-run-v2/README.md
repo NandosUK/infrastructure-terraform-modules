@@ -17,6 +17,7 @@ Once the service is created it will become available on `https://MY_SERVICE.api.
 - **Resource Limits** : Define CPU and memory limitations for your service.
 - **Scalability** : Set the minimum and maximum number of instances for your service.
 - **Volume Mounts** : Conditionally enable volume mounts, useful for SQL connections.
+- **Create Trigger**: The module creates a cloud build trigger to deploy the subsequent updates to the service. You need a cloudbuild.yaml
 
 ### Network Endpoint Group (NEG)
 
