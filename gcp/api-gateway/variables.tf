@@ -30,10 +30,10 @@ variable "openapi_spec_file_path" {
 
 variable "environment" {
   type        = string
-  description = "Environment that can be preview, preprod, or prod"
+  description = "Environment that can be preview, preprod, dev or prod"
 
   validation {
-    condition     = contains(["preview", "preprod", "prod"], var.environment)
-    error_message = "The environment must be one of: preview, preprod, or prod."
+    condition     = contains(["preview", "preprod", "prod", "dev"], var.environment)
+    error_message = "The environment must be one of: preview, preprod, dev or prod."
   }
 }
