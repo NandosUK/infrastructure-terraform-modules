@@ -62,6 +62,7 @@ resource "google_api_gateway_gateway" "nandos_api_gateway" {
 
 resource "google_compute_region_network_endpoint_group" "api_g_neg" {
   provider              = google-beta
+  project               = var.project_id
   name                  = "${var.api_name}-serverless-neg"
   network_endpoint_type = "SERVERLESS"
   region                = var.project_region
