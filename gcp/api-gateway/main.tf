@@ -1,6 +1,7 @@
 locals {
   openapi_contents = filebase64(var.openapi_spec_file_path)
   config_hash      = md5(local.openapi_contents)
+  domains          = ["gateway-${var.api_name}.api.nandos.services"]
 }
 
 
@@ -85,6 +86,20 @@ resource "google_compute_url_map" "urlmap" {
   description     = "URL map for ${var.api_name}"
   default_service = google_compute_backend_service.api_g_backend_service.id
 
+}
+
+resource "google_compute_managed_ssl_certificate" "default" {
+  provider = google-beta
+  project  = var.project_id
+  name     = "${var.api_name}-cert"
+
+  lifecycle {
+    create_before_destroy = true
+  }
+
+  managed {
+    domains = local.domains
+  }
 }
 
 
