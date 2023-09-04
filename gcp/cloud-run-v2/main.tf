@@ -116,15 +116,16 @@ resource "google_compute_region_network_endpoint_group" "cloudrun_neg" {
   }
 }
 
-
 # Cloud Armor Security Policy
+
 resource "google_compute_security_policy" "cloud_armor_policy" {
   count       = var.enable_cloud_armor ? 1 : 0
   name        = "${var.name}-armor-policy"
   description = "A security policy for Cloud Armor."
+
   rule {
-    action   = "allow"
-    priority = "1000"
+    action   = "allow" # or "deny", depending on your needs
+    priority = 2147483647
     match {
       versioned_expr = "SRC_IPS_V1"
       config {
@@ -133,7 +134,11 @@ resource "google_compute_security_policy" "cloud_armor_policy" {
     }
     description = "default rule"
   }
+
+  # Additional rules can go here with different priority values.
+  # ...
 }
+
 
 
 # Load Balancer module using serverless NEGs
@@ -164,7 +169,7 @@ module "lb-http" {
       custom_response_headers = ["X-Cache-Hit: {cdn_cache_status}"]
 
       # Clour Armor security
-      security_policy         = var.enable_cloud_armor ? google_compute_security_policy.cloud_armor_policy[0].self_link : null
+      security_policy = var.enable_cloud_armor ? google_compute_security_policy.cloud_armor_policy[0].self_link : null
 
       log_config = {
         enable = false
