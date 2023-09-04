@@ -161,38 +161,28 @@ variable "trigger_config" {
     create_trigger  = true
   }
 }
-
 variable "alert_config" {
   description = "Configuration for alerts"
   type = object({
-    alert_notification_channels = list(string)
-    error_rate_threshold        = number
-    error_rate_duration         = string
-    latency_threshold           = number
-    latency_duration            = string
-
-    # Additional alert settings
-    client_error_rate_threshold = number
-    client_error_rate_duration  = string
-    traffic_volume_threshold    = number
-    traffic_volume_duration     = string
-    cpu_utilization_threshold   = number
-    cpu_utilization_duration    = string
+    enabled               = bool
+    threshold_value       = number
+    duration              = number
+    alignment_period      = number
+    auto_close            = number
+    notification_channels = list(string)
   })
   default = {
-    alert_notification_channels = []
-    error_rate_threshold        = 10.0
-    error_rate_duration         = "300s"
-    latency_threshold           = 1000.0
-    latency_duration            = "300s"
-
-    # Additional alert settings
-    client_error_rate_threshold = 50.0
-    client_error_rate_duration  = "300s"
-    traffic_volume_threshold    = 1000
-    traffic_volume_duration     = "300s"
-    cpu_utilization_threshold   = 90
-    cpu_utilization_duration    = "300s"
+    enabled               = true
+    threshold_value       = 10.0
+    duration              = 300
+    alignment_period      = 60
+    auto_close            = 86400
+    notification_channels = []
   }
 }
- 
+
+variable "enable_cloud_armor" {
+  description = "Enable Google Cloud Armor integration"
+  type        = bool
+  default     = false
+}

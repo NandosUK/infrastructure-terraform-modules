@@ -1,140 +1,30 @@
-# Error Rate Alert
-resource "google_monitoring_alert_policy" "error_rate_alert" {
-  project      = var.project_id
+resource "google_monitoring_alert_policy" "error" {
   display_name = "Error Rate Alert for ${var.service_name}"
+  enabled      = var.enabled
   combiner     = "OR"
-
+  user_labels = {
+    api_name = var.service_name
+  }
   conditions {
-    display_name = "5xx Errors"
-
+    display_name = "Number of errors is above ${var.threshold_value} during ${var.duration}s"
     condition_threshold {
-      filter = "metric.type=\"run.googleapis.com/request_count\" AND metric.response_code_class=\"5xx\" AND resource.type=\"cloud_run_revision\" AND resource.labels.service_name=\"${var.service_name}\""
-
-
-
-      comparison      = "COMPARISON_GT"
-      threshold_value = var.error_rate_threshold
-      duration        = var.error_rate_duration
-
       aggregations {
-        alignment_period   = "60s"
-        per_series_aligner = "ALIGN_RATE"
+        alignment_period   = "${var.alignment_period}s"
+        per_series_aligner = "ALIGN_SUM"
       }
+      trigger {
+        percent = 100
+      }
+      duration        = "${var.duration}s"
+      comparison      = "COMPARISON_GT"
+      filter          = "resource.type = \"cloud_run_revision\" AND resource.labels.service_name = \"${var.service_name}\" AND metric.type = \"logging.googleapis.com/log_entry_count\" AND metric.labels.severity = \"ERROR\""
+      threshold_value = var.threshold_value
+
     }
   }
-
-  notification_channels = var.alert_notification_channels
-  enabled               = true
-}
-
-# High Latency Alert
-resource "google_monitoring_alert_policy" "latency_alert" {
-  project      = var.project_id
-  display_name = "High Latency Alert for ${var.service_name}"
-  combiner     = "OR"
-
-  conditions {
-    display_name = "High Latency"
-
-    condition_threshold {
-      filter = "resource.type=\"cloud_run_revision\" AND metric.type=\"run.googleapis.com/request_latencies\" AND resource.labels.service_name=\"${var.service_name}\""
-
-      comparison      = "COMPARISON_GT"
-      threshold_value = var.latency_threshold
-      duration        = var.latency_duration
-
-      aggregations {
-        alignment_period   = "60s"
-        per_series_aligner = "ALIGN_PERCENTILE_95"
-      }
-    }
+  alert_strategy {
+    auto_close = "${var.auto_close}s"
   }
 
-  notification_channels = var.alert_notification_channels
-  enabled               = true
-}
-
-
-# 4xx Error Rate Alert
-resource "google_monitoring_alert_policy" "client_error_rate_alert" {
-  project      = var.project_id
-  display_name = "4xx Error Rate Alert for ${var.service_name}"
-  combiner     = "OR"
-
-  conditions {
-    display_name = "4xx Errors"
-
-    condition_threshold {
-      filter = "metric.type=\"run.googleapis.com/request_count\" AND metric.response_code_class=\"4xx\" AND resource.type=\"cloud_run_revision\" AND resource.labels.service_name=\"${var.service_name}\""
-
-
-      comparison      = "COMPARISON_GT"
-      threshold_value = var.client_error_rate_threshold
-      duration        = var.client_error_rate_duration
-
-      aggregations {
-        alignment_period   = "60s"
-        per_series_aligner = "ALIGN_RATE"
-      }
-    }
-  }
-
-  notification_channels = var.alert_notification_channels
-  enabled               = true
-}
-
-
-# Traffic Volume Alert
-resource "google_monitoring_alert_policy" "traffic_volume_alert" {
-  project      = var.project_id
-  display_name = "Traffic Volume Alert for ${var.service_name}"
-  combiner     = "OR"
-
-  conditions {
-    display_name = "Traffic Volume"
-
-    condition_threshold {
-      filter = "resource.type=\"cloud_run_revision\" AND metric.type=\"run.googleapis.com/request_count\" AND resource.labels.service_name=\"${var.service_name}\""
-
-      comparison      = "COMPARISON_GT"
-      threshold_value = var.traffic_volume_threshold
-      duration        = var.traffic_volume_duration
-
-      aggregations {
-        alignment_period   = "60s"
-        per_series_aligner = "ALIGN_RATE"
-      }
-    }
-  }
-
-  notification_channels = var.alert_notification_channels
-  enabled               = true
-}
-
-# CPU Utilization Alert
-resource "google_monitoring_alert_policy" "cpu_utilization_alert" {
-  project      = var.project_id
-  display_name = "CPU Utilization Alert for ${var.service_name}"
-  combiner     = "OR"
-
-  conditions {
-    display_name = "CPU Utilization"
-
-    condition_threshold {
-      filter = "metric.type=\"run.googleapis.com/container/cpu/utilization\" AND resource.type=\"cloud_run_revision\" AND resource.labels.service_name=\"${var.service_name}\""
-
-
-      comparison      = "COMPARISON_GT"
-      threshold_value = var.cpu_utilization_threshold
-      duration        = var.cpu_utilization_duration
-
-      aggregations {
-        alignment_period   = "60s"
-        per_series_aligner = "ALIGN_RATE"
-      }
-    }
-  }
-
-  notification_channels = var.alert_notification_channels
-  enabled               = true
+  notification_channels = var.notification_channels
 }

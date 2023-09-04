@@ -17,19 +17,13 @@ module "cloud-run" {
     "SECRET_ONE",
     "SECRET_TWO"
   ]
+  enable_cloud_armor = true
   alert_config = {
-    alert_notification_channels = ["your-notification-channel-id"]
-    error_rate_threshold        = 20.0
-    error_rate_duration         = "600s"
-    latency_threshold           = 2000.0
-    latency_duration            = "600s"
-
-    # Additional alert settings
-    client_error_rate_threshold = 50.0
-    client_error_rate_duration  = "300s"
-    traffic_volume_threshold    = 1000
-    traffic_volume_duration     = "300s"
-    cpu_utilization_threshold   = 90
-    cpu_utilization_duration    = "300s"
+    enabled               = true
+    threshold_value       = 10.0
+    duration              = 300
+    alignment_period      = 60
+    auto_close            = 86400
+    notification_channels = []
   }
 }

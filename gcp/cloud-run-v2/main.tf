@@ -116,7 +116,28 @@ resource "google_compute_region_network_endpoint_group" "cloudrun_neg" {
   }
 }
 
+
+# Cloud Armor Security Policy
+resource "google_compute_security_policy" "cloud_armor_policy" {
+  count       = var.enable_cloud_armor ? 1 : 0
+  name        = "${var.name}-armor-policy"
+  description = "A security policy for Cloud Armor."
+  rule {
+    action   = "allow"
+    priority = "1000"
+    match {
+      versioned_expr = "SRC_IPS_V1"
+      config {
+        src_ip_ranges = ["*"]
+      }
+    }
+    description = "default rule"
+  }
+}
+
+
 # Load Balancer module using serverless NEGs
+# View all options on https://github.com/terraform-google-modules/terraform-google-lb-http
 module "lb-http" {
   source  = "GoogleCloudPlatform/lb-http/google//modules/serverless_negs"
   project = var.project_id
@@ -141,7 +162,10 @@ module "lb-http" {
       enable_cdn              = false
       custom_request_headers  = ["X-Client-Geo-Location: {client_region_subdivision}, {client_city}"]
       custom_response_headers = ["X-Cache-Hit: {cdn_cache_status}"]
-      security_policy         = null
+
+      # Clour Armor security
+      security_policy         = var.enable_cloud_armor ? google_compute_security_policy.cloud_armor_policy[0].self_link : null
+
       log_config = {
         enable = false
       }
@@ -176,14 +200,14 @@ module "trigger_provision" {
   }
 }
 
-
 module "cloud_run_alerts" {
-  source                      = "../cloud-alerts"
-  project_id                  = var.project_id
-  service_name                = var.name
-  alert_notification_channels = var.alert_config.alert_notification_channels
-  error_rate_threshold        = var.alert_config.error_rate_threshold
-  error_rate_duration         = var.alert_config.error_rate_duration
-  latency_threshold           = var.alert_config.latency_threshold
-  latency_duration            = var.alert_config.latency_duration
+  source                = "../cloud-alerts"
+  project_id            = var.project_id
+  service_name          = var.name
+  enabled               = var.alert_config.enabled
+  threshold_value       = var.alert_config.threshold_value
+  duration              = var.alert_config.duration
+  alignment_period      = var.alert_config.alignment_period
+  auto_close            = var.alert_config.auto_close
+  notification_channels = var.alert_config.notification_channels
 }
