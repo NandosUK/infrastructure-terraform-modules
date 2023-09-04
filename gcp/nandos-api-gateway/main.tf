@@ -3,6 +3,28 @@ locals {
   config_hash      = md5(local.openapi_contents)
 }
 
+locals {
+  openapi_yaml = <<-EOT
+    openapi: "3.0.0"
+    info:
+      title: "Nandos API"
+      version: "1.0"
+    paths:
+      ${join("\n", [for service in var.services : <<-SERVICE
+      /${service.name}/{path}*:
+        x-google-backend:
+          address: "${service.url}"
+          protocol: "https"
+        get:
+          summary: "Proxy GET requests for ${service.name}"
+          operationId: "getOperation"
+        post:
+          summary: "Proxy POST requests for ${service.name}"
+          operationId: "postOperation"
+      SERVICE
+])}
+  EOT
+}
 
 # Create a service account for the API Gateway
 resource "google_service_account" "api_gateway_sa" {
@@ -41,8 +63,8 @@ resource "google_api_gateway_api_config" "nandos_api_config" {
 
   openapi_documents {
     document {
-      path     = var.openapi_spec_file_path
-      contents = filebase64(var.openapi_spec_file_path)
+      path     = "${path.module}/generated-api-gateway-config.yml"
+      contents = base64encode(local.openapi_yaml)
     }
   }
   lifecycle {

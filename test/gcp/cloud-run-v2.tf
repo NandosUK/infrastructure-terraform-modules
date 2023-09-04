@@ -1,4 +1,4 @@
-module "cloud-run" {
+module "cloud-run-api-my-awesome-api" {
   source              = "../../gcp/cloud-run-v2"
   project_id          = "test-project-id"
   name                = "my-awesome-api"

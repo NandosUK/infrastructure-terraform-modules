@@ -37,3 +37,11 @@ variable "openapi_spec_file_path" {
     error_message = "The custom_domain must be a subdomain under nandos.dev. For example: myapi.nandos.dev."
   }
 } */
+
+variable "services" {
+  type = list(object({
+    name = string
+    url  = string
+  }))
+  default = []
+}
