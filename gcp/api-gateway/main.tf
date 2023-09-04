@@ -60,7 +60,8 @@ resource "google_api_gateway_gateway" "nandos_api_gateway" {
   region     = var.project_region
 }
 
-# Enable the api so we can generate keys against it
+# TODO: enable add keys via TF
+/* # Enable the api so we can generate keys against it
 resource "google_project_service" "enable_api_gateway" {
   service = google_api_gateway_api.nandos_api.managed_service
 
@@ -86,7 +87,7 @@ resource "google_apikeys_key" "primary" {
   depends_on = [
     google_project_service.enable_api_gateway
   ]
-}
+} */
 
 
 resource "google_compute_region_network_endpoint_group" "api_g_neg" {
