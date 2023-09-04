@@ -27,21 +27,3 @@ variable "openapi_spec_file_path" {
   description = "The path to the OpenAPI spec file."
   type        = string
 }
-
-/* variable "custom_domain" {
-  description = "Nandos domain for the API Gateway."
-  type        = string
-
-  validation {
-    condition     = can(regex("^[a-zA-Z0-9-]+\\.nandos\\.dev$", var.custom_domain))
-    error_message = "The custom_domain must be a subdomain under nandos.dev. For example: myapi.nandos.dev."
-  }
-} */
-
-variable "services" {
-  type = list(object({
-    name = string
-    url  = string
-  }))
-  default = []
-}

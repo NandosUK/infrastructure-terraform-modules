@@ -1,15 +1,33 @@
-openapi: "3.0.0"
+swagger: "2.0"
 info:
-  title: "Nandos API"
-  version: "1.0"
+  title: api-gateway-example-1
+  description: Sample API on API Gateway with a Google Cloud Functions backend with 2 endpoints hello and bye
+  version: 1.0.0
+schemes:
+  - https
+produces:
+  - application/json
+host: "user-api-0j1ghi98wvs54.apigateway.infra-dev-migue-93b99628.cloud.goog"
 paths:
-  /{path}*:
-    x-google-backend:
-      address: "${cloud_run_url}"
-      protocol: "https"
+  /hello:
     get:
-      summary: "Proxy GET requests"
-      operationId: "getOperation"
-    post:
-      summary: "Proxy POST requests"
-      operationId: "getOperation"
+      summary: Greet a user
+      operationId: hello
+      x-google-backend:
+        address: https://europe-west2-infra-dev-migue-93b99628.cloudfunctions.net/test-api-gateway
+      responses:
+        "200":
+          description: A successful response
+          schema:
+            type: string
+  /bye:
+    get:
+      summary: Greet a user
+      operationId: bye
+      x-google-backend:
+        address: https://europe-west2-infra-dev-migue-93b99628.cloudfunctions.net/test-api-gateway
+      responses:
+        "200":
+          description: A successful response
+          schema:
+            type: string

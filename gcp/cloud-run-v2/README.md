@@ -1,70 +1,73 @@
-# Terraform Google Cloud Run Module README
+# Updated Terraform Google Cloud Run Module README
 
 ## Overview
 
-This Terraform module provides a set of reusable configurations for deploying services to Google Cloud Run, a fully managed serverless platform for running containerized applications. The module is designed for flexibility and ease-of-use, allowing users to deploy Cloud Run services with customized probes, environment variables, and even secrets from Google Cloud Secret Manager.
+This updated Terraform module provides a comprehensive set of reusable configurations for deploying services to Google Cloud Run. It extends the previous version by incorporating new variables like Cloud Armor for security, advanced probe settings, and more. Deploy your Cloud Run services easily and make them available on `https://MY_SERVICE.api.nandos.services`.
 
-Once the service is created it will become available on `https://MY_SERVICE.api.nandos.services`
+## Branching Strategy
 
-
-## Branching strategy
-
-[Details about the branching strategy](../cloud-cloudbuild-trigger/README.md)
+[Details about the branching strategy](https://chat.openai.com/cloud-cloudbuild-trigger/README.md)
 
 ## Features
 
 ### Google Cloud Run Service
 
-- **Service Name and Location** : Easily set the name and deployment region for your Cloud Run service.
-- **Ingress Settings** : By default, allows ingress traffic from all sources.
-- **Startup and Liveness Probes** : Configure startup and liveness probes to monitor the health of your service.
-- **Environment Variables and Secrets** : Dynamically set environment variables and secrets.
-- **Resource Limits** : Define CPU and memory limitations for your service.
-- **Scalability** : Set the minimum and maximum number of instances for your service.
-- **Volume Mounts** : Conditionally enable volume mounts, useful for SQL connections.
-- **Create Trigger**: The module creates a cloud build trigger to deploy the subsequent updates to the service. You need a cloudbuild.yaml
+- **Service Name and Location** : Customizable name and deployment region.
+- **Service Account** : Optional service account that will be used as role/invoker.
+- **Ingress Settings** : Control ingress traffic, including the option for public access.
+- **Startup and Liveness Probes** : Advanced configuration for health checks.
+- **Environment Variables and Secrets** : Support for dynamic environment variables and secrets.
+- **SQL and Shared VPC Connection** : Optional SQL and shared VPC connections.
+- **Artifact Repository** : Define the artifact repository for the service.
+- **Cloud Armor** : Integrated Cloud Armor support for enhanced security.
+- **Alert Configuration** : Set up custom alerting.
 
 ### Network Endpoint Group (NEG)
 
-- Creates a Network Endpoint Group for the Cloud Run service for Load Balancer integration.
+- **NEG Creation** : Creates a Network Endpoint Group for Load Balancer integration.
 
 ### Load Balancer with Serverless NEG
 
-- Utilizes the Google Cloud Load Balancer module with support for serverless Network Endpoint Groups.
-- Optional SSL and domain configurations.
+- **SSL and Domain** : Optional SSL and custom domain settings.
 
 ### Cloud Build Trigger
 
-- Creates a Cloud Build trigger for CI/CD, conditional based on the `var.create_trigger` flag.
+- **Advanced Trigger Config** : More granular control over Cloud Build triggers.
 
-## Variables
+## New Variables
 
-- `var.name`: Name of the Cloud Run service.
-- `var.project_region`: Google Cloud region where the service is deployed.
-- `var.env_vars`: Map of environment variables for the service.
-- `var.secrets`: List of secret keys from Google Cloud Secret Manager.
-- `var.cpu_limit`: CPU limit for the service.
-- `var.memory_limit`: Memory limit for the service.
-- `var.max_scale`: Maximum number of instances for the service.
-- `var.min_scale`: Minimum number of instances for the service.
-- `var.sql_connection`: SQL connection string, if needed.
-- `var.allow_public_access`: Flag to control public access.
-- `var.project_id`: Google Cloud project ID.
+- `var.cloud_run_service_account`: The service account to use for the Cloud Run service.
+- `var.sharedVpcConnector`: Shared VPC connection string for internal network access.
+- `var.environment`: The current environment.
+- `var.artifact_repository`: The artifact repository for the service.
+- `var.repository_name`: GitHub repository name where the service is located.
+- `var.trigger_config`: Cloud Build Trigger configuration.
+- `var.alert_config`: Custom alert configuration.
+- `var.cloud_armor`: Cloud Armor configuration settings.
 
-See the code for all available variables.
+### Startup and Liveness Probe Variables
+
+- `var.startup_probe_initial_delay`
+- `var.startup_probe_timeout`
+- `var.startup_probe_period`
+- `var.startup_probe_failure_threshold`
+- `var.startup_probe_port`
+- `var.liveness_probe_path`
+
+See code for the complete list of available variables.
 
 ## Usage
 
-To use this module, include it in your Terraform script and fill in the required variables. Check out the example folder for a sample Terraform script that uses this module.
+Refer to the example Terraform script in the example folder for a demonstration on how to use this updated module.
 
 Example of use:
 
-[test/gcp/cloud-run-v2.tf](../../test/gcp/cloud-run-v2.tf)
+[test/gcp/cloud-run-v2.tf](https://chat.openai.com/test/gcp/cloud-run-v2.tf)
 
 ## Contribution
 
-Contributions are welcome! Feel free to open an issue or submit a pull request.
+Contributions are welcome! Please open an issue or submit a pull request.
 
 ## License
 
-This module is released under the MIT License. See the LICENSE file for more details.
+This module is released under the MIT License. Check the LICENSE file for more details.---
