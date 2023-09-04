@@ -60,6 +60,33 @@ resource "google_api_gateway_gateway" "nandos_api_gateway" {
 }
 
 
+resource "google_compute_region_network_endpoint_group" "api_g_neg" {
+  provider              = google-beta
+  name                  = "${var.api_name}-serverless-neg"
+  network_endpoint_type = "SERVERLESS"
+  region                = var.project_region
+  serverless_deployment {
+    platform = "apigateway.googleapis.com"
+    resource = google_api_gateway_gateway.nandos_api_gateway.id
+  }
+}
+
+resource "google_compute_backend_service" "api_g_backend_service" {
+  name       = "${var.api_name}-backend-service"
+  enable_cdn = false
+  backend {
+    group = google_compute_region_network_endpoint_group.api_g_neg.id
+  }
+}
+
+resource "google_compute_url_map" "urlmap" {
+  name            = "${var.api_name}-urlmap"
+  description     = "URL map for ${var.api_name}"
+  default_service = google_compute_backend_service.api_g_backend_service.id
+
+}
+
+
 output "api_gateway_url_text" {
   value = "Your API Gateway URL is: ${google_api_gateway_gateway.nandos_api_gateway.default_hostname}"
 }
