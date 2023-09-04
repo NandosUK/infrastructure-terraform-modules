@@ -1,7 +1,7 @@
 locals {
   openapi_contents = filebase64(var.openapi_spec_file_path)
   config_hash      = md5(local.openapi_contents)
-  domains          = ["gateway-${var.api_name}.api.nandos.services"]
+  domains          = ["gw-${var.api_name}.api.nandos.services"]
 }
 
 
