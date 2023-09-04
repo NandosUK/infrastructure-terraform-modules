@@ -42,10 +42,15 @@ variable "sharedVpcConnector" {
 }
 
 variable "environment" {
-  description = "Environment currently running on"
   type        = string
-  default     = null
+  description = "Environment that can be preview, preprod, or prod"
+
+  validation {
+    condition     = contains(["preview", "preprod", "prod"], var.environment)
+    error_message = "The environment must be one of: preview, preprod, or prod."
+  }
 }
+
 
 variable "artifact_repository" {
   description = "Artifact repository to use for this service"

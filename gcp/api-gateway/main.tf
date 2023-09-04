@@ -1,7 +1,7 @@
 locals {
   openapi_contents = filebase64(var.openapi_spec_file_path)
   config_hash      = md5(local.openapi_contents)
-  domains          = ["gw-${var.api_name}.api.nandos.services"]
+  domains = [var.environment == "prod" ? "${var.api_name}.api.nandos.services" : var.environment == "preview" ? "${var.api_name}-preview.api.nandos.services" : "${var.api_name}-preprod.api.nandos.services"]
 }
 
 

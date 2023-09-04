@@ -27,3 +27,13 @@ variable "openapi_spec_file_path" {
   description = "The path to the OpenAPI spec file."
   type        = string
 }
+
+variable "environment" {
+  type        = string
+  description = "Environment that can be preview, preprod, or prod"
+
+  validation {
+    condition     = contains(["preview", "preprod", "prod"], var.environment)
+    error_message = "The environment must be one of: preview, preprod, or prod."
+  }
+}
