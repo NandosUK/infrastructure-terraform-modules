@@ -70,6 +70,16 @@ variable "branching_strategy" {
   description = "Branching strategy for different environments"
   type        = map(any)
   default = {
+    dev = {
+      validate = {
+        branch       = "^NOT_USED_PREVIEW$"
+        invert_regex = false
+      }
+      provision = {
+        branch       = ".*"
+        invert_regex = false
+      }
+    },
     preview = {
       validate = {
         branch       = "^NOT_USED_PREVIEW$"
