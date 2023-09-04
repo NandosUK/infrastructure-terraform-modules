@@ -26,60 +26,7 @@ You can find specific implementation examples under the [test](test) folder.
 
 ## Which API should I use?
 
-### 1. API Cloud Run
-
-[Example](test/cloud-run-v2.tf)
-
-<img src="assets/api_1_run.png" />
-
-This is a good starting point to build any API that supports
-
-- Load Balancer
-- Cloud Armor Policy support
-- Custom domain on `https://MY_API.api.nandos.services`
-- Error monitoring
-- Cloud Secret support
-- Custom Env variables
-- Custom Release strategy
-
-### 2. API Gateway
-
-[Example](test/cloud-run-v2.tf)
-
-<img src="assets/api_2_run.png" />
-
-If your api needs extra features like Okta Authentication, Service key authentication use this api.
-Note: You still need to create your resources with API Cloud Run above and reference its urls in the swagger docs.
-
-#### When To Use
-
--
-- **Security Features:**
-  - When working with Google-specific services, like validating Google ID tokens or using built-in OpenID Connect and OAuth Consent flows provided in GCP.
-  - For basic JWT validation.
-- **Traffic Management:** For basic per-project, per-minute quotas.
-
-### 3. Apigee
-
-- [Example Proxy Creation](https://github.com/NandosUK/infrastructure/blob/master/gcp/mgt-apigee/environment/inputs-for-deployments.auto.tfvars)
-- [Example Backstage Proxy Creation](https://backstage.nandos.dev/create/templates/default/custom-api-template)
-
-<img src="assets/api_3_run.png" />
-
-#### When To Use
-
-- Multitenant APIs
-- API used by 3rd parties
-- Use custom transformations
-- API needs advanced quota limits
-- Connect to internal /external API / System + complex transformation (XML -> JSON, etc)
-
-#### Resources
-
-- [apigee-publish](https://github.com/NandosUK/infrastructure/tree/master/apigee/apigee-publish)
-- [Proxies](https://github.com/NandosUK/infrastructure/blob/master/gcp/mgt-apigee/environment/inputs-for-deployments.auto.tfvars)
-- [Hall Of Flame: Apigee Kubernetes Stack Tutorial](https://nandosuk.atlassian.net/wiki/spaces/CORE/pages/3716907010/Hall+Of+Flame%3A+Apigee+Kubernetes+Stack+Tutorial?search_id=ae1dc135-725f-482a-b3cc-66dfba3dffb6)
-- [Hall Of Flame: Apigee Cloud Run Stack Tutorial](https://nandosuk.atlassian.net/wiki/spaces/CORE/pages/3665690669/Hall+Of+Flame+Apigee+Cloud+Run+Stack+Tutorial)
+[Click here to find the different options (Internal Docs)](https://github.com/NandosUK/infrastructure/tree/master/api)
 
 # Contribute
 
