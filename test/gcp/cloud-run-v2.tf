@@ -17,7 +17,10 @@ module "cloud-run" {
     "SECRET_ONE",
     "SECRET_TWO"
   ]
-  enable_cloud_armor = true
+  cloud_armor = {
+    enabled         = true
+    rules_file_path = "assets/cloud-armor-rules-example.yaml"
+  }
   alert_config = {
     enabled               = true
     threshold_value       = 10.0

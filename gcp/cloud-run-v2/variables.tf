@@ -181,8 +181,14 @@ variable "alert_config" {
   }
 }
 
-variable "enable_cloud_armor" {
-  description = "Enable Google Cloud Armor integration"
-  type        = bool
-  default     = false
+variable "cloud_armor" {
+  description = "Configuration for Google Cloud Armor integration"
+  type = object({
+    enabled         = bool
+    rules_file_path = string
+  })
+  default = {
+    enabled         = false
+    rules_file_path = ""
+  }
 }

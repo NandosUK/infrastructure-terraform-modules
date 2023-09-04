@@ -1,3 +1,7 @@
+locals {
+  cloud_armor_rules = fileexists(var.cloud_armor.rules_file_path) ? yamldecode(file(var.cloud_armor.rules_file_path)) : []
+}
+
 # Resource configuration for deploying a Google Cloud Run service
 resource "google_cloud_run_v2_service" "default" {
   name     = var.name           # Service name
@@ -119,12 +123,26 @@ resource "google_compute_region_network_endpoint_group" "cloudrun_neg" {
 # Cloud Armor Security Policy
 
 resource "google_compute_security_policy" "cloud_armor_policy" {
-  count       = var.enable_cloud_armor ? 1 : 0
+  count       = var.cloud_armor.enabled ? 1 : 0
   name        = "${var.name}-armor-policy"
   description = "A security policy for Cloud Armor."
-
+  dynamic "rule" {
+    for_each = local.cloud_armor_rules
+    content {
+      action   = rule.value.action
+      priority = rule.value.priority
+      match {
+        versioned_expr = rule.value.match.versioned_expr
+        config {
+          src_ip_ranges = rule.value.match.config.src_ip_ranges
+        }
+      }
+      description = rule.value.description
+    }
+  }
+  # Default rule (do not remove)
   rule {
-    action   = "allow" # or "deny", depending on your needs
+    action   = "allow"
     priority = 2147483647
     match {
       versioned_expr = "SRC_IPS_V1"
@@ -169,7 +187,7 @@ module "lb-http" {
       custom_response_headers = ["X-Cache-Hit: {cdn_cache_status}"]
 
       # Clour Armor security
-      security_policy = var.enable_cloud_armor ? google_compute_security_policy.cloud_armor_policy[0].self_link : null
+      security_policy = var.cloud_armor.enabled ? google_compute_security_policy.cloud_armor_policy[0].self_link : null
 
       log_config = {
         enable = false
