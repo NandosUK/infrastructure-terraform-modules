@@ -103,6 +103,23 @@ resource "google_compute_managed_ssl_certificate" "default" {
 }
 
 
+resource "google_compute_target_https_proxy" "default" {
+  project = var.project_id
+  name    = "${var.api_name}-https-proxy"
+  url_map = google_compute_url_map.urlmap.id
+
+  ssl_certificates = [google_compute_managed_ssl_certificate.default.id]
+
+}
+
+resource "google_compute_global_forwarding_rule" "https" {
+  provider   = google-beta
+  project    = var.project_id
+  name       = "${var.api_name}-https"
+  target     = google_compute_target_https_proxy.default.id
+  port_range = "443"
+}
+
 output "api_gateway_url_text" {
   value = "Your API Gateway URL is: ${google_api_gateway_gateway.nandos_api_gateway.default_hostname}"
 }
