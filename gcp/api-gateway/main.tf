@@ -68,7 +68,7 @@ resource "google_compute_region_network_endpoint_group" "api_g_neg" {
   region                = var.project_region
   serverless_deployment {
     platform = "apigateway.googleapis.com"
-    resource = google_api_gateway_gateway.nandos_api_gateway.id
+    resource = google_api_gateway_gateway.nandos_api_gateway.gateway_id
   }
 }
 
