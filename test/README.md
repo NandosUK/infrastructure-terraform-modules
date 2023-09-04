@@ -1,8 +1,10 @@
-# Test Modules
+# Module Testing
 
 Use this folder to run locally the testing of the modules
 
-Run
+**Run**
+
+`cd gcp`
 
 `terraform init`
 
@@ -11,6 +13,5 @@ Run
 `terraform plan`
 
 If all green, all good to go.
-
 
 TODO: Add this in CI to actually build the module examples on its own project
