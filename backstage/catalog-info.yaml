@@ -1,0 +1,23 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+
+metadata:
+  name: "nandos-terraform-modules"
+  description: "Public Repository with the most common Terraform Modules to support Nandos services"
+
+  annotations:
+    github.com/project-slug: infrastructure-terraform-modules    
+    backstage.io/techdocs-ref: dir:.
+    
+
+  links:
+    - url: https://github.com/NandosUK/infrastructure-terraform-modules/tree/main/backstage
+      title: Service Repository
+      icon: github
+    
+spec:
+  type: "library"
+  lifecycle: "production"
+  owner: "group:default/stock-po"
+
+    
