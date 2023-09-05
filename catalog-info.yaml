@@ -6,18 +6,15 @@ metadata:
   description: "Public Repository with the most common Terraform Modules to support Nandos services"
 
   annotations:
-    github.com/project-slug: infrastructure-terraform-modules    
+    github.com/project-slug: infrastructure-terraform-modules
     backstage.io/techdocs-ref: dir:.
-    
 
   links:
-    - url: https://github.com/NandosUK/infrastructure-terraform-modules/tree/main/backstage
+    - url: https://github.com/NandosUK/infrastructure-terraform-modules/tree/main/
       title: Service Repository
       icon: github
-    
+
 spec:
   type: "library"
   lifecycle: "production"
   owner: "group:default/stock-po"
-
-    
