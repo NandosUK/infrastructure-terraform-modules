@@ -168,7 +168,7 @@ module "lb-http" {
   version = "~> 9.0"
 
   # SSL and domain configuration
-  managed_ssl_certificate_domains = [var.environment == "prod" ? "${var.name}.api.nandos.services" : var.environment == "preview" ? "${var.name}-preview.api.nandos.services" : "${var.name}-preprod.api.nandos.services"]
+  managed_ssl_certificate_domains = [var.environment == "prod" ? "${var.name}.api.nandos.dev" : var.environment == "preview" ? "${var.name}-preview.api.nandos.dev" : "${var.name}-preprod.api.nandos.dev"]
 
   ssl                       = true
   https_redirect            = true # Enable HTTPS redirect
