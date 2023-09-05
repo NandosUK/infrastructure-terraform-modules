@@ -1,6 +1,6 @@
 # Nando's Terraform Modules
 
-<img src="assets/tfnandos.png" alt="Terraform" width="300"/>
+<img src="../assets/tfnandos.png" alt="Terraform" width="300"/>
 
 ## Description
 
