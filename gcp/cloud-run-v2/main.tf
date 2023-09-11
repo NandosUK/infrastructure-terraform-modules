@@ -210,6 +210,15 @@ resource "google_eventarc_trigger" "default" {
     attribute = "type"
     value     = each.value.event_type
   }
+  matching_criteria {
+    attribute = "database"
+    value     = "(default)"
+  }
+  /* matching_criteria {
+    attribute = "document"
+    operator  = "match-path-pattern"
+    value     = "chicken_forecast"
+  } */
   event_data_content_type = "application/protobuf"
   service_account         = var.cloud_run_service_account
   destination {
