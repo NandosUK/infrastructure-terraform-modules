@@ -13,7 +13,7 @@ You can find specific examples and available variables inside [each module folde
 
 ```hcl
 module "cloud-run-api-my-awesome-api" {
-  source                = "github.com/NandosUK/infrastructure-terraform-modules/gcp/cloud-run-v1"
+  source                = "github.com/NandosUK/infrastructure-terraform-modules/gcp/cloud-run-v2"
   project_id                 = "my-gcp-project-id"
   name                       = "my-awesome-api"
   (...)
