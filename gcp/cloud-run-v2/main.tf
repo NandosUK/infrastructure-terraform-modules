@@ -202,6 +202,7 @@ module "lb-http" {
 
 
 resource "google_eventarc_trigger" "default" {
+  provider = google-beta
   for_each = { for i, trigger in var.eventarc_triggers : i => trigger }
 
   name     = "trigger-${google_cloud_run_v2_service.default.name}"
@@ -211,7 +212,7 @@ resource "google_eventarc_trigger" "default" {
     value     = each.value.event_type
   }
   event_data_content_type = "application/json"
-  service_account = var.cloud_run_service_account
+  service_account         = var.cloud_run_service_account
   destination {
     cloud_run_service {
       service = google_cloud_run_v2_service.default.name
