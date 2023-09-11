@@ -200,19 +200,30 @@ module "lb-http" {
   }
 }
 
+resource "google_storage_bucket" "testb123" {
+  name          = "test-bucket-miguelpgtestaurora"
+  location      = "europe-west2"
+  force_destroy = true
+
+}
 
 resource "google_eventarc_trigger" "default" {
-  provider = google-beta
-  for_each = { for i, trigger in var.eventarc_triggers : i => trigger }
-
-  name     = "trigger-${google_cloud_run_v2_service.default.name}"
-  location = var.project_region
+  provider                = google-beta
+  for_each                = { for i, trigger in var.eventarc_triggers : i => trigger }
+  event_data_content_type = "application/protobuf"
+  name                    = "trigger-${google_cloud_run_v2_service.default.name}"
+  location                = var.project_region
   matching_criteria {
     attribute = "type"
     value     = each.value.event_type
   }
-  event_data_content_type = "application/protobuf"
-  service_account         = var.cloud_run_service_account
+
+  matching_criteria {
+    attribute = "bucket"
+    value     = google_storage_bucket.testb123.name
+  }
+
+  service_account = var.cloud_run_service_account
   destination {
     cloud_run_service {
       service = google_cloud_run_v2_service.default.name
