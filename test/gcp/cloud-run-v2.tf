@@ -29,4 +29,30 @@ module "cloud-run-api-my-awesome-api" {
     auto_close            = 86400
     notification_channels = []
   }
+  eventarc_triggers = [
+    {
+      event_type = "google.cloud.firestore.document.v1.created",
+      api_path   = "/api/my-trigger-receiver"
+      }, {
+
+      event_type = "google.cloud.firestore.document.v1.updated",
+      api_path   = "/api/my-trigger-receiver"
+
+      }, {
+
+      event_type = "google.cloud.firestore.document.v1.created",
+      api_path   = "/api/my-trigger-receiver"
+
+      }, {
+
+      event_type = "google.cloud.firestore.document.v1.deleted",
+      api_path   = "/api/my-trigger-receiver"
+
+      }, {
+
+      event_type = "google.cloud.firestore.document.v1.written",
+      api_path   = "/api/my-trigger-receiver"
+
+    }
+  ]
 }

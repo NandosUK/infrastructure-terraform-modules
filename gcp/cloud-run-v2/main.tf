@@ -200,6 +200,27 @@ module "lb-http" {
   }
 }
 
+
+resource "google_eventarc_trigger" "default" {
+  for_each = { for i, trigger in var.eventarc_triggers : i => trigger }
+
+  name     = "trigger-${google_cloud_run_v2_service.default.name}"
+  location = var.project_region
+  matching_criteria {
+    attribute = "type"
+    value     = each.value.event_type
+  }
+
+  service_account = var.cloud_run_service_account
+  destination {
+    cloud_run_service {
+      service = google_cloud_run_v2_service.default.name
+      path    = each.value.api_path
+      region  = var.project_region
+    }
+  }
+}
+
 # Cloud Build trigger configuration
 module "trigger_provision" {
   count           = var.create_trigger == true ? 1 : 0

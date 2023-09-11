@@ -198,3 +198,13 @@ variable "cloud_armor" {
     rules_file_path = ""
   }
 }
+
+variable "eventarc_triggers" {
+  description = "Configuration for Eventarc triggers"
+  type = list(object({
+    event_type = string
+    api_path   = string
+
+  }))
+  default = []
+}
