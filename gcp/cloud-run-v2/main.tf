@@ -210,8 +210,8 @@ resource "google_eventarc_trigger" "default" {
     attribute = "type"
     value     = each.value.event_type
   }
-
-  service_account = var.cloud_run_service_account
+  event_data_content_type = "application/json"
+  service_account         = var.cloud_run_service_account
   destination {
     cloud_run_service {
       service = google_cloud_run_v2_service.default.name
