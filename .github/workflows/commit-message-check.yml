@@ -16,8 +16,8 @@ jobs:
 
       - name: Check Commit Messages
         run: |
-          commits=$(git log --format=%s ${{ github.event.before }}..${{ github.event.after }})
-          for commit in $commits
+          IFS=$'\n' commits=($(git log --format=%s ${{ github.event.before }}..${{ github.event.after }}))
+          for commit in "${commits[@]}"
           do
             if ! [[ "$commit" =~ ^(feat|fix|chore|docs|style|refactor|perf|test)(\(.*\))?:?.{2,} ]]; then
               echo "Invalid commit message: $commit"
