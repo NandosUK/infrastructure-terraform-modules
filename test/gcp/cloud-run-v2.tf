@@ -31,28 +31,18 @@ module "cloud-run-api-my-awesome-api" {
   }
   eventarc_triggers = [
     {
-      event_type = "google.cloud.firestore.document.v1.created",
-      api_path   = "/api/my-trigger-receiver"
-      }, {
-
-      event_type = "google.cloud.firestore.document.v1.updated",
-      api_path   = "/api/my-trigger-receiver"
-
-      }, {
-
-      event_type = "google.cloud.firestore.document.v1.created",
-      api_path   = "/api/my-trigger-receiver"
-
-      }, {
-
-      event_type = "google.cloud.firestore.document.v1.deleted",
-      api_path   = "/api/my-trigger-receiver"
-
-      }, {
-
-      event_type = "google.cloud.firestore.document.v1.written",
-      api_path   = "/api/my-trigger-receiver"
-
+      api_path                = "/api/my-trigger-receiver"
+      event_data_content_type = "application/protobuf"
+      matching_criteria = [{
+        attribute = "type"
+        value     = "google.cloud.firestore.document.v1.created",
+        },
+        {
+          attribute = "database"
+          value     = "(default)"
+      }]
     }
   ]
 }
+
+

@@ -202,12 +202,12 @@ variable "cloud_armor" {
 variable "eventarc_triggers" {
   description             = "Configuration for Eventarc triggers"
   type = list(object({
-    event_type = string
+    event_data_content_type = string
     api_path   = string
     matching_criteria = list(object({
       attribute = string
       value     = string
-      operator  = string
+      operator  = optional(string)
     }))
   }))
   default = []

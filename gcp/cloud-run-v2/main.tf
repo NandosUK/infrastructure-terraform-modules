@@ -206,22 +206,15 @@ resource "google_eventarc_trigger" "default" {
 
   name     = "trigger-${google_cloud_run_v2_service.default.name}"
   location = var.project_region
-  /* matching_criteria {
-    attribute = "type"
-    value     = each.value.event_type
-  }
-  matching_criteria {
-    attribute = "database"
-    value     = "(default)"
-  } */
   dynamic "matching_criteria" {
     for_each = each.value.matching_criteria
     content {
       attribute = matching_criteria.value.attribute
       value     = matching_criteria.value.value
+      operator  = matching_criteria.value.operator
     }
   }
-  event_data_content_type = "application/protobuf"
+  event_data_content_type = each.value.event_data_content_type
   service_account         = var.cloud_run_service_account
   destination {
     cloud_run_service {
