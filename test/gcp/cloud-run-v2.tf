@@ -37,12 +37,10 @@ module "cloud-run-api-my-awesome-api" {
       matching_criteria = [{
         attribute = "type"
         value     = "google.cloud.firestore.document.v1.created",
-        operator  = "EXACT"
         },
         {
           attribute = "database"
           value     = "(default)"
-          operator  = "EXACT"
       }]
     }
   ]
