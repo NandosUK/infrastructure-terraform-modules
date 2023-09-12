@@ -16,11 +16,10 @@ jobs:
 
       - name: Check Commit Messages
         run: |
-
-          IFS=$'\n' commits=($(git log --format=%s ${{ github.event.before }}..${{ github.event.after }}))
-          for commit in "${commits[@]}"
+          commits=$(git log --format=%s origin/${{ github.base_ref }}..origin/${{ github.head_ref }})
+          for commit in $commits
           do
-            if ! [[ "$commit" =~ ^(feat|fix|chore|docs|style|refactor|perf|test):\s+.* ]]; then
+            if ! [[ "$commit" =~ ^(feat|fix|chore|docs|style|refactor|perf|test)(\(.*\))?:?.{2,} ]]; then
               echo "Invalid commit message: $commit"
               exit 1
             fi
