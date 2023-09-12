@@ -195,7 +195,7 @@ variable "cloud_armor" {
   })
   default = {
     enabled         = false
-    rules_file_path = "assets/cloud-armor-rules.yaml"
+    rules_file_path = ""
   }
 }
 
