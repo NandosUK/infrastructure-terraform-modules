@@ -33,7 +33,6 @@ module "cloud-run-api-my-awesome-api" {
     {
       api_path                = "/api/my-trigger-receiver"
       event_data_content_type = "application/protobuf"
-
       matching_criteria = [{
         attribute = "type"
         value     = "google.cloud.firestore.document.v1.created",
