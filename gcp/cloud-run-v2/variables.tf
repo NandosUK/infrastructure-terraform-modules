@@ -12,6 +12,13 @@ variable "name" {
     error_message = "The name can only contain alphanumeric characters, hyphens, and underscores."
   }
 }
+
+variable "domain_host" {
+  description = "The host name for the domain or subdomain where this service is exposed. If empty, the systems use api.nandos.dev. You can find available domains on https://github.com/NandosUK/infrastructure/blob/master/gcp/mgt-dns/environment/inputs-for-dns.auto.tfvars"
+  type        = string
+
+  default = "api.nandos.dev"
+}
 variable "project_region" {
   description = "(Required) The location of the cloud run instance. eg europe-west2"
   type        = string
@@ -200,10 +207,10 @@ variable "cloud_armor" {
 }
 
 variable "eventarc_triggers" {
-  description             = "Configuration for Eventarc triggers"
+  description = "Configuration for Eventarc triggers"
   type = list(object({
     event_data_content_type = string
-    api_path   = string
+    api_path                = string
     matching_criteria = list(object({
       attribute = string
       value     = string
