@@ -206,14 +206,6 @@ resource "google_eventarc_trigger" "default" {
 
   name     = "trigger-${google_cloud_run_v2_service.default.name}"
   location = var.project_region
-  /* matching_criteria {
-    attribute = "type"
-    value     = each.value.event_type
-  }
-  matching_criteria {
-    attribute = "database"
-    value     = "(default)"
-  } */
   dynamic "matching_criteria" {
     for_each = each.value.matching_criteria
     content {
