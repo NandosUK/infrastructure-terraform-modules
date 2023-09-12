@@ -16,7 +16,7 @@ jobs:
 
       - name: Check Commit Messages
         run: |
-          commits=$(git log --format=%s origin/${{ github.base_ref }}..origin/${{ github.head_ref }})
+          commits=$(git log --format=%s ${{ github.event.before }}..${{ github.event.after }})
           for commit in $commits
           do
             if ! [[ "$commit" =~ ^(feat|fix|chore|docs|style|refactor|perf|test)(\(.*\))?:?.{2,} ]]; then
