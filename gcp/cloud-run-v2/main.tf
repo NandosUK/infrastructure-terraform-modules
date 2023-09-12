@@ -1,5 +1,5 @@
 locals {
-  cloud_armor_rules = var.cloud_armor.enabled ? yamldecode(file(var.cloud_armor.rules_file_path)) : [] 
+  cloud_armor_rules = var.cloud_armor.enabled ? yamldecode(file(var.cloud_armor.rules_file_path)) : []
 }
 
 # Resource configuration for deploying a Google Cloud Run service
