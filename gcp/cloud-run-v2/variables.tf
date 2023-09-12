@@ -207,7 +207,7 @@ variable "eventarc_triggers" {
     matching_criteria = list(object({
       attribute = string
       value     = string
-      operator  = string
+      operator  = optional(string)
     }))
   }))
   default = []
