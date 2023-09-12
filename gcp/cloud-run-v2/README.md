@@ -34,9 +34,9 @@ This updated Terraform module provides a comprehensive set of reusable configura
 
 Key elements description:
 
-- **matching_criteria** : matching criteria for the trigger, including attributes like "attribute," "value", and "operator" to filter specific events.
+- **matching_criteria** : matching criteria for the trigger, including attributes like "attribute," "value", and "operator"(optional) to filter specific events.
 - **event_data_content_type** : Sets the event's content type.
-- **path** : to specify the URL path that will be appended to the service's base URL
+- **api_path** : to specify the URL path that will be appended to the service's base URL
 
 ### Cloud Build Trigger
 
