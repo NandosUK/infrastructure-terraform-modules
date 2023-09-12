@@ -19,7 +19,7 @@ jobs:
           commits=$(git log --format=%s ${{ github.event.before }}..${{ github.event.after }})
           for commit in $commits
           do
-            if ! [[ "$commit" =~ ^(feat|fix|chore|docs|style|refactor|perf|test):.* ]]; then
+            if ! [[ "$commit" =~ ^(feat|fix|chore|docs|style|refactor|perf|test):\s+.* ]]; then
               echo "Invalid commit message: $commit"
               exit 1
             fi
