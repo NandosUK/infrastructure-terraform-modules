@@ -223,6 +223,7 @@ resource "google_eventarc_trigger" "default" {
   }
   event_data_content_type = "application/protobuf"
   service_account         = var.cloud_run_service_account
+  pubsub_service_account  = var.pubsub_service_account
   destination {
     cloud_run_service {
       service = google_cloud_run_v2_service.default.name
@@ -231,6 +232,27 @@ resource "google_eventarc_trigger" "default" {
     }
   }
 }
+
+resource "google_project_iam_binding" "eventarc_cloud_run" {
+  count   = length(var.eventarc_triggers) > 0 ? 1 : 0
+  project = var.project_id
+  role    = "roles/eventarc.eventReceiver"
+
+  members = [
+    "serviceAccount:${var.cloud_run_service_account}",
+  ]
+}
+
+resource "google_project_iam_binding" "eventarc_pubsub" {
+  count   = length(var.eventarc_triggers) > 0 ? 1 : 0
+  project = var.project_id
+  role    = "roles/iam.serviceAccountTokenCreator"
+
+  members = [
+    "serviceAccount:${var.pubsub_service_account}",
+  ]
+}
+
 
 # Cloud Build trigger configuration
 module "trigger_provision" {

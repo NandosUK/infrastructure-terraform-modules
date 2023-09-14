@@ -203,6 +203,7 @@ variable "eventarc_triggers" {
   description             = "Configuration for Eventarc triggers"
   event_data_content_type = "string"
   type = list(object({
+    pubsub_service_account = string
     event_type = string
     api_path   = string
     matching_criteria = list(object({
