@@ -1,5 +1,5 @@
 locals {
-  cloud_armor_rules = fileexists(var.cloud_armor.rules_file_path) ? yamldecode(file(var.cloud_armor.rules_file_path)) : []
+  cloud_armor_rules = var.cloud_armor.enabled ? yamldecode(file(var.cloud_armor.rules_file_path)) : []
 }
 
 # Resource configuration for deploying a Google Cloud Run service
@@ -168,7 +168,7 @@ module "lb-http" {
   version = "~> 9.0"
 
   # SSL and domain configuration
-  managed_ssl_certificate_domains = [var.environment == "prod" ? "${var.name}.api.nandos.dev" : var.environment == "preview" ? "${var.name}-preview.api.nandos.dev" : "${var.name}-preprod.api.nandos.dev"]
+  managed_ssl_certificate_domains = [var.environment == "prod" ? "${var.name}.${var.domain_host}" : var.environment == "preview" ? "${var.name}-preview.${var.domain_host}" : "${var.name}-preprod.${var.domain_host}"]
 
   ssl                       = true
   https_redirect            = true # Enable HTTPS redirect
@@ -206,24 +206,16 @@ resource "google_eventarc_trigger" "default" {
 
   name     = "trigger-${google_cloud_run_v2_service.default.name}"
   location = var.project_region
-  /* matching_criteria {
-    attribute = "type"
-    value     = each.value.event_type
-  }
-  matching_criteria {
-    attribute = "database"
-    value     = "(default)"
-  } */
   dynamic "matching_criteria" {
     for_each = each.value.matching_criteria
     content {
       attribute = matching_criteria.value.attribute
       value     = matching_criteria.value.value
+      operator  = matching_criteria.value.operator
     }
   }
-  event_data_content_type = "application/protobuf"
+  event_data_content_type = each.value.event_data_content_type
   service_account         = var.cloud_run_service_account
-  pubsub_service_account  = var.pubsub_service_account
   destination {
     cloud_run_service {
       service = google_cloud_run_v2_service.default.name
@@ -249,10 +241,9 @@ resource "google_project_iam_binding" "eventarc_pubsub" {
   role    = "roles/iam.serviceAccountTokenCreator"
 
   members = [
-    "serviceAccount:${var.pubsub_service_account}",
+    "serviceAccount:service-${var.project_id}@gcp-sa-pubsub.iam.gserviceaccount.com"
   ]
 }
-
 
 # Cloud Build trigger configuration
 module "trigger_provision" {

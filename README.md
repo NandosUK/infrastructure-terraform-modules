@@ -13,7 +13,7 @@ You can find specific examples and available variables inside [each module folde
 
 ```hcl
 module "cloud-run-api-my-awesome-api" {
-  source                = "github.com/NandosUK/infrastructure/terraform-modules/gcp/cloud-run-v1"
+  source                = "github.com/NandosUK/infrastructure-terraform-modules/gcp/cloud-run-v2"
   project_id                 = "my-gcp-project-id"
   name                       = "my-awesome-api"
   (...)
@@ -58,7 +58,7 @@ The commit message should be structured as follows:
 
 - `feat(api): add new validation logic`
 - `fix(cloud-run-v1): resolve issue with variable x`
-- `chore(tests): add additional unit tests for utils`
+- `test(utils): add additional unit tests for utils`
 - `docs(cloud-function-v1): update setup instructions`
 
 ### How to Make Commits
