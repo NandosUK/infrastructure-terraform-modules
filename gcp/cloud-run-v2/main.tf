@@ -1,3 +1,5 @@
+data "google_project" "current" {}
+
 locals {
   cloud_armor_rules = var.cloud_armor.enabled ? yamldecode(file(var.cloud_armor.rules_file_path)) : []
 }
@@ -240,7 +242,7 @@ resource "google_project_iam_binding" "eventarc_pubsub" {
   role    = "roles/iam.serviceAccountTokenCreator"
 
   members = [
-    "serviceAccount:service-${var.project_id}@gcp-sa-pubsub.iam.gserviceaccount.com"
+    "serviceAccount:service-${data.google_project.current.number}@gcp-sa-pubsub.iam.gserviceaccount.com"
   ]
 }
 
