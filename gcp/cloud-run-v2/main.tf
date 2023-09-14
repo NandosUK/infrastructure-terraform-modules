@@ -1,4 +1,6 @@
-data "google_project" "current" {}
+data "google_project" "current" {
+  project_id = var.project_id
+}
 
 locals {
   cloud_armor_rules = var.cloud_armor.enabled ? yamldecode(file(var.cloud_armor.rules_file_path)) : []
