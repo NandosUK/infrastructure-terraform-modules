@@ -256,7 +256,7 @@ module "trigger_provision" {
   repository_name = var.repository_name
   description     = "Provision ${var.name} Service (CI/CD)"
   filename        = "${var.service_path}/cloudbuild.yaml"
-  include         = ["${var.service_path}/**"]
+  include         = concat(["${var.service_path}/**"], var.dependencies)
   exclude         = ["${var.service_path}/functions/**"]
   environment     = var.environment
 
