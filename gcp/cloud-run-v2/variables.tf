@@ -219,3 +219,9 @@ variable "eventarc_triggers" {
   }))
   default = []
 }
+
+variable "dependencies" {
+  description = "A list of glob-format dependencies for the cloudbuild trigger"
+  type = list(string)
+  default = []
+}

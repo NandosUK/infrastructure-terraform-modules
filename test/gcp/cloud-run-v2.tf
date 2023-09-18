@@ -8,6 +8,7 @@ module "cloud-run-api-my-awesome-api" {
   environment         = "preview"
   repository_name     = "my-repo-in-github"
   service_path        = "/services/my-awesome-api"
+  dependencies        = ["services/shared/**", "services/types/**"]
   env_vars = {
     "ENVIRONMENT" = "preview"
     "DEBUG"       = "true"
