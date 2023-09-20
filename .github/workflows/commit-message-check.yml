@@ -16,11 +16,28 @@ jobs:
 
       - name: Check Commit Messages
         run: |
-          IFS=$'\n' commits=($(git log --format=%s ${{ github.event.before }}..${{ github.event.after }}))
-          for commit in "${commits[@]}"
-          do
+          OLD_COMMIT=$(git rev-parse ${{ github.event.before }})
+          NEW_COMMIT=$(git rev-parse ${{ github.event.after }})
+
+          # Check if github.event.before is the initial commit
+          if [ "${{ github.event.before }}" = "0000000000000000000000000000000000000000" ]; then
+            COMMIT_RANGE=$(git rev-list --max-parents=0 $NEW_COMMIT)
+          else
+            # Check if this is a force push or an amended commit
+            git diff --quiet $OLD_COMMIT..$NEW_COMMIT || FORCE_PUSH=true
+          
+            if [ "$force_push" = true ]; then
+              COMMIT_RANGE=$(git log --pretty=format:%H $NEW_COMMIT)
+            else
+              COMMIT_RANGE=$(git log --pretty=format:%H $OLD_COMMIT..$NEW_COMMIT)
+            fi
+          fi
+          
+          for COMMIT_HASH in $COMMIT_RANGE; do
+            commit=$(git log --format=%s -n 1 $COMMIT_HASH)
             if ! [[ "$commit" =~ ^(feat|fix|chore|docs|style|refactor|perf|test)(\(.*\))?:?.{2,} ]]; then
               echo "Invalid commit message: $commit"
               exit 1
             fi
           done
+
