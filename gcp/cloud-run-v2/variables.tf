@@ -101,6 +101,7 @@ variable "secrets" {
 
 
 # Corresponding variables for startup probe and liveness probe
+# Startup probe
 variable "startup_probe_initial_delay" {
   description = "Initial delay seconds for the startup probe"
   default     = 0
@@ -126,10 +127,32 @@ variable "startup_probe_port" {
   default     = 8080
 }
 
+# Liveness probe
+variable "liveness_probe_initial_delay" {
+  description = "Initial delay seconds for the liveness probe"
+  default     = 0
+}
+
+variable "liveness_probe_timeout" {
+  description = "Timeout seconds for the liveness probe"
+  default     = 1
+}
+
+variable "liveness_probe_period" {
+  description = "Period seconds for the liveness probe"
+  default     = 3
+}
+
+variable "liveness_probe_failure_threshold" {
+  description = "Failure threshold for the liveness probe"
+  default     = 1
+}
+
 variable "liveness_probe_path" {
   description = "Path for the liveness probe"
   default     = "/"
 }
+
 variable "cpu_limit" {
   description = "CPU limit for the Cloud Run container"
   type        = string

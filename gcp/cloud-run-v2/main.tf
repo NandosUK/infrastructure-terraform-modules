@@ -29,6 +29,10 @@ resource "google_cloud_run_v2_service" "default" {
 
       # Liveness Probe
       liveness_probe {
+        initial_delay_seconds = var.liveness_probe_initial_delay
+        timeout_seconds       = var.liveness_probe_timeout
+        period_seconds        = var.liveness_probe_period
+        failure_threshold     = var.liveness_probe_failure_threshold
         http_get {
           path = var.liveness_probe_path
         }

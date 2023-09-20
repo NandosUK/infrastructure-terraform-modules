@@ -9,6 +9,10 @@ module "cloud-run-api-my-awesome-api" {
   repository_name     = "my-repo-in-github"
   service_path        = "/services/my-awesome-api"
   dependencies        = ["services/shared/**", "services/types/**"]
+
+  startup_probe_initial_delay = 5
+  liveness_probe_initial_delay = 10
+
   env_vars = {
     "ENVIRONMENT" = "preview"
     "DEBUG"       = "true"
