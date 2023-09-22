@@ -104,7 +104,7 @@ variable "secrets" {
 # Startup probe
 variable "startup_probe_initial_delay" {
   description = "Initial delay seconds for the startup probe"
-  default     = 0
+  default     = 3
 }
 
 variable "startup_probe_timeout" {
