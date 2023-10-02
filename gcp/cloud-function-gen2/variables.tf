@@ -119,6 +119,17 @@ variable "http_headers" {
 variable "project" {
   default = null
 }
+
+variable "repository_name" {
+  description = "Repo name where the service is located (in GitHub)"
+  type        = string
+}
+
+variable "project_id" {
+  description = "The ID of the project in which the resource belongs."
+  type        = string
+}
+
 variable "trigger_config" {
   description = "Configuration for the Cloud Build Trigger"
   type = object({
