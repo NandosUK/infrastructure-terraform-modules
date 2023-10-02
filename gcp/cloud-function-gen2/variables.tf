@@ -119,3 +119,47 @@ variable "http_headers" {
 variable "project" {
   default = null
 }
+variable "trigger_config" {
+  description = "Configuration for the Cloud Build Trigger"
+  type = object({
+    name            = string
+    repository_name = string
+    description     = string
+    filename        = string
+    include         = list(string)
+    exclude         = list(string)
+    environment     = string
+    substitutions   = map(string)
+    create_trigger  = bool
+  })
+  default = {
+    name            = "default-trigger-name"
+    repository_name = "default-repo-name"
+    description     = "default-description"
+    filename        = "cloudbuild.yaml"
+    include         = []
+    exclude         = []
+    environment     = null
+    substitutions   = {}
+    create_trigger  = true
+  }
+}
+variable "alert_config" {
+  description = "Configuration for alerts"
+  type = object({
+    enabled               = bool
+    threshold_value       = number
+    duration              = number
+    alignment_period      = number
+    auto_close            = number
+    notification_channels = list(string)
+  })
+  default = {
+    enabled               = true
+    threshold_value       = 10.0
+    duration              = 300
+    alignment_period      = 60
+    auto_close            = 86400
+    notification_channels = []
+  }
+}

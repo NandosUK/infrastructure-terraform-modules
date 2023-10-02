@@ -161,10 +161,9 @@ module "trigger_provision" {
   filename      = var.function_path == "" ? "services/${var.service_name}/functions/${var.function_name}/cloudbuild.yaml" : "${var.function_path}/cloudbuild.yaml"
   include       = var.function_path == "" ? ["services/${var.service_name}/functions/${var.function_name}/**"] : ["${var.function_path}/**"]
   tags          = ["function"]
-  branch        = var.branching_strategy.provision.branch
-  invert_regex  = var.branching_strategy.provision.invert_regex
   substitutions = merge(local.default_substitution_vars, var.trigger_substitutions)
   environment   = var.environment
+  repository_name = var.repository_name
 }
 
 /******************************************
