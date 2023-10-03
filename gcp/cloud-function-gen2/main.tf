@@ -1,4 +1,6 @@
-data "google_project" "current" {}
+data "google_project" "current" {
+  project_id = var.project_id
+}
 
 locals {
   default_substitution_vars = {
@@ -9,7 +11,6 @@ locals {
     _FUNCTION_PATH = var.function_path == "" ? "services/${var.service_name}/functions/${var.function_name}" : var.function_path
     _LOCATION      = var.region
   }
-  project                       = var.project != null ? var.project : data.google_project.current.project_id
   default_environment_variables = {}
   service_account               = var.service_account_email != "" ? var.service_account_email : "${data.google_project.current.project_id}@appspot.gserviceaccount.com"
 
@@ -62,7 +63,7 @@ resource "google_cloudfunctions2_function" "function" {
       for_each = var.secret_keys
       content {
         key        = secret_environment_variables.value
-        project_id = local.project
+        project_id = var.project_id
 
         secret  = secret_environment_variables.value
         version = "latest"
@@ -170,7 +171,7 @@ module "trigger_provision" {
 	Alerts definition
  *****************************************/
 
-module "cloud_run_alerts" {
+module "cloud_function_alerts" {
   source                = "../cloud-alerts"
   project_id            = var.project_id
   service_name          = var.function_name

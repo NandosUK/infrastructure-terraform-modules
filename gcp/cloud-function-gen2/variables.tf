@@ -116,10 +116,6 @@ variable "http_headers" {
   default = {}
 }
 
-variable "project" {
-  default = null
-}
-
 variable "repository_name" {
   description = "Repo name where the service is located (in GitHub)"
   type        = string

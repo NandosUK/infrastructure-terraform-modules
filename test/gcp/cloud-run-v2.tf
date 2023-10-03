@@ -1,6 +1,6 @@
 module "cloud-run-api-my-awesome-api" {
   source              = "../../gcp/cloud-run-v2"
-  project_id          = "test-project-id"
+  project_id          = "my-awesome-project"
   name                = "my-awesome-api"
   project_region      = "europe-west2"
   allow_public_access = true
@@ -10,7 +10,7 @@ module "cloud-run-api-my-awesome-api" {
   service_path        = "/services/my-awesome-api"
   dependencies        = ["services/shared/**", "services/types/**"]
 
-  startup_probe_initial_delay = 5
+  startup_probe_initial_delay  = 5
   liveness_probe_initial_delay = 10
 
   env_vars = {
