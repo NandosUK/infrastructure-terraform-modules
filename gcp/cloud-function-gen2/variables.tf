@@ -4,10 +4,9 @@ variable "function_description" {}
 
 // Overrides the default path of services/{service name}/functions/{function name}
 variable "function_path" {
+  description = "Path to the function, if not provided, it will be generated based on the function name"
   default = ""
 }
-
-
 variable "service_name" {
   description = "Name of the service wrapping this function (you must have functions folder in it)"
 }

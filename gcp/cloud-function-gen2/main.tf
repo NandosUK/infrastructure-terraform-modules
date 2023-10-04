@@ -6,7 +6,6 @@ locals {
   default_substitution_vars = {
     _STAGE         = "provision",
     _BUILD_ENV     = var.environment,
-    _SERVICE_NAME  = var.service_name,
     _FUNCTION_NAME = var.function_name,
     _FUNCTION_PATH = var.function_path == "" ? "services/${var.service_name}/functions/${var.function_name}" : var.function_path
     _LOCATION      = var.region
