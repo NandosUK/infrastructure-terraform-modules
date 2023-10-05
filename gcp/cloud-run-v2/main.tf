@@ -233,7 +233,8 @@ resource "google_eventarc_trigger" "default" {
 }
 
 resource "google_project_iam_binding" "eventarc_cloud_run" {
-  count   = length(var.eventarc_triggers) > 0 && var.cloud_run_service_account != null && var.cloud_run_service_account != "" ? 1 : 0
+  for_each = length(var.eventarc_triggers) > 0 && var.cloud_run_service_account != null && var.cloud_run_service_account != "" ? { "instance" : 1 } : {}
+
   project = var.project_id
   role    = "roles/eventarc.eventReceiver"
 
@@ -243,9 +244,9 @@ resource "google_project_iam_binding" "eventarc_cloud_run" {
 }
 
 resource "google_project_iam_binding" "eventarc_pubsub" {
-  count   = length(var.eventarc_triggers) > 0 ? 1 : 0
-  project = var.project_id
-  role    = "roles/iam.serviceAccountTokenCreator"
+  for_each = length(var.eventarc_triggers) > 0 ? { "instance" : 1 } : {}
+  project  = var.project_id
+  role     = "roles/iam.serviceAccountTokenCreator"
 
   members = [
     "serviceAccount:service-${data.google_project.current.number}@gcp-sa-pubsub.iam.gserviceaccount.com"
