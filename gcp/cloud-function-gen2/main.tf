@@ -95,6 +95,25 @@ resource "google_cloudfunctions2_function" "function" {
     }
   }
 
+  dynamic "event_trigger" {
+    for_each = var.event_trigger != null ? [var.event_trigger] : []
+    content {
+      trigger_region        = var.region
+      event_type            = event_trigger.value["event_type"]
+      retry_policy          = event_trigger.value["retry_policy"]
+      service_account_email = event_trigger.value["service_account_email"]
+      dynamic "event_filters" {
+        for_each = event_trigger.value["event_filters"]
+
+        content {
+          attribute       = event_filters.value["attribute"]
+          value           = event_filters.value["value"]
+          operator        = event_filters.value["operator"]
+        }
+      }
+    }
+  }
+
   build_config {
     runtime     = var.function_runtime != "" ? var.function_runtime : local.language_config.default_runtime
     entry_point = var.function_entry_point != "" ? var.function_entry_point : local.language_config.default_entry_point
