@@ -87,7 +87,7 @@ variable "event_trigger" {
     pubsub_topic          = optional(string)
     event_filters = list(object({
       attribute       = string
-      attribute_value = string
+      value           = string
       operator        = optional(string)
     }))
   }))

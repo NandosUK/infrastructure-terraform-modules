@@ -108,7 +108,7 @@ resource "google_cloudfunctions2_function" "function" {
 
         content {
           attribute       = event_filters.value["attribute"]
-          attribute_value = event_filters.value["attribute_value"]
+          value           = event_filters.value["value"]
           operator        = event_filters.value["operator"]
         }
       }
