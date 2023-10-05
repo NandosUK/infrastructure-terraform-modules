@@ -77,6 +77,10 @@ variable "threshold_value" {
   default = 60
 }
 
+variable "event_type" {
+  default = null
+}
+
 variable "event_trigger" {
   description = "List of event triggers"
   type = list(object({
