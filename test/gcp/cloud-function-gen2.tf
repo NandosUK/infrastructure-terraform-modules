@@ -14,7 +14,7 @@ module "cloud-function-my-awesome-cf" {
   min_instance_count    = 1
   branching_strategy    = "master"
   repository_name       = "my-awesome-cf"
-  project_id            = "my-awesome-project"
+  project_id            = "mgt-build-56d2ff6b"
   timeout_seconds       = 60
   trigger_substitutions = {
     _RUNTIME               = "nodejs16"

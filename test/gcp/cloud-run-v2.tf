@@ -1,6 +1,6 @@
 module "cloud-run-api-my-awesome-api" {
   source              = "../../gcp/cloud-run-v2"
-  project_id          = "my-awesome-project"
+  project_id          = "mgt-build-56d2ff6b"
   name                = "my-awesome-api"
   project_region      = "europe-west2"
   allow_public_access = true
@@ -50,4 +50,23 @@ module "cloud-run-api-my-awesome-api" {
   ]
 }
 
+
+module "cloud-run-api-my-awesome-api-no-triggers" {
+  source              = "../../gcp/cloud-run-v2"
+  project_id          = "mgt-build-56d2ff6b"
+  name                = "my-awesome-api-no-triggers"
+  project_region      = "europe-west2"
+  allow_public_access = true
+  create_trigger      = true
+  environment         = "preview"
+  repository_name     = "my-repo-in-github"
+  service_path        = "/services/my-awesome-api"
+
+
+  env_vars = {
+    "ENVIRONMENT" = "preview"
+    "DEBUG"       = "true"
+    # ... add more as needed
+  }
+}
 
