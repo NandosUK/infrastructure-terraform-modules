@@ -91,6 +91,7 @@ variable "event_trigger" {
       operator        = optional(string)
     }))
   }))
+  default     = null
 }
 
 variable "schedule" {
