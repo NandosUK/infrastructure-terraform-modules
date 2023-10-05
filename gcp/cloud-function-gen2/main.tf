@@ -75,7 +75,6 @@ resource "google_cloudfunctions2_function" "function" {
     content {
       trigger_region        = var.region
       event_type            = event_trigger.value["event_type"]
-      pubsub_topic          = event_trigger.value["pubsub_topic"]
       retry_policy          = event_trigger.value["retry_policy"]
       service_account_email = event_trigger.value["service_account_email"]
     }
