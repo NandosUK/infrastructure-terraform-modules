@@ -57,6 +57,7 @@ resource "google_cloudfunctions2_function" "function" {
     available_memory      = var.available_memory_mb
     timeout_seconds       = var.timeout_seconds
     service_account_email = local.service_account
+    trigger_http          = var.event_trigger != null ? false : var.trigger_http
     environment_variables = merge(local.default_environment_variables, var.environment_variables)
     dynamic "secret_environment_variables" {
       for_each = var.secret_keys
@@ -64,7 +65,7 @@ resource "google_cloudfunctions2_function" "function" {
         key        = secret_environment_variables.value
         project_id = var.project_id
 
-        secret  = secret_environment_variables.value
+        secret  = secret_environment_variables.value 
         version = "latest"
       }
     }

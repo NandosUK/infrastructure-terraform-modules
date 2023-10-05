@@ -67,6 +67,9 @@ variable "function_entry_point" {
   default = ""
 }
 
+variable "trigger_http" {
+  default = true
+}
 variable "function_source_archive_object" {
   default = ""
 }
