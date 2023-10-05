@@ -70,27 +70,47 @@ resource "google_cloudfunctions2_function" "function" {
     }
   }
 
-  dynamic "event_trigger" {
-    for_each = var.event_type == "PUBSUB" ? [var.event_trigger] : []
-    content {
-      trigger_region        = var.region
-      event_type            = event_trigger.value["event_type"]
-      pubsub_topic          = event_trigger.value["pubsub_topic"]
-      retry_policy          = event_trigger.value["retry_policy"]
-      service_account_email = event_trigger.value["service_account_email"]
-    }
-  }
+  # dynamic "event_trigger" {
+  #   for_each = var.event_type == "PUBSUB" ? [var.event_trigger] : []
+  #   content {
+  #     trigger_region        = var.region
+  #     event_type            = event_trigger.value["event_type"]
+  #     pubsub_topic          = event_trigger.value["pubsub_topic"]
+  #     retry_policy          = event_trigger.value["retry_policy"]
+  #     service_account_email = event_trigger.value["service_account_email"]
+  #   }
+  # }
+
+  # dynamic "event_trigger" {
+  #   for_each = var.event_type == "STORAGE" ? [var.event_trigger] : []
+  #   content {
+  #     trigger_region        = var.region
+  #     event_type            = event_trigger.value["event_type"]
+  #     retry_policy          = event_trigger.value["retry_policy"]
+  #     service_account_email = event_trigger.value["service_account_email"]
+  #     event_filters {
+  #       attribute = "bucket"
+  #       value     = event_trigger.value["bucket_name"]
+  #     }
+  #   }
+  # }
 
   dynamic "event_trigger" {
-    for_each = var.event_type == "STORAGE" ? [var.event_trigger] : []
+    for_each = var.event_trigger != null ? [var.event_trigger] : []
     content {
       trigger_region        = var.region
       event_type            = event_trigger.value["event_type"]
       retry_policy          = event_trigger.value["retry_policy"]
+      pubsub_topic          = event_trigger.value["pubsub_topic"] 
       service_account_email = event_trigger.value["service_account_email"]
-      event_filters {
-        attribute = "bucket"
-        value     = event_trigger.value["bucket_name"]
+      dynamic "event_filters" {
+        for_each = event_trigger.value["event_filters"]
+
+        content {
+          attribute       = event_filters.value["attribute"]
+          attribute_value = event_filters.value["attribute_value"]
+          operator        = event_filters.value["operator"]
+        }
       }
     }
   }

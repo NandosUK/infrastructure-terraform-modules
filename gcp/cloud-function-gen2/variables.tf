@@ -76,13 +76,21 @@ variable "function_type" {}
 variable "threshold_value" {
   default = 60
 }
-variable "event_trigger" {
-  description = "event trigger, per resource docs"
-  default     = null
-}
 
-variable "event_type" {
-  default = null
+variable "event_trigger" {
+  description = "List of event triggers"
+  type = list(object({
+    trigger_region        = string
+    event_type            = string
+    retry_policy          = string
+    service_account_email = string
+    pubsub_topic          = optional(string)
+    event_filters = list(object({
+      attribute       = string
+      attribute_value = string
+      operator        = optional(string)
+    }))
+  }))
 }
 
 variable "schedule" {
