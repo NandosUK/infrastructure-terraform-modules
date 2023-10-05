@@ -83,17 +83,17 @@ variable "event_type" {
 
 variable "event_trigger" {
   description = "List of event triggers"
-  type = {
-    trigger_region        = string
-    event_type            = string
-    retry_policy          = string
-    service_account_email = string
-    event_filters = list(object({
-      attribute       = string
-      value           = string
-      operator        = optional(string)
-    }))
-  }
+  # type = {
+  #   trigger_region        = string
+  #   event_type            = string
+  #   retry_policy          = string
+  #   service_account_email = string
+  #   event_filters = list(object({
+  #     attribute       = string
+  #     value           = string
+  #     operator        = optional(string)
+  #   }))
+  # }
   default     = null
 }
 
