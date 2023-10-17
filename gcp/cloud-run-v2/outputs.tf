@@ -10,5 +10,5 @@ output "service_name" {
 
 output "external_ip" {
   description = "value"
-  value       = module.lb-http.external_ip
+  value       = length(module.lb-http) > 0 ? module.lb-http[0].external_ip : null
 }
