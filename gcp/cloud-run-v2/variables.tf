@@ -248,3 +248,9 @@ variable "dependencies" {
   type = list(string)
   default = []
 }
+
+variable "enable_custom_domain" {
+  description = "Create necessary resources to bind a custom domain to the resource"
+  type        = bool
+  default     = true
+}

@@ -120,6 +120,7 @@ resource "google_cloud_run_service_iam_binding" "noauth" {
 
 # Network Endpoint Group (NEG) for Cloud Run service
 resource "google_compute_region_network_endpoint_group" "cloudrun_neg" {
+  count                 = var.enable_custom_domain ? 1 : 0
   name                  = "${var.name}-neg"
   network_endpoint_type = "SERVERLESS"       # Serverless NEG
   region                = var.project_region # Region
@@ -170,6 +171,7 @@ resource "google_compute_security_policy" "cloud_armor_policy" {
 # Load Balancer module using serverless NEGs
 # View all options on https://github.com/terraform-google-modules/terraform-google-lb-http
 module "lb-http" {
+  count                 = var.enable_custom_domain ? 1 : 0
   source  = "GoogleCloudPlatform/lb-http/google//modules/serverless_negs"
   project = var.project_id
   name    = "${var.name}-lb"
