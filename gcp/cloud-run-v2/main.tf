@@ -188,7 +188,7 @@ module "lb-http" {
     default = {
       groups = [
         {
-          group = google_compute_region_network_endpoint_group.cloudrun_neg.id
+          group = google_compute_region_network_endpoint_group.cloudrun_neg[count.index].id
         }
       ]
 
