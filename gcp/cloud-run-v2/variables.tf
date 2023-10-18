@@ -13,6 +13,13 @@ variable "name" {
   }
 }
 
+variable "domain_name" {
+  description = "The domain name for the service. If empty, the system uses the project name."
+  type        = string
+
+  default = null
+}
+
 variable "domain_host" {
   description = "The host name for the domain or subdomain where this service is exposed. If empty, the systems use api.nandos.dev. You can find available domains on https://github.com/NandosUK/infrastructure/blob/master/gcp/mgt-dns/environment/inputs-for-dns.auto.tfvars"
   type        = string

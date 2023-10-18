@@ -176,7 +176,7 @@ module "lb-http" {
   version = "~> 9.0"
 
   # SSL and domain configuration
-  managed_ssl_certificate_domains = [var.environment == "prod" ? "${var.name}.${var.domain_host}" : var.environment == "preview" ? "${var.name}-preview.${var.domain_host}" : "${var.name}-preprod.${var.domain_host}"]
+  managed_ssl_certificate_domains = [ var.domain_name? "${var.domain_name}.${var.domain_host}" : var.environment == "prod" ? "${var.name}.${var.domain_host}" : var.environment == "preview" ? "${var.name}-preview.${var.domain_host}" : "${var.name}-preprod.${var.domain_host}"]
 
   ssl                       = true
   https_redirect            = true # Enable HTTPS redirect
