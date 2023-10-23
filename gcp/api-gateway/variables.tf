@@ -37,3 +37,14 @@ variable "environment" {
     error_message = "The environment must be one of: preview, preprod, dev or prod."
   }
 }
+
+variable "api_keys" {
+  description = "List of API keys configurations. This is only needed if you require 3rd party access."
+  type        = list(object({
+    name          = string
+    display_name  = string
+    methods       = list(string)
+    allowed_ips   = optional( list(string))
+  }))
+  default = []
+}
