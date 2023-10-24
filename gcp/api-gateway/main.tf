@@ -68,22 +68,22 @@ resource "google_api_gateway_gateway" "nandos_api_gateway" {
 # }
 
 resource "google_apikeys_key" "api_keys" {
-  count = can(length(var.api_keys)) ? length(var.api_keys) : 0
+  for_each = { for key in var.api_keys : key.name => key }
 
-  name         = "key-${var.api_keys[count.index].name}"
-  display_name = var.api_keys[count.index].display_name
+  name         = "key-${each.value.name}"
+  display_name = each.value.display_name
   project      = var.project_id
 
   restrictions {
     api_targets {
       service = google_api_gateway_api.nandos_api.managed_service
-      methods = var.api_keys[count.index].methods
+      methods = each.value.methods
     }
 
     dynamic "server_key_restrictions" {
-      for_each = var.api_keys[count.index].allowed_ips != null ? [1] : []
+      for_each = each.value.allowed_ips != null ? [1] : []
       content {
-        allowed_ips = var.api_keys[count.index].allowed_ips
+        allowed_ips = each.value.allowed_ips
       }
     }
   }
