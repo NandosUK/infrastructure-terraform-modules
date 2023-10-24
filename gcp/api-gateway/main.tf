@@ -68,7 +68,7 @@ resource "google_api_gateway_gateway" "nandos_api_gateway" {
 # }
 
 resource "google_apikeys_key" "api_keys" {
-  for_each = var.api_keys
+  for_each = { for key in var.api_keys : key.name => key }
 
   name         = "key-${each.value.name}"
   display_name = each.value.display_name
