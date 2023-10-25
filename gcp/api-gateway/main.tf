@@ -67,27 +67,27 @@ resource "google_api_gateway_gateway" "nandos_api_gateway" {
 #   disable_on_destroy  = false
 # }
 
-resource "google_apikeys_key" "api_keys" {
-  count = length(var.api_keys)
+# resource "google_apikeys_key" "api_keys" {
+#   count = length(var.api_keys)
 
-  name         = "key-${var.api_keys[count.index].name}"
-  display_name = var.api_keys[count.index].display_name
-  project      = var.project_id
+#   name         = "key-${var.api_keys[count.index].name}"
+#   display_name = var.api_keys[count.index].display_name
+#   project      = var.project_id
 
-  restrictions {
-    api_targets {
-      service = google_api_gateway_api.nandos_api.managed_service
-      methods = var.api_keys[count.index].methods
-    }
+#   restrictions {
+#     api_targets {
+#       service = google_api_gateway_api.nandos_api.managed_service
+#       methods = var.api_keys[count.index].methods
+#     }
 
-    dynamic "server_key_restrictions" {
-      for_each = var.api_keys[count.index].allowed_ips != null ? [1] : []
-      content {
-        allowed_ips = var.api_keys[count.index].allowed_ips
-      }
-    }
-  }
-}
+#     dynamic "server_key_restrictions" {
+#       for_each = var.api_keys[count.index].allowed_ips != null ? [1] : []
+#       content {
+#         allowed_ips = var.api_keys[count.index].allowed_ips
+#       }
+#     }
+#   }
+# }
 
 resource "google_compute_region_network_endpoint_group" "api_g_neg" {
   provider              = google-beta

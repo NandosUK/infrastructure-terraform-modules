@@ -38,13 +38,13 @@ variable "environment" {
   }
 }
 
-variable "api_keys" {
-  description = "List of API keys configurations. This is only needed if you require 3rd party access."
-  type        = list(object({
-    name          = string
-    display_name  = string
-    methods       = list(string)
-    allowed_ips   = optional( list(string))
-  }))
-  default = []
-}
+# variable "api_keys" {
+#   description = "List of API keys configurations. This is only needed if you require 3rd party access."
+#   type        = list(object({
+#     name          = string
+#     display_name  = string
+#     methods       = list(string)
+#     allowed_ips   = optional( list(string))
+#   }))
+#   default = []
+# }
