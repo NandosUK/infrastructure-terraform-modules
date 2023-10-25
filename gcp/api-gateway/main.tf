@@ -4,10 +4,9 @@ locals {
   domains          = [var.environment == "prod" ? "${var.api_name}.api.nandos.dev" : var.environment == "preview" ? "${var.api_name}-preview.api.nandos.dev" : "${var.api_name}-preprod.api.nandos.dev"]
 }
 
-
 # Create a service account for the API Gateway
 resource "google_service_account" "api_gateway_sa" {
-  account_id   = "${var.api_name}-api-gateway-sa"
+  account_id   = "${substr("${var.api_name}-api-gateway", 0, 25)}-sa"
   display_name = "API Gateway ${var.api_name}"
   project      = var.project_id
 }
