@@ -4,10 +4,9 @@ locals {
   domains          = [var.environment == "prod" ? "${var.api_name}.api.nandos.dev" : var.environment == "preview" ? "${var.api_name}-preview.api.nandos.dev" : "${var.api_name}-preprod.api.nandos.dev"]
 }
 
-
 # Create a service account for the API Gateway
 resource "google_service_account" "api_gateway_sa" {
-  account_id   = "${var.api_name}-api-gateway-sa"
+  account_id   = "${substr("${var.api_name}-api-gateway", 0, 25)}-sa"
   display_name = "API Gateway ${var.api_name}"
   project      = var.project_id
 }
@@ -60,35 +59,34 @@ resource "google_api_gateway_gateway" "nandos_api_gateway" {
   region     = var.project_region
 }
 
-# TODO: enable add keys via TF
-/* # Enable the api so we can generate keys against it
-resource "google_project_service" "enable_api_gateway" {
-  service = google_api_gateway_api.nandos_api.managed_service
+# in development: api keys
+# resource "google_project_service" "enable_api_gateway" {
+#   service             = google_api_gateway_api.nandos_api.managed_service
+#   project             = var.project_id
+#   disable_on_destroy  = false
+# }
 
-  disable_on_destroy = false # Set to 'true' if you want to disable the service when destroying this Terraform resource
-}
+# resource "google_apikeys_key" "api_keys" {
+#   count = length(var.api_keys)
 
+#   name         = "key-${var.api_keys[count.index].name}"
+#   display_name = var.api_keys[count.index].display_name
+#   project      = var.project_id
 
-resource "google_apikeys_key" "primary" {
-  name         = "key-my-test-123"
-  display_name = "Key for XXX 123"
-  project      = var.project_id
+#   restrictions {
+#     api_targets {
+#       service = google_api_gateway_api.nandos_api.managed_service
+#       methods = var.api_keys[count.index].methods
+#     }
 
-  restrictions {
-    api_targets {
-      service = google_api_gateway_api.nandos_api.managed_service
-      methods = ["GET*"]
-    }
-
-    server_key_restrictions {
-      allowed_ips = ["127.0.0.1"]
-    }
-  }
-  depends_on = [
-    google_project_service.enable_api_gateway
-  ]
-} */
-
+#     dynamic "server_key_restrictions" {
+#       for_each = var.api_keys[count.index].allowed_ips != null ? [1] : []
+#       content {
+#         allowed_ips = var.api_keys[count.index].allowed_ips
+#       }
+#     }
+#   }
+# }
 
 resource "google_compute_region_network_endpoint_group" "api_g_neg" {
   provider              = google-beta
@@ -114,7 +112,6 @@ resource "google_compute_url_map" "urlmap" {
   name            = "${var.api_name}-urlmap"
   description     = "URL map for ${var.api_name}"
   default_service = google_compute_backend_service.api_g_backend_service.id
-
 }
 
 resource "google_compute_managed_ssl_certificate" "default" {
@@ -129,9 +126,7 @@ resource "google_compute_managed_ssl_certificate" "default" {
   lifecycle {
     create_before_destroy = true
   }
-
 }
-
 
 resource "google_compute_target_https_proxy" "default" {
   project = var.project_id

@@ -5,4 +5,11 @@ module "api-gateway-api-1" {
   openapi_spec_file_path = "../assets/api-gateway-example.yml"
   project_region         = "europe-west2"
   environment            = "preview"
+  # api_keys               = [
+  #   {
+  #     name         = "default"
+  #     display_name = "Default API Key for testing"
+  #     methods      = ["GET*"]
+  #   },
+  # ]
 }
