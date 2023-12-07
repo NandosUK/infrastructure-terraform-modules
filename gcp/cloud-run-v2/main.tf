@@ -16,6 +16,10 @@ resource "google_cloud_run_v2_service" "default" {
     containers {
       image = "gcr.io/cloudrun/hello"
 
+      ports {
+        container_port = var.container_port
+      }
+
       # Startup Probe
       startup_probe {
         initial_delay_seconds = var.startup_probe_initial_delay
@@ -171,7 +175,7 @@ resource "google_compute_security_policy" "cloud_armor_policy" {
 # Load Balancer module using serverless NEGs
 # View all options on https://github.com/terraform-google-modules/terraform-google-lb-http
 module "lb-http" {
-  count                 = var.enable_custom_domain ? 1 : 0
+  count   = var.enable_custom_domain ? 1 : 0
   source  = "GoogleCloudPlatform/lb-http/google//modules/serverless_negs"
   project = var.project_id
   name    = "${var.name}-lb"

@@ -24,6 +24,13 @@ variable "project_region" {
   type        = string
 }
 
+variable "container_port" {
+  description = "(Optional) Port number the container listens on. This must be a valid TCP port number."
+  type        = number
+  default     = 8080
+  
+}
+
 variable "cloud_run_service_account" {
   description = "(Optional) The SA that will be used as role/invoker."
   type        = string
@@ -245,8 +252,8 @@ variable "eventarc_triggers" {
 
 variable "dependencies" {
   description = "A list of glob-format dependencies for the cloudbuild trigger"
-  type = list(string)
-  default = []
+  type        = list(string)
+  default     = []
 }
 
 variable "enable_custom_domain" {
