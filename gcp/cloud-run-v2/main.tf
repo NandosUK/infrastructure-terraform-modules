@@ -70,8 +70,6 @@ resource "google_cloud_run_v2_service" "default" {
         }
       }
 
-
-
       # Conditional volume_mounts
       dynamic "volume_mounts" {
         for_each = var.sql_connection != null ? [1] : []
@@ -86,6 +84,11 @@ resource "google_cloud_run_v2_service" "default" {
     scaling {
       max_instance_count = var.max_scale
       min_instance_count = var.min_scale
+    }
+
+    vpc_access {
+      connector = var.vpc_access_connector
+      egress    = var.vpc_access_egress
     }
 
     dynamic "volumes" {
