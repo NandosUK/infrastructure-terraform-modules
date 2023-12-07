@@ -28,7 +28,7 @@ variable "container_port" {
   description = "(Optional) Port number the container listens on. This must be a valid TCP port number."
   type        = number
   default     = 8080
-  
+
 }
 
 variable "cloud_run_service_account" {
@@ -91,6 +91,17 @@ variable "min_scale" {
 variable "max_scale" {
   description = "Maximum number of instances for autoscaling"
   default     = 100
+}
+
+variable "vpc_access_connector" {
+  description = "(Optional) The VPC Access Connector to use for this service"
+  type        = string
+  default     = null 
+}
+variable "vpc_access_egress" {
+   description = "(Optional) Traffic VPC egress settings. Possible values are: ALL_TRAFFIC, PRIVATE_RANGES_ONLY"
+  type        = string
+  default     = null 
 }
 
 # Declare new variables
