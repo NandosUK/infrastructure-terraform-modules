@@ -116,7 +116,11 @@ variable "secrets" {
   default     = []
 }
 
-
+variable "secret_ref"{
+  description = "Secret Manager secret name"
+  type        = string
+  default     = null
+}
 
 # Corresponding variables for startup probe and liveness probe
 # Startup probe
