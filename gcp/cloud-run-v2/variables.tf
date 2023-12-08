@@ -117,7 +117,7 @@ variable "secrets" {
 }
 
 variable "secret_ref"{
-  description = "Secret Manager secret name"
+  description = "(Optional) Secret Manager secret name"
   type        = string
   default     = null
 }
