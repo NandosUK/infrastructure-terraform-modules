@@ -10,6 +10,12 @@ variable "description" {
   description = "The description of the Cloud Build trigger."
 }
 
+variable "location" {
+  type        = string
+  default     = null
+  description = "The location of the Cloud Build trigger. If not specify, the default location will be global."
+}
+
 # Filename of the build configuration
 variable "filename" {
   type        = string
