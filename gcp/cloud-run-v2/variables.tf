@@ -96,12 +96,12 @@ variable "max_scale" {
 variable "vpc_access_connector" {
   description = "(Optional) The VPC Access Connector to use for this service"
   type        = string
-  default     = null 
+  default     = null
 }
 variable "vpc_access_egress" {
-   description = "(Optional) Traffic VPC egress settings. Possible values are: ALL_TRAFFIC, PRIVATE_RANGES_ONLY"
+  description = "(Optional) Traffic VPC egress settings. Possible values are: ALL_TRAFFIC, PRIVATE_RANGES_ONLY"
   type        = string
-  default     = null 
+  default     = null
 }
 
 # Declare new variables
@@ -194,10 +194,10 @@ variable "location" {
   type        = string
   default     = null
 }
- 
+
 variable "trigger_substitutions" {
   description = "Substitution variable for the trigger, think about Buckets names, pubsub names, service accounts, etc. Anything dynamic you will need to deploy this function (via Yaml file)"
-  default = {}
+  default     = {}
 }
 
 variable "trigger_config" {
