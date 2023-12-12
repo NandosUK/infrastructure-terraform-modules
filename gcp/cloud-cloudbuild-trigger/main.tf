@@ -2,6 +2,7 @@ resource "google_cloudbuild_trigger" "trigger_main" {
   description = var.description
   tags        = var.tags
   name        = var.name
+  location    = var.location
   github {
     owner = var.repository_owner
     name  = var.repository_name

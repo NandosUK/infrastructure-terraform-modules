@@ -265,6 +265,7 @@ module "trigger_provision" {
   source          = "../cloud-cloudbuild-trigger"
   name            = "service-${var.name}-provision"
   repository_name = var.repository_name
+  location        = var.location 
   description     = "Provision ${var.name} Service (CI/CD)"
   filename        = "${var.service_path}/cloudbuild.yaml"
   include         = concat(["${var.service_path}/**"], var.dependencies)

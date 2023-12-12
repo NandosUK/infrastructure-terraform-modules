@@ -137,6 +137,12 @@ variable "project_id" {
   type        = string
 }
 
+variable "location" {
+  description = "Cloud build trigger location. If not specified, the default location will be global."
+  type        = string
+  default     = null
+}
+
 variable "trigger_config" {
   description = "Configuration for the Cloud Build Trigger"
   type = object({
