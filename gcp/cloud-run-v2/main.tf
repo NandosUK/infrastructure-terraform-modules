@@ -4,6 +4,15 @@ data "google_project" "current" {
 
 locals {
   cloud_armor_rules = var.cloud_armor.enabled ? yamldecode(file(var.cloud_armor.rules_file_path)) : []
+  default_substitution_vars = {
+    _STAGE                    = "provision"
+    _BUILD_ENV                = var.environment
+    _SERVICE_NAME             = var.name
+    _DOCKER_ARTIFACT_REGISTRY = var.artifact_repository
+    _SERVICE_PATH             = var.service_path
+    _LOCATION                 = var.project_region
+    _SERVICE_ACCOUNT          = var.cloud_run_service_account
+  }
 }
 
 # Resource configuration for deploying a Google Cloud Run service
@@ -273,15 +282,8 @@ module "trigger_provision" {
   environment     = var.environment
 
   # Substitution variables for Cloud Build Trigger
-  substitutions = {
-    _STAGE                    = "provision"
-    _BUILD_ENV                = var.environment
-    _SERVICE_NAME             = var.name
-    _DOCKER_ARTIFACT_REGISTRY = var.artifact_repository
-    _SERVICE_PATH             = var.service_path
-    _LOCATION                 = var.project_region
-    _SERVICE_ACCOUNT          = var.cloud_run_service_account
-  }
+  substitutions   = merge(local.default_substitution_vars, var.trigger_substitutions)
+
 }
 
 module "cloud_run_alerts" {
