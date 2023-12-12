@@ -197,6 +197,7 @@ variable "location" {
  
 variable "trigger_substitutions" {
   description = "Substitution variable for the trigger, think about Buckets names, pubsub names, service accounts, etc. Anything dynamic you will need to deploy this function (via Yaml file)"
+  default = {}
 }
 
 variable "trigger_config" {
