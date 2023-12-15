@@ -1,5 +1,5 @@
 resource "google_storage_bucket" "bucket" {
-  name     = var.google_storage_bucket
+  name     = "${var.google_storage_bucket}-${var.project}"
   location = var.region
   project  = var.project
 }
@@ -12,6 +12,7 @@ resource "google_compute_network" "vpc_network" {
 resource "google_compute_address" "static" {
   name    = "${var.name}-ip"
   project = var.project
+  region  = var.region
 }
 
 resource "google_compute_instance" "default" {
