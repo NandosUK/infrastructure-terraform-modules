@@ -132,7 +132,7 @@ variable "startup_probe_timeout" {
 
 variable "timeout" {
   description = "Specifies the time within which a response must be returned by services deployed to Cloud Run"
-  default     = "5m"
+  default     = "300s"
 }
 
 variable "startup_probe_period" {
