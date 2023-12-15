@@ -96,12 +96,12 @@ variable "max_scale" {
 variable "vpc_access_connector" {
   description = "(Optional) The VPC Access Connector to use for this service"
   type        = string
-  default     = null 
+  default     = null
 }
 variable "vpc_access_egress" {
-   description = "(Optional) Traffic VPC egress settings. Possible values are: ALL_TRAFFIC, PRIVATE_RANGES_ONLY"
+  description = "(Optional) Traffic VPC egress settings. Possible values are: ALL_TRAFFIC, PRIVATE_RANGES_ONLY"
   type        = string
-  default     = null 
+  default     = null
 }
 
 # Declare new variables
@@ -128,6 +128,11 @@ variable "startup_probe_initial_delay" {
 variable "startup_probe_timeout" {
   description = "Timeout seconds for the startup probe"
   default     = 1
+}
+
+variable "timeout" {
+  description = "Specifies the time within which a response must be returned by services deployed to Cloud Run"
+  default     = "5m"
 }
 
 variable "startup_probe_period" {
