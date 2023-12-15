@@ -35,6 +35,9 @@ resource "google_compute_instance" "default" {
   metadata = {
     ssh-keys = var.ssh-keys
   }
+  shielded_instance_config {
+    enable_secure_boot = true
+  }
 }
 
 resource "google_compute_firewall" "default" {
