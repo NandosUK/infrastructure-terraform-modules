@@ -33,7 +33,7 @@ variable "machine_type" {
 
 variable "ssh-keys" {
   type        = string
-  description = "Key used to SSH into your VM. The format is ubuntu:ssh-rsa AAAAB3NzaC1, where you specify the username followed by the public key."
+  description = "Key used to SSH into your VM. The format is ubuntu:ssh-rsa AAAAB3NzaC1, where you specify the username followed by the public key. If there are multiple SSH keys, each key is separated by a newline character (\\n)."
   default     = null
 }
 

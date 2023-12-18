@@ -13,6 +13,53 @@ resource "google_compute_network" "vpc_network" {
   project = var.project
 }
 
+resource "google_compute_global_address" "default" {
+  name    = "tcp-proxy-xlb-ip"
+  project = var.project
+}
+
+resource "google_compute_target_tcp_proxy" "default" {
+  name            = "${var.name}-proxy"
+  project         = var.project
+  backend_service = google_compute_backend_service.default.id
+}
+
+resource "google_compute_global_forwarding_rule" "default" {
+  name                  = "${var.name}-fwd"
+  project               = var.project
+  ip_protocol           = "TCP"
+  load_balancing_scheme = "EXTERNAL"
+  port_range            = "22"
+  target                = google_compute_target_tcp_proxy.default.id
+  ip_address            = google_compute_global_address.default.id
+}
+
+resource "google_compute_backend_service" "default" {
+  name                  = "tcp-proxy-xlb-backend-service"
+  project               = var.project
+  protocol              = "TCP"
+  port_name             = "tcp-port-22"
+  load_balancing_scheme = "EXTERNAL"
+  timeout_sec           = 10
+  health_checks         = [google_compute_health_check.default.id]
+  backend {
+    group           = google_compute_instance_group.default.self_link
+    balancing_mode  = "UTILIZATION"
+    max_utilization = 1.0
+    capacity_scaler = 1.0
+  }
+}
+
+resource "google_compute_health_check" "default" {
+  name               = "${var.name}-health"
+  timeout_sec        = 1
+  check_interval_sec = 10
+  project            = var.project
+  tcp_health_check {
+    port = "80"
+  }
+}
+
 resource "google_compute_instance" "default" {
   project      = var.project
   name         = var.name
@@ -35,147 +82,27 @@ resource "google_compute_instance" "default" {
   }
 }
 
-resource "google_compute_instance_group" "http-instance-group" {
-  name        = "${var.name}-http-ig"
+resource "google_compute_instance_group" "default" {
+  name        = "${var.name}-ig"
   project     = var.project
   zone        = var.zone
-  description = "Instance group for HTTP"
-  named_port {
-    name = "tcp-port-80"
-    port = 80
-  }
-}
-
-resource "google_compute_instance_group" "https-instance-group" {
-  name        = "${var.name}-https-ig"
-  project     = var.project
-  zone        = var.zone
-  description = "Instance group for HTTPS"
-  named_port {
-    name = "tcp-port-443"
-    port = 443
-  }
-}
-
-resource "google_compute_instance_group" "ssh-instance-group" {
-  name        = "${var.name}-ssh-ig"
-  project     = var.project
-  zone        = var.zone
-  description = "Instance group for SSH"
+  description = "Instance group for all ports"
+  instances   = [google_compute_instance.default.self_link]
   named_port {
     name = "tcp-port-22"
     port = 22
   }
-}
-
-resource "google_compute_instance_group" "sftp-instance-group" {
-  name        = "${var.name}-sftp-ig"
-  project     = var.project
-  zone        = var.zone
-  description = "Instance group for SFTP"
+  named_port {
+    name = "tcp-port-80"
+    port = 80
+  }
+  named_port {
+    name = "tcp-port-443"
+    port = 443
+  }
   named_port {
     name = "tcp-port-2222"
     port = 2222
-  }
-}
-
-module "lb-http" {
-  source      = "GoogleCloudPlatform/lb-http/google"
-  version     = "~> 9.0"
-  project     = var.project
-  name        = "${var.name}-lb"
-  target_tags = local.tags
-  backends = {
-    http = {
-      port        = 80
-      protocol    = "HTTP"
-      port_name   = "tcp-port-80"
-      timeout_sec = 10
-      enable_cdn  = false
-      groups = [
-        {
-          group = google_compute_instance_group.http-instance-group.self_link
-        },
-      ]
-      iap_config = {
-        enable = false
-      }
-      log_config = {
-        enable = false
-      }
-      health_check = {
-        port     = 80
-        protocol = "HTTP"
-        path     = "/"
-      }
-    }
-    https = {
-      port        = 443
-      protocol    = "HTTPS"
-      port_name   = "tcp-port-443"
-      timeout_sec = 10
-      enable_cdn  = false
-      groups = [
-        {
-          group = google_compute_instance_group.https-instance-group.self_link
-        },
-      ]
-      iap_config = {
-        enable = false
-      }
-      log_config = {
-        enable = false
-      }
-      health_check = {
-        port     = 443
-        protocol = "HTTPS"
-        path     = "/"
-      }
-    }
-    ssh = {
-      port        = 22
-      protocol    = "TCP"
-      port_name   = "tcp-port-22"
-      timeout_sec = 10
-      enable_cdn  = false
-      groups = [
-        {
-          group = google_compute_instance_group.ssh-instance-group.self_link
-        },
-      ]
-      iap_config = {
-        enable = false
-      }
-      log_config = {
-        enable = false
-      }
-      health_check = {
-        port     = 22
-        protocol = "TCP"
-      }
-    }
-    sftp = {
-      port        = 2222
-      protocol    = "TCP"
-      port_name   = "tcp-port-2222"
-      timeout_sec = 10
-      enable_cdn  = false
-      groups = [
-        {
-          group = google_compute_instance_group.sftp-instance-group.self_link
-        },
-      ]
-      iap_config = {
-        enable = false
-      }
-      log_config = {
-        enable = false
-      }
-      health_check = {
-        port     = 2222
-        protocol = "TCP"
-      }
-    }
   }
 }
 
@@ -188,7 +115,7 @@ resource "google_compute_firewall" "default" {
     ports    = ["80", "443", "2222"]
   }
   target_tags   = local.tags
-  source_ranges = compact([module.lb-http.external_ip, module.lb-http.external_ipv6_address])
+  source_ranges = [google_compute_global_address.default.address]
 }
 
 resource "google_compute_firewall" "sftp-port-22" {
@@ -200,5 +127,5 @@ resource "google_compute_firewall" "sftp-port-22" {
     ports    = ["22"]
   }
   target_tags   = local.tags
-  source_ranges = compact([module.lb-http.external_ip, module.lb-http.external_ipv6_address])
+  source_ranges = [google_compute_global_address.default.address]
 }
