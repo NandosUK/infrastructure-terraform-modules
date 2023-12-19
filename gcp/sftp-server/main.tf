@@ -1,7 +1,6 @@
 locals {
-  image              = "thorn-technologies-public/sftpgw-3-4-4-1694633054"
-  tags               = ["sftp-instance"]
-  nandos_internal_ip = "203.206.117.131"
+  image = "thorn-technologies-public/sftpgw-3-4-4-1694633054"
+  tags  = ["sftp-instance"]
   # https://cloud.google.com/load-balancing/docs/health-check-concepts#ip-ranges
   gcp_healthcheck_ip_1 = "130.211.0.0/22"
   gcp_healthcheck_ip_2 = "35.191.0.0/16"
@@ -116,13 +115,15 @@ resource "google_compute_firewall" "default" {
     protocol = "tcp"
     ports    = ["80", "443", "22"]
   }
-  source_ranges = [
-    local.nandos_internal_ip,
-    local.gcp_healthcheck_ip_1,
-    local.gcp_healthcheck_ip_2,
-    local.gcp_iap_ip,
-    google_compute_global_address.default.address,
-  ]
+  source_ranges = concat(
+    var.source_ranges,
+    [
+      local.gcp_healthcheck_ip_1,
+      local.gcp_healthcheck_ip_2,
+      local.gcp_iap_ip,
+      google_compute_global_address.default.address,
+    ]
+  )
 }
 
 resource "google_compute_firewall" "egress" {
