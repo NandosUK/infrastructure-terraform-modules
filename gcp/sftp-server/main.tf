@@ -96,15 +96,15 @@ module "load-balancer-https" {
 
 # openssh access to the VM
 # but you probably don't need ssh access to the vm
-module "load-balancer-ssh" {
-  source                  = "../load-balancer"
-  project                 = var.project
-  zone                    = var.zone
-  name                    = "${var.name}-ssh"
-  port                    = 2222
-  google_compute_instance = google_compute_instance.default.self_link
-  ip_address              = google_compute_global_address.default.address
-}
+# module "load-balancer-ssh" {
+#   source                  = "../load-balancer"
+#   project                 = var.project
+#   zone                    = var.zone
+#   name                    = "${var.name}-ssh"
+#   port                    = 2222
+#   google_compute_instance = google_compute_instance.default.self_link
+#   ip_address              = google_compute_global_address.default.address
+# }
 
 resource "google_compute_firewall" "default" {
   name        = "${var.name}-fw"
@@ -114,7 +114,7 @@ resource "google_compute_firewall" "default" {
   direction   = "INGRESS"
   allow {
     protocol = "tcp"
-    ports    = ["80", "443", "22", "2222"]
+    ports    = ["80", "443", "22"]
   }
   source_ranges = [
     local.nandos_internal_ip,
