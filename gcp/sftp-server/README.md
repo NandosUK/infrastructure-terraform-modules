@@ -10,6 +10,10 @@ Ensure the following APIs are enabled in your GCP project (the last two might no
 - `deploymentmanager.googleapis.com`
 - `runtimeconfig.googleapis.com`
 
+## Configuring the SFTP Server
+
+Once provisioned via terraform, the server still needs to be configured with users, linked to the cloud storage bucket, and some other stuff. Go to the IP address generated, create an admin user, and then follow the rest of the setup guide. It's pretty simple.
+
 ## Accessing the SFTP Server
 
 You can access the SFTP server using an SFTP client, such as [FileZilla](https://filezilla-project.org/) or the `sftp` command in your terminal. Use the following information:
