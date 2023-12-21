@@ -13,6 +13,12 @@ variable "project" {
   description = "Name of your Google Cloud project"
 }
 
+variable "environment" {
+  type        = string
+  description = "The environment you are running in (preview|preprod|prod)"
+}
+
+
 variable "region" {
   type        = string
   description = "Name of your Google Cloud region"
@@ -46,5 +52,4 @@ variable "source_ranges" {
 variable "domain" {
   type        = string
   description = "Domain name to map to the server"
-  default     = null
 }
