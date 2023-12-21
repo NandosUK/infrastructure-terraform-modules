@@ -106,7 +106,7 @@ resource "google_compute_instance_group" "http" {
 # HTTP/HTTPS load balancer w/ SSL
 module "lb-http" {
   source  = "GoogleCloudPlatform/lb-http/google//modules/serverless_negs"
-  project = var.project_id
+  project = var.project
   name    = "${var.name}-lb"
   version = "~> 9.0"
 
