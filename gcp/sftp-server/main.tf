@@ -73,26 +73,6 @@ module "load-balancer-sftp" {
   ip_address              = google_compute_global_address.default.address
 }
 
-module "load-balancer-http" {
-  source                  = "../load-balancer"
-  project                 = var.project
-  zone                    = var.zone
-  name                    = "${var.name}-http"
-  port                    = 80
-  google_compute_instance = google_compute_instance.default.self_link
-  ip_address              = google_compute_global_address.default.address
-}
-
-module "load-balancer-https" {
-  source                  = "../load-balancer"
-  project                 = var.project
-  zone                    = var.zone
-  name                    = "${var.name}-https"
-  port                    = 443
-  google_compute_instance = google_compute_instance.default.self_link
-  ip_address              = google_compute_global_address.default.address
-}
-
 # openssh access to the VM
 # but you probably don't need ssh access to the vm
 # module "load-balancer-ssh" {
@@ -104,6 +84,65 @@ module "load-balancer-https" {
 #   google_compute_instance = google_compute_instance.default.self_link
 #   ip_address              = google_compute_global_address.default.address
 # }
+
+resource "google_compute_instance_group" "http" {
+  name        = "http-ig"
+  project     = var.project
+  zone        = var.zone
+  description = "Instance group for port 80/443"
+  instances   = [google_compute_instance.default.self_link]
+
+  named_port {
+    name = "tcp-port-80"
+    port = 80
+  }
+
+  named_port {
+    name = "tcp-port-443"
+    port = 443
+  }
+}
+
+# HTTP/HTTPS load balancer w/ SSL
+module "lb-http" {
+  source  = "GoogleCloudPlatform/lb-http/google//modules/serverless_negs"
+  project = var.project_id
+  name    = "${var.name}-lb"
+  version = "~> 9.0"
+
+  # SSL and domain configuration
+  managed_ssl_certificate_domains = [var.environment == "prod" ? var.domain : "${var.environment}.${var.domain}"]
+
+  ssl                       = true
+  https_redirect            = true # Enable HTTPS redirect
+  random_certificate_suffix = true
+
+  # Use the same IP as 22/2222 ports
+  create_address = false
+  address        = google_compute_global_address.default.address
+
+  backends = {
+    default = {
+      groups = [
+        {
+          group = google_compute_instance_group.http.self_link
+        }
+      ]
+
+      description             = "Backend for SFTP Server"
+      enable_cdn              = false
+      custom_request_headers  = ["X-Client-Geo-Location: {client_region_subdivision}, {client_city}"]
+      custom_response_headers = ["X-Cache-Hit: {cdn_cache_status}"]
+
+      log_config = {
+        enable = false
+      }
+      iap_config = {
+        enable = false
+      }
+    }
+  }
+}
 
 resource "google_compute_firewall" "default" {
   name        = "${var.name}-fw"
