@@ -42,3 +42,9 @@ variable "source_ranges" {
   description = "Source IP range"
   default     = []
 }
+
+variable "domain" {
+  type        = string
+  description = "Domain name to map to the server"
+  default     = null
+}
