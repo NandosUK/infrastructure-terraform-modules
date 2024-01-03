@@ -283,7 +283,7 @@ module "trigger_provision" {
     _LOCATION                 = var.project_region
     _SERVICE_ACCOUNT          = var.cloud_run_service_account
     },
-    var.substitution_trigger
+    var.trigger_substitutions
   )
 }
 

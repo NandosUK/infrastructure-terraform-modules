@@ -257,7 +257,7 @@ variable "cloud_armor" {
   }
 }
 
-variable "substitution_trigger" {
+variable "trigger_substitutions" {
   description = "Substitution variables for Cloud Build Trigger"
   type        = map(string)
   default     = {}
