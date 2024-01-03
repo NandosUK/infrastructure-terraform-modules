@@ -257,6 +257,12 @@ variable "cloud_armor" {
   }
 }
 
+variable "substitution_trigger" {
+  description = "Substitution variables for Cloud Build Trigger"
+  type        = map(string)
+  default     = {}
+}
+
 variable "eventarc_triggers" {
   description = "Configuration for Eventarc triggers"
   type = list(object({

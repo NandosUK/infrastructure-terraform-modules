@@ -274,7 +274,7 @@ module "trigger_provision" {
   environment     = var.environment
 
   # Substitution variables for Cloud Build Trigger
-  substitutions = {
+  substitutions = merge({
     _STAGE                    = "provision"
     _BUILD_ENV                = var.environment
     _SERVICE_NAME             = var.name
@@ -282,7 +282,9 @@ module "trigger_provision" {
     _SERVICE_PATH             = var.service_path
     _LOCATION                 = var.project_region
     _SERVICE_ACCOUNT          = var.cloud_run_service_account
-  }
+    },
+    var.substitution_trigger
+  )
 }
 
 module "cloud_run_alerts" {
