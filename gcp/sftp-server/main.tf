@@ -140,6 +140,10 @@ module "lb-http" {
       iap_config = {
         enable = false
       }
+      health_check = {
+        request_path = "/"
+        port         = 80
+      }
     }
   }
 }
