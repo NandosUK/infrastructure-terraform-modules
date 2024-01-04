@@ -87,11 +87,13 @@ resource "google_cloud_run_v2_service" "default" {
       min_instance_count = var.min_scale
     }
 
-    vpc_access {
-      connector = var.vpc_access_connector
-      egress    = var.vpc_access_egress
+    dynamic "vpc_access" {
+      for_each = var.vpc_access_connector != null ? [1] : []
+      content {
+        connector = var.vpc_access_connector
+        egress    = var.vpc_access_egress
+      }
     }
-
     dynamic "volumes" {
       for_each = var.sql_connection != null ? [1] : [] # Include the block only if var.sql_connection is not null
       content {
