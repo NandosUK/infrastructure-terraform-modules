@@ -57,6 +57,10 @@ variable "available_memory_mb" {
   default = "256M"
 }
 
+variable "cpu_limit" {
+  default = null
+}
+
 variable "notification_channels" {}
 
 variable "function_runtime" {
