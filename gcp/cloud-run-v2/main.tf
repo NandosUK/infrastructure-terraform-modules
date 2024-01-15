@@ -4,6 +4,7 @@ data "google_project" "current" {
 
 locals {
   cloud_armor_rules = var.cloud_armor.enabled ? yamldecode(file(var.cloud_armor.rules_file_path)) : []
+  domain            = var.custom_domain != null ? var.custom_domain : var.environment == "prod" ? "${var.name}.${var.domain_host}" : var.environment == "preview" ? "${var.name}-preview.${var.domain_host}" : "${var.name}-preprod.${var.domain_host}"
 }
 
 # Resource configuration for deploying a Google Cloud Run service
@@ -188,7 +189,7 @@ module "lb-http" {
   version = "~> 9.0"
 
   # SSL and domain configuration
-  managed_ssl_certificate_domains = [var.environment == "prod" ? "${var.name}.${var.domain_host}" : var.environment == "preview" ? "${var.name}-preview.${var.domain_host}" : "${var.name}-preprod.${var.domain_host}"]
+  managed_ssl_certificate_domains = [local.domain]
 
   ssl                       = true
   https_redirect            = true # Enable HTTPS redirect
