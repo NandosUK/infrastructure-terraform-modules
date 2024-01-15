@@ -56,6 +56,7 @@ resource "google_cloudfunctions2_function" "function" {
     min_instance_count    = var.min_instance_count
     available_memory      = var.available_memory_mb
     timeout_seconds       = var.timeout_seconds
+    available_cpu         = var.cpu_limit
     service_account_email = local.service_account
     environment_variables = merge(local.default_environment_variables, var.environment_variables)
     dynamic "secret_environment_variables" {
