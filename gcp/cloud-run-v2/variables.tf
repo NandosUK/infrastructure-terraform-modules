@@ -295,3 +295,15 @@ variable "enable_custom_domain" {
   type        = bool
   default     = true
 }
+
+variable "startup_cpu_boost" {
+  description = "CPU boost for the Cloud Run container"
+  type        = bool
+  default     = true
+}
+
+variable "cpu_idle" {
+  description = "CPU idle for the Cloud Run container"
+  type        = bool
+  default     = true
+}

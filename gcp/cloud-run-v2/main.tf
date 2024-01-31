@@ -70,6 +70,8 @@ resource "google_cloud_run_v2_service" "default" {
           cpu    = var.cpu_limit
           memory = var.memory_limit
         }
+        cpu_idle          = var.cpu_idle
+        startup_cpu_boost = var.startup_cpu_boost
       }
 
       # Conditional volume_mounts
