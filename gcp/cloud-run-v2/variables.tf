@@ -129,27 +129,27 @@ variable "secrets" {
 # Startup probe
 variable "startup_probe_initial_delay" {
   description = "Initial delay seconds for the startup probe"
-  default     = 3
+  default     = 20
 }
 
 variable "startup_probe_timeout" {
   description = "Timeout seconds for the startup probe"
-  default     = 1
+  default     = 5
 }
 
 variable "timeout" {
   description = "Specifies the time within which a response must be returned by services deployed to Cloud Run"
-  default     = "300s"
+  default     = "600s"
 }
 
 variable "startup_probe_period" {
   description = "Period seconds for the startup probe"
-  default     = 3
+  default     = 30
 }
 
 variable "startup_probe_failure_threshold" {
   description = "Failure threshold for the startup probe"
-  default     = 1
+  default     = 3
 }
 
 variable "startup_probe_port" {
