@@ -160,22 +160,22 @@ variable "startup_probe_port" {
 # Liveness probe
 variable "liveness_probe_initial_delay" {
   description = "Initial delay seconds for the liveness probe"
-  default     = 0
+  default     = 60
 }
 
 variable "liveness_probe_timeout" {
   description = "Timeout seconds for the liveness probe"
-  default     = 1
+  default     = 5
 }
 
 variable "liveness_probe_period" {
   description = "Period seconds for the liveness probe"
-  default     = 3
+  default     = 60
 }
 
 variable "liveness_probe_failure_threshold" {
   description = "Failure threshold for the liveness probe"
-  default     = 1
+  default     = 3
 }
 
 variable "liveness_probe_path" {
