@@ -209,8 +209,8 @@ module "lb-http" {
   https_redirect            = true # Enable HTTPS redirect
   random_certificate_suffix = true
 
-  url_map        = var.url_map
-  create_url_map = var.url_map == null ? true : false
+  url_map        = google_compute_url_map.https.self_link
+  create_url_map = var.create_url_map
 
   backends = merge(
     {
@@ -237,7 +237,7 @@ module "lb-http" {
 }
 
 resource "google_compute_url_map" "custom_url_map_https" {
-  count           = var.enable_custom_domain && var.url_map != null ? 1 : 0
+  count           = var.create_url_map == false ? 1 : 0
   name            = "${var.name}-https-urlmap"
   description     = "Custom URL map for Cloud Run service"
   default_service = module.lb-http[0].backend_services["default"].self_link

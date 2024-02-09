@@ -296,10 +296,10 @@ variable "enable_custom_domain" {
   default     = true
 }
 
-variable "url_map" {
-  description = "URL map to be used in the load balancer"
-  type        = string
-  default     = null
+variable "create_url_map" {
+  description = "Create a URL map for the load balancer"
+  type        = bool
+  default     = true
 }
 
 
