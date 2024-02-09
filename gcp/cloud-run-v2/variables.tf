@@ -297,7 +297,7 @@ variable "enable_custom_domain" {
 }
 
 variable "create_url_map" {
-  description = "Create a URL map for the load balancer"
+  description = "Create a URL map for the load balancer. If false, the URL map must be created manually"
   type        = bool
   default     = true
 }
