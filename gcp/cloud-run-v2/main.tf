@@ -210,7 +210,7 @@ module "lb-http" {
   random_certificate_suffix = true
 
   url_map        = var.url_map
-  create_url_map = var.create_url_map
+  create_url_map = var.url_map == null ? true : false
 
   backends = merge(
     {
@@ -234,6 +234,39 @@ module "lb-http" {
       })
     }
   )
+}
+
+resource "google_compute_url_map" "custom_url_map_https" {
+  count           = var.enable_custom_domain && var.url_map != null ? 1 : 0
+  name            = "${var.name}-https-urlmap"
+  description     = "Custom URL map for Cloud Run service"
+  default_service = module.lb-http[0].backend_services["default"].self_link
+
+  host_rule {
+    hosts        = [local.domain]
+    path_matcher = "allpaths"
+  }
+  path_matcher {
+    name            = "allpaths"
+    default_service = module.lb-http[0].backend_services["default"].self_link
+    dynamic "path_rule" {
+      for_each = var.path_rules
+      content {
+        paths   = each.value.paths != null ? [each.value.paths] : ["/*"]
+        service = each.value.service_name != null ? module.lb-http[0].backend_services["${each.value.service_name}"].self_link : module.lb-http[0].backend_services["default"].self_link
+        route_action {
+          url_rewrite {
+            path_prefix_rewrite = each.value.route_action.url_rewrite.path_prefix_rewrite != null ? each.value.route_action.url_rewrite.path_prefix_rewrite : null
+          }
+        }
+      }
+    }
+  }
+  test {
+    service = module.lb-http[0].backend_services["default"].self_link
+    host    = local.domain
+    path    = "/="
+  }
 }
 
 resource "google_eventarc_trigger" "default" {

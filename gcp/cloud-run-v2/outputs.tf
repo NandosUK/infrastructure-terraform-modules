@@ -12,8 +12,3 @@ output "external_ip" {
   description = "value"
   value       = length(module.lb-http) > 0 ? module.lb-http[0].external_ip : null
 }
-
-output "backends_access" {
-  description = ""
-  value       = length(module.lb-http) > 0 ? module.lb-http[0].backend_services : null
-}
