@@ -315,7 +315,7 @@ variable "additional_backend_services" {
 variable "path_rules" {
   description = "Custon path rules for the load balancer"
 type = list(object({
-    paths   = string
+    paths   = list(string)
     service_name = string
     route_action = optional(object({
         url_rewrite = optional(object({
