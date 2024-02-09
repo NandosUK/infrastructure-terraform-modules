@@ -304,11 +304,9 @@ variable "url_map" {
 
 variable "additional_backend_services" {
   description = "Additional backend services to be used in the load balancer"
-  type = map(object({
-    key = map(object({
-      group       = string
-      cloud_armor = bool
-    }))
+ type = map(object({
+    group       = string
+    cloud_run   = bool
   }))
   default = {}
 }
