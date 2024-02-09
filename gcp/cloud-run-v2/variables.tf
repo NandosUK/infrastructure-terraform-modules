@@ -302,10 +302,30 @@ variable "url_map" {
   default     = null
 }
 
+variable "default_service_config" {
+  description = "Default service configuration to be used in the load balancer"
+  type        = map(any)
+  default = {
+    description             = "Backend for Cloud Run service"
+    enable_cdn              = false
+    custom_request_headers  = ["X-Client-Geo-Location: {client_region_subdivision}, {client_city}"]
+    custom_response_headers = ["X-Cache-Hit: {cdn_cache_status}"]
+    log_config = {
+      enable = false
+    }
+    iap_config = {
+      enable = false
+    }
+  }
+}
+
 variable "additional_backend_services" {
   description = "Additional backend services to be used in the load balancer"
-  type        = list(string)
-  default     = []
+  type = map(object({
+    group       = string
+    cloud_armor = bool
+  }))
+  default = {}
 }
 
 variable "startup_cpu_boost" {

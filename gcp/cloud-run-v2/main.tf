@@ -200,36 +200,28 @@ module "lb-http" {
   url_map        = var.url_map
   create_url_map = var.url_map == null ? true : false
 
-  dynamic "backends" {
-    for_each = var.additional_backend_services
-    backends = {
-      default = {
+  backends = merge(
+    {
+      "default" = merge(var.default_backend_service, {
         groups = [
           {
-            group = google_compute_region_network_endpoint_group.cloudrun_neg[count.index].id
-          },
-          {
-            group = each.value
+            group = google_compute_region_network_endpoint_group.cloudrun_neg[0].id
           }
         ]
-
-        description             = "Backend for Cloud Run service"
-        enable_cdn              = false
-        custom_request_headers  = ["X-Client-Geo-Location: {client_region_subdivision}, {client_city}"]
-        custom_response_headers = ["X-Cache-Hit: {cdn_cache_status}"]
-
-        # Clour Armor security
         security_policy = var.cloud_armor.enabled ? google_compute_security_policy.cloud_armor_policy[0].self_link : null
-
-        log_config = {
-          enable = false
-        }
-        iap_config = {
-          enable = false
-        }
-      }
+      })
+    },
+    { for key, value in var.additional_backend_services :
+      key => merge(var.default_backend_service, {
+        groups = [
+          {
+            group = value.group
+          }
+        ]
+        security_policy = value.cloud_armor ? google_compute_security_policy.cloud_armor_policy[0].self_link : null
+      })
     }
-  }
+  )
 }
 
 resource "google_eventarc_trigger" "default" {
