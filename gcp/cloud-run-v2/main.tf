@@ -197,27 +197,36 @@ module "lb-http" {
   https_redirect            = true # Enable HTTPS redirect
   random_certificate_suffix = true
 
-  backends = {
-    default = {
-      groups = [
-        {
-          group = google_compute_region_network_endpoint_group.cloudrun_neg[count.index].id
+  url_map        = var.url_map
+  create_url_map = var.url_map == null ? true : false
+
+  dynamic "backends" {
+    for_each = var.additional_backend_services
+    backends = {
+      default = {
+        groups = [
+          {
+            group = google_compute_region_network_endpoint_group.cloudrun_neg[count.index].id
+          },
+          {
+            group = each.value
+          }
+        ]
+
+        description             = "Backend for Cloud Run service"
+        enable_cdn              = false
+        custom_request_headers  = ["X-Client-Geo-Location: {client_region_subdivision}, {client_city}"]
+        custom_response_headers = ["X-Cache-Hit: {cdn_cache_status}"]
+
+        # Clour Armor security
+        security_policy = var.cloud_armor.enabled ? google_compute_security_policy.cloud_armor_policy[0].self_link : null
+
+        log_config = {
+          enable = false
         }
-      ]
-
-      description             = "Backend for Cloud Run service"
-      enable_cdn              = false
-      custom_request_headers  = ["X-Client-Geo-Location: {client_region_subdivision}, {client_city}"]
-      custom_response_headers = ["X-Cache-Hit: {cdn_cache_status}"]
-
-      # Clour Armor security
-      security_policy = var.cloud_armor.enabled ? google_compute_security_policy.cloud_armor_policy[0].self_link : null
-
-      log_config = {
-        enable = false
-      }
-      iap_config = {
-        enable = false
+        iap_config = {
+          enable = false
+        }
       }
     }
   }

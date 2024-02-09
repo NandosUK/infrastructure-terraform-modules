@@ -296,6 +296,18 @@ variable "enable_custom_domain" {
   default     = true
 }
 
+variable "url_map" {
+  description = "URL map to be used in the load balancer"
+  type        = string
+  default     = null
+}
+
+variable "additional_backend_services" {
+  description = "Additional backend services to be used in the load balancer"
+  type        = list(string)
+  default     = []
+}
+
 variable "startup_cpu_boost" {
   description = "CPU boost for the Cloud Run container"
   type        = bool
