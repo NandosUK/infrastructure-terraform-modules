@@ -209,7 +209,7 @@ module "lb-http" {
   https_redirect            = true # Enable HTTPS redirect
   random_certificate_suffix = true
 
-  url_map        = google_compute_url_map.https.self_link
+  url_map        = google_compute_url_map.custom_url_map_https.self_link
   create_url_map = var.create_url_map
 
   backends = merge(
