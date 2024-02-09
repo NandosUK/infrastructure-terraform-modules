@@ -210,7 +210,7 @@ module "lb-http" {
   random_certificate_suffix = true
 
   url_map        = var.url_map
-  create_url_map = var.url_map == null ? true : false
+  create_url_map = var.create_url_map
 
   backends = merge(
     {

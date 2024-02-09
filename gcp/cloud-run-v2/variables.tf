@@ -302,6 +302,12 @@ variable "url_map" {
   default     = null
 }
 
+variable "create_url_map" {
+  description = "Create a URL map for the load balancer"
+  type        = bool
+  default     = true
+}
+
 variable "additional_backend_services" {
   description = "Additional backend services to be used in the load balancer"
  type = map(object({
