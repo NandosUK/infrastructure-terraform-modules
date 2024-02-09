@@ -214,7 +214,7 @@ module "lb-http" {
 
   backends = merge(
     {
-      "default" = merge(local.default_backend_service, {
+      "default" = merge(local.default_backend_config, {
         groups = [
           {
             group = google_compute_region_network_endpoint_group.cloudrun_neg[0].id
@@ -224,7 +224,7 @@ module "lb-http" {
       })
     },
     { for key, value in var.additional_backend_services :
-      key => merge(local.default_backend_service, {
+      key => merge(local.default_backend_config, {
         groups = [
           {
             group = value.group
