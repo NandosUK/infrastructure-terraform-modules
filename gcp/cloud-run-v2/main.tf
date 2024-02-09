@@ -254,10 +254,14 @@ resource "google_compute_url_map" "custom_url_map_https" {
       content {
         paths   = length(path_rule.value.paths)  > 0 ? path_rule.value.paths : ["/*"]
         service = path_rule.value.service_name != null ? module.lb-http[0].backend_services["${path_rule.value.service_name}"].self_link : module.lb-http[0].backend_services["default"].self_link
-        route_action {
-          url_rewrite {
-            path_prefix_rewrite = path_rule.value.route_action.url_rewrite.path_prefix_rewrite != null ? path_rule.value.route_action.url_rewrite.path_prefix_rewrite : null
+        dynamic "route_action" {
+          for_each = path_rule.value.route_action != null ? [1] : []
+          content {
+            url_rewrite {
+              path_prefix_rewrite = path_rule.value.route_action.url_rewrite.path_prefix_rewrite != null ? path_rule.value.route_action.url_rewrite.path_prefix_rewrite : null
+            }
           }
+          
         }
       }
     }
