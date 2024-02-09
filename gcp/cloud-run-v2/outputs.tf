@@ -13,7 +13,9 @@ output "external_ip" {
   value       = length(module.lb-http) > 0 ? module.lb-http[0].external_ip : null
 }
 
-output "default_backend_self_link" {
-  description = ""
-  value       = length(module.lb-http) > 0 ? module.lb-http[0].backend_services["default"].self_link : null
+output "default_backend_self_links" {
+  description = "Self links of default backend services"
+  value = {
+    for key, value in additional_backend_services : key => length(module.lb-http) > 0 ? module.lb-http[0].backend_services["${key}"].self_link : null
+  }
 }
