@@ -5,6 +5,18 @@ data "google_project" "current" {
 locals {
   cloud_armor_rules = var.cloud_armor.enabled ? yamldecode(file(var.cloud_armor.rules_file_path)) : []
   domain            = var.custom_domain != null ? var.custom_domain : var.environment == "prod" ? "${var.name}.${var.domain_host}" : var.environment == "preview" ? "${var.name}-preview.${var.domain_host}" : "${var.name}-preprod.${var.domain_host}"
+  default_backend_config = {
+    description             = "Backend for Cloud Run service"
+    enable_cdn              = false
+    custom_request_headers  = ["X-Client-Geo-Location: {client_region_subdivision}, {client_city}"]
+    custom_response_headers = ["X-Cache-Hit: {cdn_cache_status}"]
+    log_config = {
+      enable = false
+    }
+    iap_config = {
+      enable = false
+    }
+  }
 }
 
 # Resource configuration for deploying a Google Cloud Run service
@@ -202,7 +214,7 @@ module "lb-http" {
 
   backends = merge(
     {
-      "default" = merge(var.default_backend_service, {
+      "default" = merge(local.default_backend_service, {
         groups = [
           {
             group = google_compute_region_network_endpoint_group.cloudrun_neg[0].id
@@ -212,7 +224,7 @@ module "lb-http" {
       })
     },
     { for key, value in var.additional_backend_services :
-      key => merge(var.default_backend_service, {
+      key => merge(local.default_backend_service, {
         groups = [
           {
             group = value.group
