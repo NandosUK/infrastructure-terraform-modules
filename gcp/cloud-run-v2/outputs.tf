@@ -15,5 +15,5 @@ output "external_ip" {
 
 output "default_backend_self_link" {
   description = ""
-  value       = length(module.lb-http) > 0 ? module.lb-http["default"].self_link : null
+  value       = length(module.lb-http) > 0 ? module.lb-http.backend_services["default"].self_link : null
 }
