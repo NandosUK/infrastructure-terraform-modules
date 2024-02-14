@@ -236,6 +236,7 @@ module "lb-http" {
   )
 }
 
+# Custom URL maps for https load balancer
 resource "google_compute_url_map" "custom_url_map_https" {
   count           = var.create_url_map == false ? 1 : 0
   name            = "${var.name}-https-urlmap"
@@ -265,11 +266,6 @@ resource "google_compute_url_map" "custom_url_map_https" {
         }
       }
     }
-  }
-  test {
-    service = module.lb-http[0].backend_services["default"].self_link
-    host    = local.domain
-    path    = "/="
   }
 }
 
