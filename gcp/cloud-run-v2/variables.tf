@@ -296,6 +296,36 @@ variable "enable_custom_domain" {
   default     = true
 }
 
+variable "create_url_map" {
+  description = "Create a URL map for the load balancer. If false, the URL map must be created manually"
+  type        = bool
+  default     = true
+}
+
+
+variable "additional_backend_services" {
+  description = "Additional backend services to be used in the load balancer"
+  type = map(object({
+    group       = string
+    cloud_armor = bool
+  }))
+  default = {}
+}
+
+variable "path_rules" {
+  description = "Custon path rules for the load balancer"
+type = list(object({
+    paths   = list(string)
+    service_name = string
+    route_action = optional(object({
+        url_rewrite = optional(object({
+            path_prefix_rewrite = string
+        }))
+    }))
+}))
+  default = null
+}
+
 variable "startup_cpu_boost" {
   description = "CPU boost for the Cloud Run container"
   type        = bool
