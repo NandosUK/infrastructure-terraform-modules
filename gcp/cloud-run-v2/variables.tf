@@ -129,7 +129,7 @@ variable "secrets" {
 # Startup probe
 variable "startup_probe_initial_delay" {
   description = "Initial delay seconds for the startup probe"
-  default     = 20
+  default     = 0
 }
 
 variable "startup_probe_timeout" {
@@ -165,17 +165,17 @@ variable "liveness_probe_initial_delay" {
 
 variable "liveness_probe_timeout" {
   description = "Timeout seconds for the liveness probe"
-  default     = 5
+  default     = 1
 }
 
 variable "liveness_probe_period" {
   description = "Period seconds for the liveness probe"
-  default     = 60
+  default     = 3
 }
 
 variable "liveness_probe_failure_threshold" {
   description = "Failure threshold for the liveness probe"
-  default     = 3
+  default     = 1
 }
 
 variable "liveness_probe_path" {
