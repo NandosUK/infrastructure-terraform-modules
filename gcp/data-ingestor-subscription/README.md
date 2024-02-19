@@ -7,7 +7,7 @@ Make sure you add permissions to the relevant service accounts permission
 
 Example:
 
-https://github.com/NandosUK/data-ingestor/blob/main/services/schemas/tables/raw_restaurant_operations/restaurant_admin_api_events.ts
+https://github.com/NandosUK/data-ingestor/blob/main/services/schemas/tables/raw_restaurant_operations/restaurant_admin_api_events.ts#L7
 
 ## Example usage:
 
