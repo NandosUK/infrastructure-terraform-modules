@@ -4,10 +4,13 @@ locals {
 }
 
 
-resource "google_pubsub_subscription" "pubsub_push_subscription" {
-  name                 = "${var.name}-subscription"
-  topic                = local.topic_name
-  ack_deadline_seconds = 20
+resource "google_pubsub_subscription" "pubsub_subscription" {
+  name                       = "${var.name}-subscription"
+  topic                      = local.topic_name
+  ack_deadline_seconds       = var.ack_deadline_seconds
+  message_retention_duration = var.message_retention_duration
+  retain_acked_messages      = var.retain_acked_messages
+  enable_message_ordering    = var.enable_message_ordering
 
   labels = {
     info        = "terraform-managed-subscription"
@@ -15,18 +18,21 @@ resource "google_pubsub_subscription" "pubsub_push_subscription" {
     name        = var.name
   }
 
-  push_config {
-    push_endpoint = var.push_endpoint
+  dynamic "push_config" {
+    for_each = var.subscription_type == "push" ? [1] : []
+    content {
+      push_endpoint = var.push_endpoint
 
-    attributes = {
-      x-goog-version = "v1"
-      environment    = var.environment
-      service        = "data-ingestor"
-    }
+      attributes = {
+        x-goog-version = "v1"
+        environment    = var.environment
+        service        = "data-ingestor"
+      }
 
-    oidc_token {
-      service_account_email = var.service_account_email
-      audience              = var.audience
+      oidc_token {
+        service_account_email = var.service_account_email
+        audience              = var.audience
+      }
     }
   }
 }
