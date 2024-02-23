@@ -40,8 +40,20 @@ resource "google_cloud_run_v2_service" "default" {
         timeout_seconds       = var.startup_probe_timeout
         period_seconds        = var.startup_probe_period
         failure_threshold     = var.startup_probe_failure_threshold
-        tcp_socket {
-          port = var.startup_probe_port
+
+        dynamic "http_get" {
+          for_each = var.startup_probe_path != null ? [1] : []
+          content {
+            path = var.startup_probe_path
+            port = var.startup_probe_port
+          }
+        }
+
+        dynamic "tcp_socket" {
+          for_each = var.startup_probe_path == null ? [1] : []
+          content {
+            port = var.startup_probe_port
+          }
         }
       }
 
@@ -209,7 +221,7 @@ module "lb-http" {
   https_redirect            = true # Enable HTTPS redirect
   random_certificate_suffix = true
 
-  url_map        = var.create_url_map == false? google_compute_url_map.custom_url_map_https[count.index].self_link : null
+  url_map        = var.create_url_map == false ? google_compute_url_map.custom_url_map_https[count.index].self_link : null
   create_url_map = var.create_url_map
 
   backends = merge(
@@ -253,7 +265,7 @@ resource "google_compute_url_map" "custom_url_map_https" {
     dynamic "path_rule" {
       for_each = var.path_rules
       content {
-        paths   = length(path_rule.value.paths)  > 0 ? path_rule.value.paths : ["/*"]
+        paths   = length(path_rule.value.paths) > 0 ? path_rule.value.paths : ["/*"]
         service = path_rule.value.service_name != null ? module.lb-http[0].backend_services["${path_rule.value.service_name}"].self_link : module.lb-http[0].backend_services["default"].self_link
         dynamic "route_action" {
           for_each = path_rule.value.route_action != null ? [1] : []
@@ -262,7 +274,7 @@ resource "google_compute_url_map" "custom_url_map_https" {
               path_prefix_rewrite = path_rule.value.route_action.url_rewrite.path_prefix_rewrite != null ? path_rule.value.route_action.url_rewrite.path_prefix_rewrite : null
             }
           }
-          
+
         }
       }
     }

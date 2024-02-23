@@ -157,6 +157,11 @@ variable "startup_probe_port" {
   default     = 8080
 }
 
+variable "startup_probe_path" {
+  description = "Path for the startup probe"
+  default     = null
+}
+
 # Liveness probe
 variable "liveness_probe_initial_delay" {
   description = "Initial delay seconds for the liveness probe"
@@ -314,15 +319,15 @@ variable "additional_backend_services" {
 
 variable "path_rules" {
   description = "Custon path rules for the load balancer"
-type = list(object({
-    paths   = list(string)
+  type = list(object({
+    paths        = list(string)
     service_name = string
     route_action = optional(object({
-        url_rewrite = optional(object({
-            path_prefix_rewrite = string
-        }))
+      url_rewrite = optional(object({
+        path_prefix_rewrite = string
+      }))
     }))
-}))
+  }))
   default = null
 }
 
