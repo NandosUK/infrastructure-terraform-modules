@@ -89,6 +89,7 @@ module "trigger_provision" {
     _SERVICE_PATH             = var.service_path
     _LOCATION                 = var.project_region
     _SERVICE_ACCOUNT          = var.cloud_run_service_account
+    _JOB_NAME                 = local.job_name
     },
     var.trigger_substitutions
   )
