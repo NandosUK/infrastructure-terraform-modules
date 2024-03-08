@@ -16,7 +16,7 @@ resource "google_cloud_run_v2_job" "default" {
       max_retries     = var.max_retries
       service_account = var.cloud_run_service_account
       containers {
-        image = "us-docker.pkg.dev/cloudrun/container/job:latest"
+        image = coalesce(var.image, "us-docker.pkg.dev/cloudrun/container/job:latest")
 
         resources {
           limits = {
@@ -104,4 +104,28 @@ module "cloud_run_alerts" {
   alignment_period      = var.alert_config.alignment_period
   auto_close            = var.alert_config.auto_close
   notification_channels = var.alert_config.notification_channels
+}
+
+resource "google_cloud_scheduler_job" "scheduler_job" {
+  count            = var.enable_scheduler ? 1 : 0
+  provider         = google-beta
+  name             = var.scheduler_job_name
+  description      = "Scheduled job for triggering Cloud Run job: ${local.job_name}"
+  schedule         = var.schedule
+  attempt_deadline = var.attempt_deadline
+  region           = var.project_region
+  project          = var.project_id
+
+  retry_config {
+    retry_count = var.retry_count
+  }
+
+  http_target {
+    http_method = var.http_method
+    uri         = "https://${var.project_region}-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/${data.google_project.current.number}/jobs/${local.job_name}:run"
+
+    oauth_token {
+      service_account_email = var.cloud_run_service_account
+    }
+  }
 }

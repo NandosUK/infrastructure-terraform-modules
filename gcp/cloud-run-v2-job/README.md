@@ -2,10 +2,6 @@
 
 This updated Terraform module is designed for deploying jobs to Google Cloud Run, adapting the versatility and ease of deploying services to the specific needs of job execution in a serverless environment. It extends the capabilities of Google Cloud Run services to jobs, allowing for scheduled tasks, batch processing, and one-off executions with the same level of configurability and scalability. Deploy your Cloud Run jobs efficiently and manage them seamlessly within the Google Cloud ecosystem.
 
-## Branching Strategy
-
-[Details about the branching strategy](https://chat.openai.com/cloud-cloudbuild-trigger/README.md)
-
 ## Features
 
 ### Google Cloud Run Job
@@ -53,4 +49,4 @@ For a practical demonstration of using this module to deploy Cloud Run jobs, ref
 
 Example of use:
 
-[test/gcp/cloud-run-job-v2.tf](https://chat.openai.com/test/gcp/cloud-run-job-v2.tf)
+[test/gcp/cloud-run-job-v2.tf](../../test/gcp/cloud-run-job-v2.tf)

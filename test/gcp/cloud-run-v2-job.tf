@@ -44,3 +44,23 @@ module "cloud-run-api-my-awesome-job" {
     "path/to/dependency2"
   ]
 }
+
+module "cloud_run_job_example" {
+  source = "../../gcp/cloud-run-v2-job"
+
+  project_id                = "mgt-build-56d2ff6b"
+  name                      = "example-job"
+  project_region            = "us-central1"
+  cloud_run_service_account = "your-invoker-sa@your-project-id.iam.gserviceaccount.com"
+  environment               = "dev"
+  artifact_repository       = "your-artifact-repository-url"
+  repository_name           = "your-repository-name"
+  service_path              = "path/to/service"
+  enable_scheduler          = true # Set this to true to enable scheduling
+  schedule                  = "*/30 * * * *"
+  attempt_deadline          = "320s"
+  scheduler_job_name        = "example-scheduler-job"
+  http_method               = "POST"
+  retry_count               = 3
+  // Additional variables as required...
+}
