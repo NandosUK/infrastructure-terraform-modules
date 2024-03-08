@@ -150,17 +150,6 @@ variable "attempt_deadline" {
   default     = "360s"
 }
 
-variable "scheduler_job_name" {
-  description = "The name of the scheduler job, must be unique within the project."
-  type        = string
-  default     = "schedule-job"
-}
-
-variable "http_method" {
-  description = "The HTTP method to use for the scheduler job when calling the Cloud Run job. Typically 'POST'."
-  type        = string
-  default     = "POST"
-}
 
 variable "retry_count" {
   description = "The number of times to retry the execution of the job if the previous execution fails."
