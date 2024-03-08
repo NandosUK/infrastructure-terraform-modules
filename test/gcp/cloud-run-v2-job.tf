@@ -59,8 +59,6 @@ module "cloud_run_job_example" {
   enable_scheduler          = true # Set this to true to enable scheduling
   schedule                  = "*/30 * * * *"
   attempt_deadline          = "320s"
-  scheduler_job_name        = "example-scheduler-job"
-  http_method               = "POST"
   retry_count               = 3
   // Additional variables as required...
 }
