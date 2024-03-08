@@ -60,6 +60,12 @@ variable "env_vars" {
   default     = {}
 }
 
+variable "image" {
+  description = "The container image to run."
+  type        = string
+  default     = "us-docker.pkg.dev/cloudrun/container/job:latest"
+}
+
 variable "secrets" {
   description = "List of secret names from Secret Manager."
   type        = list(string)

@@ -16,7 +16,7 @@ resource "google_cloud_run_v2_job" "default" {
       max_retries     = var.max_retries
       service_account = var.cloud_run_service_account
       containers {
-        image = coalesce(var.image, "us-docker.pkg.dev/cloudrun/container/job:latest")
+        image = var.image
 
         resources {
           limits = {
