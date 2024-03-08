@@ -1,8 +1,6 @@
-# Updated Terraform Google Cloud Run Module README
+# Overview
 
-## Overview
-
-This updated Terraform module provides a comprehensive set of reusable configurations for deploying services to Google Cloud Run. It extends the previous version by incorporating new variables like Cloud Armor for security, advanced probe settings, and more. Deploy your Cloud Run services easily and make them available on `https://MY_SERVICE.api.nandos.dev`.
+This Terraform module provides a comprehensive set of reusable configurations for deploying services to Google Cloud Run service / api. It extends the previous version by incorporating new variables like Cloud Armor for security, advanced probe settings, and more. Deploy your Cloud Run services easily and make them available on `https://MY_SERVICE.api.nandos.dev`.
 
 ## Branching Strategy
 
