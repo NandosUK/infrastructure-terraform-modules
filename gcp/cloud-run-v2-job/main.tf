@@ -109,7 +109,7 @@ module "cloud_run_alerts" {
 resource "google_cloud_scheduler_job" "scheduler_job" {
   count            = var.enable_scheduler ? 1 : 0
   provider         = google-beta
-  name             = var.scheduler_job_name
+  name             = "${local.job_name}-scheduler"
   description      = "Scheduled job for triggering Cloud Run job: ${local.job_name}"
   schedule         = var.schedule
   attempt_deadline = var.attempt_deadline
@@ -121,7 +121,7 @@ resource "google_cloud_scheduler_job" "scheduler_job" {
   }
 
   http_target {
-    http_method = var.http_method
+    http_method = "POST"
     uri         = "https://${var.project_region}-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/${data.google_project.current.number}/jobs/${local.job_name}:run"
 
     oauth_token {
