@@ -129,4 +129,9 @@ resource "google_cloud_scheduler_job" "scheduler_job" {
       service_account_email = var.cloud_run_service_account
     }
   }
+  lifecycle {
+    ignore_changes = [
+      paused,
+    ]
+  }
 }
