@@ -3,10 +3,6 @@ variable "name" {
   description = "Name of the SFTP server"
 }
 
-variable "google_storage_bucket" {
-  type        = string
-  description = "Name of your Google Storage bucket"
-}
 
 variable "project" {
   type        = string
@@ -34,7 +30,7 @@ variable "zone" {
 variable "machine_type" {
   type        = string
   description = "Machine type of your VM"
-  default     = "e2-small"
+  default     = "e2-medium"
 }
 
 variable "ssh-keys" {
@@ -43,13 +39,9 @@ variable "ssh-keys" {
   default     = null
 }
 
-variable "source_ranges" {
-  type        = list(string)
-  description = "Source IP range"
-  default     = []
+variable "whitelisted_ips" {
+  type = list(string)
+  description = "list of ip addresses to whitelist"
+  default = ["*"]
 }
 
-variable "domain" {
-  type        = string
-  description = "Domain name to map to the server"
-}
