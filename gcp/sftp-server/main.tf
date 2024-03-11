@@ -208,6 +208,7 @@ module "cloud-nat" {
 
 resource "google_compute_security_policy" "sftp" {
   name = "unit4"
+  count = var.enable_whitelist ? 1 : 0
 
   rule {
     action   = "allow"
@@ -218,7 +219,7 @@ resource "google_compute_security_policy" "sftp" {
         src_ip_ranges = var.whitelisted_ips
       }
     }
-    description = "Allow Unit 4 IP addresses"
+    description = "Allow IP addresses"
   }
 
   rule {
