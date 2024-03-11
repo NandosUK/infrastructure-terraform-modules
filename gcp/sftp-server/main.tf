@@ -101,7 +101,7 @@ resource "google_compute_backend_service" "https" {
     balancing_mode  = "CONNECTION"
     max_connections = 10
   }
-  security_policy = google_compute_security_policy.sftp.name
+  security_policy = google_compute_security_policy[0].sftp.name
 }
 
 resource "google_compute_backend_service" "sftp" {
@@ -117,7 +117,7 @@ resource "google_compute_backend_service" "sftp" {
     balancing_mode  = "CONNECTION"
     max_connections = 10
   }
-  security_policy = google_compute_security_policy.sftp.name
+  security_policy = google_compute_security_policy[0].sftp.name
 }
 
 
