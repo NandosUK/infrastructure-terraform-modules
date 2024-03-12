@@ -58,14 +58,12 @@ resource "google_cloud_run_v2_job" "default" {
   }
 }
 
-
-resource "google_project_iam_binding" "sa_run_invoke" {
+resource "google_project_iam_member" "sa_run_invoke" {
   count   = var.cloud_run_service_account == null ? 0 : 1
   project = var.project_id
-  role    = "roles/run.invoker"
-  members = ["serviceAccount:${var.cloud_run_service_account}"]
+  role    = "roles/iam.serviceAccountTokenCreator"
+  member  = "serviceAccount:${var.cloud_run_service_account}"
 }
-
 
 # Cloud Build trigger configuration
 module "trigger_provision" {

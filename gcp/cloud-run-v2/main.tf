@@ -305,22 +305,18 @@ resource "google_eventarc_trigger" "default" {
   }
 }
 
-resource "google_project_iam_binding" "eventarc_cloud_run" {
+resource "google_project_iam_member" "eventarc_cloud_run" {
+  count   = length(var.eventarc_triggers) > 0 && var.cloud_run_service_account != null && var.cloud_run_service_account != "" ? 1 : 0
   project = var.project_id
   role    = "roles/eventarc.eventReceiver"
-
-  members = length(var.eventarc_triggers) > 0 && var.cloud_run_service_account != null && var.cloud_run_service_account != "" ? ["serviceAccount:${var.cloud_run_service_account}"] : []
+  member  = "serviceAccount:${var.cloud_run_service_account}"
 }
 
 
-resource "google_project_iam_binding" "eventarc_pubsub" {
-  count   = length(var.eventarc_triggers) > 0 ? 1 : 0
+resource "google_project_iam_member" "eventarc_pubsub" {
   project = var.project_id
   role    = "roles/iam.serviceAccountTokenCreator"
-
-  members = [
-    "serviceAccount:service-${data.google_project.current.number}@gcp-sa-pubsub.iam.gserviceaccount.com"
-  ]
+  member  = "serviceAccount:service-${data.google_project.current.number}@gcp-sa-pubsub.iam.gserviceaccount.com"
 }
 
 # Cloud Build trigger configuration
