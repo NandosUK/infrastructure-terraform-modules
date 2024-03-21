@@ -18,9 +18,8 @@ variable "project_region" {
 }
 
 variable "cloud_run_service_account" {
-  description = "(Optional) The service account that will be used as role/invoker."
+  description = "The service account email that will be used as role/invoker."
   type        = string
-  default     = null
 }
 
 variable "environment" {
