@@ -1,17 +1,9 @@
 locals {
-  image = "thorn-technologies-public/sftpgw-3-4-4-1694633054"
-  tags  = ["sftp-instance"]
-  # https://cloud.google.com/load-balancing/docs/health-check-concepts#ip-ranges
+  image                = "thorn-technologies-public/sftpgw-3-4-6-1702847260"
+  tags                 = ["sftp-instance"]
+  gcp_iap_ip           = "35.235.240.0/20"
   gcp_healthcheck_ip_1 = "130.211.0.0/22"
   gcp_healthcheck_ip_2 = "35.191.0.0/16"
-  # https://cloud.google.com/iap/docs/using-tcp-forwarding
-  gcp_iap_ip = "35.235.240.0/20"
-}
-
-resource "google_storage_bucket" "bucket" {
-  name     = "${var.google_storage_bucket}-${var.project}"
-  location = var.region
-  project  = var.project
 }
 
 resource "google_compute_network" "vpc_network" {
@@ -32,12 +24,13 @@ resource "google_project_iam_member" "sftpuser" {
   role     = each.key
 }
 
-resource "google_compute_instance" "default" {
+
+resource "google_compute_instance" "sftp" {
   project      = var.project
   name         = var.name
   zone         = var.zone
   machine_type = var.machine_type
-  tags         = local.tags
+  tags         = ["http-server", "https-server", "lb-health-check", "sftp-instance"]
   boot_disk {
     initialize_params {
       image = local.image
@@ -63,92 +56,105 @@ resource "google_compute_global_address" "default" {
   project = var.project
 }
 
-module "load-balancer-sftp" {
-  source                  = "../load-balancer"
-  project                 = var.project
-  zone                    = var.zone
-  name                    = "${var.name}-sftp"
-  port                    = 22
-  google_compute_instance = google_compute_instance.default.self_link
-  ip_address              = google_compute_global_address.default.address
-}
-
-# openssh access to the VM
-# but you probably don't need ssh access to the vm
-# module "load-balancer-ssh" {
-#   source                  = "../load-balancer"
-#   project                 = var.project
-#   zone                    = var.zone
-#   name                    = "${var.name}-ssh"
-#   port                    = 2222
-#   google_compute_instance = google_compute_instance.default.self_link
-#   ip_address              = google_compute_global_address.default.address
-# }
-
-resource "google_compute_instance_group" "http" {
-  name        = "http-ig"
+resource "google_compute_instance_group" "sftp_group" {
+  name        = "sftp"
   project     = var.project
   zone        = var.zone
-  description = "Instance group for port 80/443"
-  instances   = [google_compute_instance.default.self_link]
+  description = "Instance group for port 22/443"
+  instances   = [google_compute_instance.sftp.self_link]
 
   named_port {
-    name = "tcp-port-80"
-    port = 80
+    name = "sftp"
+    port = 22
   }
-
   named_port {
-    name = "tcp-port-443"
+    name = "https"
     port = 443
   }
 }
 
-# HTTP/HTTPS load balancer w/ SSL
-module "lb-http" {
-  source  = "GoogleCloudPlatform/lb-http/google//modules/serverless_negs"
-  project = var.project
-  name    = "${var.name}-lb"
-  version = "~> 9.0"
-
-  # SSL and domain configuration
-  managed_ssl_certificate_domains = [var.environment == "prod" ? var.domain : "${var.environment}.${var.domain}"]
-
-  ssl                       = true
-  https_redirect            = true # Enable HTTPS redirect
-  random_certificate_suffix = true
-
-  # Use the same IP as 22/2222 ports
-  create_address = false
-  address        = google_compute_global_address.default.address
-
-  backends = {
-    default = {
-      groups = [
-        {
-          group = google_compute_instance_group.http.self_link
-        }
-      ]
-
-      description             = "Backend for SFTP Server"
-      enable_cdn              = false
-      custom_request_headers  = ["X-Client-Geo-Location: {client_region_subdivision}, {client_city}"]
-      custom_response_headers = ["X-Cache-Hit: {cdn_cache_status}"]
-
-      log_config = {
-        enable = false
-      }
-      iap_config = {
-        enable = false
-      }
-      health_check = {
-        request_path = "/"
-        port         = 80
-      }
-    }
+resource "google_compute_health_check" "default" {
+  name                = "${var.name}-health"
+  timeout_sec         = 1
+  check_interval_sec  = 120
+  healthy_threshold   = 1
+  unhealthy_threshold = 2
+  project             = var.project
+  tcp_health_check {
+    port = 22
+  }
+  log_config {
+    enable = true
   }
 }
 
-resource "google_compute_firewall" "default" {
+resource "google_compute_backend_service" "https" {
+  name                  = "${var.name}-backend-https"
+  project               = var.project
+  protocol              = "TCP"
+  port_name             = "https"
+  load_balancing_scheme = "EXTERNAL"
+  timeout_sec           = 10
+  health_checks         = [google_compute_health_check.default.id]
+  backend {
+    group           = google_compute_instance_group.sftp_group.self_link
+    balancing_mode  = "CONNECTION"
+    max_connections = 10
+  }
+  security_policy = var.enable_whitelist ? google_compute_security_policy.sftp[0].name : ""
+}
+
+resource "google_compute_backend_service" "sftp" {
+  name                  = "${var.name}-backend-sftp"
+  project               = var.project
+  protocol              = "TCP"
+  port_name             = "sftp"
+  load_balancing_scheme = "EXTERNAL"
+  timeout_sec           = 120
+  health_checks         = [google_compute_health_check.default.id]
+  backend {
+    group           = google_compute_instance_group.sftp_group.self_link
+    balancing_mode  = "CONNECTION"
+    max_connections = 10
+  }
+  security_policy = var.enable_whitelist ? google_compute_security_policy.sftp[0].name : ""
+}
+
+
+resource "google_compute_target_tcp_proxy" "https" {
+  name            = "${var.name}-proxy"
+  project         = var.project
+  backend_service = google_compute_backend_service.https.id
+}
+
+resource "google_compute_target_tcp_proxy" "sftp" {
+  name            = "${var.name}-sftp-proxy"
+  project         = var.project
+  backend_service = google_compute_backend_service.sftp.id
+}
+
+resource "google_compute_global_forwarding_rule" "sftp-forward" {
+  name                  = "${var.name}-sftp-fwd"
+  project               = var.project
+  ip_protocol           = "TCP"
+  load_balancing_scheme = "EXTERNAL"
+  port_range            = 22
+  target                = google_compute_target_tcp_proxy.sftp.id
+  ip_address            = google_compute_global_address.default.address
+}
+
+resource "google_compute_global_forwarding_rule" "https-forward" {
+  name                  = "${var.name}-https-fwd"
+  project               = var.project
+  ip_protocol           = "TCP"
+  load_balancing_scheme = "EXTERNAL"
+  port_range            = 443
+  target                = google_compute_target_tcp_proxy.https.id
+  ip_address            = google_compute_global_address.default.address
+}
+
+
+resource "google_compute_firewall" "ingress" {
   name        = "${var.name}-fw"
   project     = var.project
   network     = google_compute_network.vpc_network.name
@@ -156,10 +162,9 @@ resource "google_compute_firewall" "default" {
   direction   = "INGRESS"
   allow {
     protocol = "tcp"
-    ports    = ["80", "443", "22"]
+    ports    = ["443", "22"]
   }
   source_ranges = concat(
-    var.source_ranges,
     [
       local.gcp_healthcheck_ip_1,
       local.gcp_healthcheck_ip_2,
@@ -167,6 +172,7 @@ resource "google_compute_firewall" "default" {
       google_compute_global_address.default.address,
     ]
   )
+
 }
 
 resource "google_compute_firewall" "egress" {
@@ -183,7 +189,7 @@ resource "google_compute_firewall" "egress" {
 }
 
 # router/NAT to allow egress traffic from sftp server without external IP
-resource "google_compute_router" "default" {
+resource "google_compute_router" "sftp" {
   project = var.project
   name    = "${var.name}-router"
   network = google_compute_network.vpc_network.name
@@ -195,7 +201,36 @@ module "cloud-nat" {
   version                            = "~> 5.0"
   project_id                         = var.project
   region                             = var.region
-  router                             = google_compute_router.default.name
+  router                             = google_compute_router.sftp.name
   name                               = "${var.name}-nat"
   source_subnetwork_ip_ranges_to_nat = "ALL_SUBNETWORKS_ALL_IP_RANGES"
+}
+
+resource "google_compute_security_policy" "sftp" {
+  name = "sftp"
+  count = var.enable_whitelist ? 1 : 0
+
+  rule {
+    action   = "allow"
+    priority = "1000"
+    match {
+      versioned_expr = "SRC_IPS_V1"
+      config {
+        src_ip_ranges = var.whitelisted_ips
+      }
+    }
+    description = "Allow IP addresses"
+  }
+
+  rule {
+    action   = "deny(403)"
+    priority = "2147483647"
+    match {
+      versioned_expr = "SRC_IPS_V1"
+      config {
+        src_ip_ranges = ["*"]
+      }
+    }
+    description = "Default deny access to all IPs"
+  }
 }
