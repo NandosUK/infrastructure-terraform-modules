@@ -99,7 +99,7 @@ resource "google_cloudfunctions2_function" "function" {
   }
 
   dynamic "event_trigger" {
-    for_each = is_generic_event_type ? [var.event_trigger] : []
+    for_each = local.is_generic_event_type ? [var.event_trigger] : []
     content {
       trigger_region        = var.region
       event_type            = event_trigger.value["event_type"]
