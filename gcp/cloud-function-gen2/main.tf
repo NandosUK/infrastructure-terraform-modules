@@ -29,6 +29,8 @@ locals {
       default_runtime              = "go116"
     }
   }[var.function_type]
+
+  is_generic_event_type = var.event_type != "PUBSUB" && var.event_type != "STORAGE"
 }
 
 /******************************************
@@ -97,7 +99,7 @@ resource "google_cloudfunctions2_function" "function" {
   }
 
   dynamic "event_trigger" {
-    for_each = var.event_trigger != null ? [var.event_trigger] : []
+    for_each = local.is_generic_event_type ? [var.event_trigger] : []
     content {
       trigger_region        = var.region
       event_type            = event_trigger.value["event_type"]
