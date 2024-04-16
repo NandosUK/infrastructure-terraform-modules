@@ -5,7 +5,7 @@ variable "function_description" {}
 // Overrides the default path of services/{service name}/functions/{function name}
 variable "function_path" {
   description = "Path to the function, if not provided, it will be generated based on the function name"
-  default = ""
+  default     = ""
 }
 variable "service_name" {
   description = "Name of the service wrapping this function (you must have functions folder in it)"
@@ -87,18 +87,20 @@ variable "event_type" {
 
 variable "event_trigger" {
   description = "List of event triggers"
-  type =  object({
+  type = object({
     trigger_region        = string
     event_type            = string
     retry_policy          = string
     service_account_email = string
-    event_filters = list(object({
-      attribute       = string
-      value           = string
-      operator        = optional(string)
-    }))
+    bucket_name           = optional(string)
+    pubsub_topic          = optional(string)
+    event_filters = optional(list(object({
+      attribute = string
+      value     = string
+      operator  = optional(string)
+    })))
   })
-  default     = null
+  default = null
 }
 
 variable "schedule" {

@@ -107,9 +107,9 @@ resource "google_cloudfunctions2_function" "function" {
         for_each = event_trigger.value["event_filters"]
 
         content {
-          attribute       = event_filters.value["attribute"]
-          value           = event_filters.value["value"]
-          operator        = event_filters.value["operator"]
+          attribute = event_filters.value["attribute"]
+          value     = event_filters.value["value"]
+          operator  = event_filters.value["operator"]
         }
       }
     }
