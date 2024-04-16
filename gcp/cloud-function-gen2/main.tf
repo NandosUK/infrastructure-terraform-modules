@@ -97,7 +97,7 @@ resource "google_cloudfunctions2_function" "function" {
   }
 
   dynamic "event_trigger" {
-    for_each = var.event_trigger != null ? [var.event_trigger] : []
+    for_each = var.event_type == "EVENTARC" ? [var.event_trigger] : []
     content {
       trigger_region        = var.region
       event_type            = event_trigger.value["event_type"]
@@ -107,9 +107,9 @@ resource "google_cloudfunctions2_function" "function" {
         for_each = event_trigger.value["event_filters"]
 
         content {
-          attribute       = event_filters.value["attribute"]
-          value           = event_filters.value["value"]
-          operator        = event_filters.value["operator"]
+          attribute = event_filters.value["attribute"]
+          value     = event_filters.value["value"]
+          operator  = event_filters.value["operator"]
         }
       }
     }
