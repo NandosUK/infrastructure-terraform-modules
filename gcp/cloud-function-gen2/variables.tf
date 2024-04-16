@@ -88,7 +88,6 @@ variable "event_type" {
 variable "event_trigger" {
   description = "List of event triggers"
   type = object({
-    trigger_region        = string
     event_type            = string
     retry_policy          = string
     service_account_email = string
