@@ -342,3 +342,9 @@ variable "cpu_idle" {
   type        = bool
   default     = true
 }
+
+variable "enable_lb_logging" {
+  description = "Enable logging for the load balancer"
+  type        = bool
+  default     = false
+}
