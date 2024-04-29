@@ -11,7 +11,8 @@ locals {
     custom_request_headers  = ["X-Client-Geo-Location: {client_region_subdivision}, {client_city}"]
     custom_response_headers = ["X-Cache-Hit: {cdn_cache_status}"]
     log_config = {
-      enable = false
+      enable = var.enable_lb_logging
+      sample_rate = var.enable_lb_logging ? 1 : 0
     }
     iap_config = {
       enable = false
