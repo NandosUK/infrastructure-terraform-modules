@@ -284,7 +284,7 @@ resource "google_compute_url_map" "custom_url_map_https" {
 
 
 resource "google_project_iam_member" "eventarc_cloud_run" {
-  count   = length(var.eventarc_triggers) > 0 && var.cloud_run_service_account != null && var.cloud_run_service_account != "" ? 1 : 0
+  count   = length(var.eventarc_triggers) > 0 && var.cloud_run_service_account != null ? 1 : 0
   project = var.project_id
   role    = "roles/eventarc.eventReceiver"
   member  = "serviceAccount:${var.cloud_run_service_account}"
