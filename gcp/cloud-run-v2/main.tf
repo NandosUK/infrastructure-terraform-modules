@@ -282,6 +282,14 @@ resource "google_compute_url_map" "custom_url_map_https" {
   }
 }
 
+
+resource "google_project_iam_member" "eventarc_cloud_run" {
+  count   = length(var.eventarc_triggers) && var.cloud_run_service_account != null && var.cloud_run_service_account != "" > 0 ? 1 : 0
+  project = var.project_id
+  role    = "roles/eventarc.eventReceiver"
+  member  = "serviceAccount:${var.cloud_run_service_account}"
+}
+
 resource "google_eventarc_trigger" "default" {
   for_each = { for i, trigger in var.eventarc_triggers : i => trigger }
 
@@ -305,15 +313,6 @@ resource "google_eventarc_trigger" "default" {
     }
   }
 }
-
-resource "google_project_iam_member" "eventarc_cloud_run" {
-  count   = length(var.eventarc_triggers) && var.cloud_run_service_account != null && var.cloud_run_service_account != "" > 0 ? 1 : 0
-  project = var.project_id
-  role    = "roles/eventarc.eventReceiver"
-  member  = "serviceAccount:${var.cloud_run_service_account}"
-  depends_on = [ resource.google_eventarc_trigger.default ]
-}
-
 
 resource "google_project_iam_member" "eventarc_pubsub" {
   project = var.project_id
