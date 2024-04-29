@@ -3,6 +3,7 @@ data "google_project" "current" {
 }
 
 locals {
+  evenarc_count = length(var.eventarc_triggers) > 0 && var.cloud_run_service_account != null && var.cloud_run_service_account != "" ? 1 : 0
   cloud_armor_rules = var.cloud_armor.enabled ? yamldecode(file(var.cloud_armor.rules_file_path)) : []
   domain            = var.custom_domain != null ? var.custom_domain : var.environment == "prod" ? "${var.name}.${var.domain_host}" : var.environment == "preview" ? "${var.name}-preview.${var.domain_host}" : "${var.name}-preprod.${var.domain_host}"
   default_backend_config = {
@@ -284,7 +285,7 @@ resource "google_compute_url_map" "custom_url_map_https" {
 
 
 resource "google_project_iam_member" "eventarc_cloud_run" {
-  count   = length(var.eventarc_triggers) > 0 && var.cloud_run_service_account != null ? 1 : 0
+  count   = local.evenarc_count
   project = var.project_id
   role    = "roles/eventarc.eventReceiver"
   member  = "serviceAccount:${var.cloud_run_service_account}"
