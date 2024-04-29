@@ -286,7 +286,7 @@ variable "eventarc_triggers" {
       operator  = optional(string)
     }))
   }))
-  default = {}
+  default = []
 }
 
 variable "dependencies" {
