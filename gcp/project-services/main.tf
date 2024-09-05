@@ -10,6 +10,5 @@ resource "google_project_service" "active_services" {
     delete = var.timeouts_config.delete
   }
 
-
   disable_dependent_services = var.disable_dependent_services
 }
