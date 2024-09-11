@@ -11,6 +11,8 @@ resource "google_cloudbuild_trigger" "trigger_main" {
       invert_regex = var.branching_strategy[var.environment]["provision"]["invert_regex"]
     }
   }
+  service_account = var.trigger_service_account
+
   substitutions  = var.substitutions
   filename       = var.filename
   included_files = var.include

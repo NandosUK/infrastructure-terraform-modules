@@ -11,7 +11,7 @@ locals {
     custom_request_headers  = ["X-Client-Geo-Location: {client_region_subdivision}, {client_city}"]
     custom_response_headers = ["X-Cache-Hit: {cdn_cache_status}"]
     log_config = {
-      enable = var.enable_lb_logging
+      enable      = var.enable_lb_logging
       sample_rate = var.enable_lb_logging ? 1 : 0
     }
     iap_config = {
@@ -331,6 +331,8 @@ module "trigger_provision" {
   include         = concat(["${var.service_path}/**"], var.dependencies)
   exclude         = ["${var.service_path}/functions/**", "${var.service_path}/jobs/**"]
   environment     = var.environment
+
+  trigger_service_account = var.trigger_service_account
 
   # Substitution variables for Cloud Build Trigger
   substitutions = merge({
