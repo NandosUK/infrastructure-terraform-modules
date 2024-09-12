@@ -331,6 +331,7 @@ module "trigger_provision" {
   include         = concat(["${var.service_path}/**"], var.dependencies)
   exclude         = ["${var.service_path}/functions/**", "${var.service_path}/jobs/**"]
   environment     = var.environment
+  project_id      = var.project_id
 
   trigger_service_account = var.trigger_service_account
 

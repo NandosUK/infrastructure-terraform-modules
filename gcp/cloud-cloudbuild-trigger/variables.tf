@@ -139,3 +139,8 @@ variable "trigger_service_account" {
   description = "Service account to use for the Cloud Build trigger."
   default     = ""
 }
+
+variable "project_id" {
+  description = "The ID of the project in which the resource belongs."
+  type        = string
+}

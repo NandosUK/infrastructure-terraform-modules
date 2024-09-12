@@ -76,6 +76,7 @@ module "trigger_provision" {
   include         = concat(["${var.service_path}/**"], var.dependencies)
   exclude         = ["${var.service_path}/functions/**"]
   environment     = var.environment
+  project_id      = var.project_id
 
   # Substitution variables for Cloud Build Trigger
   substitutions = merge({

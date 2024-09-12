@@ -1,3 +1,6 @@
+data "google_project" "current" {
+  project_id = var.project_id
+}
 resource "google_cloudbuild_trigger" "trigger_main" {
   description = var.description
   tags        = var.tags
@@ -11,7 +14,7 @@ resource "google_cloudbuild_trigger" "trigger_main" {
       invert_regex = var.branching_strategy[var.environment]["provision"]["invert_regex"]
     }
   }
-  service_account = var.trigger_service_account
+  service_account = var.trigger_service_account !="" ? "projects/${data.google_project.current.project_id}/serviceAccounts/${var.trigger_service_account}" : null
 
   substitutions  = var.substitutions
   filename       = var.filename
