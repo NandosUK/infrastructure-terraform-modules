@@ -1,14 +1,15 @@
 module "cloud-run-api-my-awesome-api" {
-  source              = "../../gcp/cloud-run-v2"
-  project_id          = "mgt-build-56d2ff6b"
-  name                = "my-awesome-api"
-  project_region      = "europe-west2"
-  allow_public_access = true
-  create_trigger      = true
-  environment         = "preview"
-  repository_name     = "my-repo-in-github"
-  service_path        = "/services/my-awesome-api"
-  dependencies        = ["services/shared/**", "services/types/**"]
+  source                    = "../../gcp/cloud-run-v2"
+  project_id                = "mgt-build-56d2ff6b"
+  name                      = "my-awesome-api"
+  project_region            = "europe-west2"
+  allow_public_access       = true
+  create_trigger            = true
+  environment               = "preview"
+  repository_name           = "my-repo-in-github"
+  service_path              = "/services/my-awesome-api"
+  dependencies              = ["services/shared/**", "services/types/**"]
+  cloud_run_service_account = "example-service-account@example.iam.gserviceaccount.com"
 
   startup_probe_initial_delay  = 5
   liveness_probe_initial_delay = 10
