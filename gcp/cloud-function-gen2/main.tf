@@ -185,6 +185,7 @@ module "trigger_provision" {
   substitutions   = merge(local.default_substitution_vars, var.trigger_substitutions)
   environment     = var.environment
   repository_name = var.repository_name
+  project_id      = var.project_id
 }
 
 /******************************************
