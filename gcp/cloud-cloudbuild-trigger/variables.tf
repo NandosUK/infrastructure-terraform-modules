@@ -137,5 +137,5 @@ variable "disabled" {
 variable "trigger_service_account" {
   type        = string
   description = "Service account to use for the Cloud Build trigger."
-  default     = "None"
+  default     = ""
 }
