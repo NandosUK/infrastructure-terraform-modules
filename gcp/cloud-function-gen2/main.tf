@@ -175,17 +175,18 @@ resource "google_cloudfunctions_function_iam_member" "invoker" {
 	Triggers
  *****************************************/
 module "trigger_provision" {
-  name            = "function-${var.function_name}-provision"
-  description     = "Provision ${var.function_name} Service (CI/CD)"
-  source          = "../cloud-cloudbuild-trigger"
-  location        = var.location
-  filename        = var.function_path == "" ? "services/${var.service_name}/functions/${var.function_name}/cloudbuild.yaml" : "${var.function_path}/cloudbuild.yaml"
-  include         = var.function_path == "" ? ["services/${var.service_name}/functions/${var.function_name}/**"] : ["${var.function_path}/**"]
-  tags            = ["function"]
-  substitutions   = merge(local.default_substitution_vars, var.trigger_substitutions)
-  environment     = var.environment
-  repository_name = var.repository_name
-  project_id      = var.project_id
+  name                    = "function-${var.function_name}-provision"
+  description             = "Provision ${var.function_name} Service (CI/CD)"
+  source                  = "../cloud-cloudbuild-trigger"
+  trigger_service_account = var.trigger_service_account
+  location                = var.location
+  filename                = var.function_path == "" ? "services/${var.service_name}/functions/${var.function_name}/cloudbuild.yaml" : "${var.function_path}/cloudbuild.yaml"
+  include                 = var.function_path == "" ? ["services/${var.service_name}/functions/${var.function_name}/**"] : ["${var.function_path}/**"]
+  tags                    = ["function"]
+  substitutions           = merge(local.default_substitution_vars, var.trigger_substitutions)
+  environment             = var.environment
+  repository_name         = var.repository_name
+  project_id              = var.project_id
 }
 
 /******************************************
