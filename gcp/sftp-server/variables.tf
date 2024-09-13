@@ -34,15 +34,15 @@ variable "ssh-keys" {
 }
 
 variable "enable_whitelist" {
-  type = bool
+  type        = bool
   description = "enable or disable the whitelist"
-  default = false
+  default     = false
 
 }
 
 variable "whitelisted_ips" {
-  type = list(string)
+  type        = list(string)
   description = "list of ip addresses to whitelist"
-  default = ["*"]
+  default     = ["*"]
 }
 
