@@ -207,7 +207,7 @@ module "cloud-nat" {
 }
 
 resource "google_compute_security_policy" "sftp" {
-  name = "sftp"
+  name  = "sftp"
   count = var.enable_whitelist ? 1 : 0
 
   rule {
