@@ -1,6 +1,6 @@
 module "wiz_gcp_cloud_events" {
   count  = var.cloud_events ? 1 : 0
-  source = "https://s3-us-east-2.amazonaws.com/wizio-public/deployment-v2/gcp/wiz-gcp-cloud-events-terraform-module.zip"
+  source = "../wiz-security-cloud-events"
 
   integration_type      = "PROJECT"
   project_id            = var.project_id
