@@ -27,7 +27,6 @@ locals {
     "cloudsql.instances.get",
     "cloudsql.instances.list",
     "storage.objects.get",
-    "storage.objects.list",
-    "datacatalog.categoryFineGrainedReader"
+    "storage.objects.list"
   ]
 }
