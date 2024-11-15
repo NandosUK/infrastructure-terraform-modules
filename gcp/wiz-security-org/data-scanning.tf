@@ -14,6 +14,13 @@ resource "google_organization_iam_member" "wiz_worker_security_role_data_scannin
   depends_on = [google_organization_iam_custom_role.wiz_security_role_data_scanning_ext]
 }
 
+resource "google_organization_iam_member" "wiz_worker_category_reader" {
+  count      = var.data_scanning ? 1 : 0
+  org_id     = var.org_id
+  role       = "roles/datacatalog.categoryFineGrainedReader"
+  member     = "serviceAccount:${local.disk_analysis_service_account_id}"
+}
+
 locals {
   DATA_SCANNING_ROLE_PERMISSIONS = [
     "bigquery.jobs.create",
@@ -27,7 +34,6 @@ locals {
     "cloudsql.instances.get",
     "cloudsql.instances.list",
     "storage.objects.get",
-    "storage.objects.list",
-    "datacatalog.categoryFineGrainedReader"
+    "storage.objects.list"
   ]
 }
