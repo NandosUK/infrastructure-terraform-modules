@@ -20,6 +20,7 @@ locals {
     "bigquery.tables.get",
     "bigquery.tables.getData",
     "bigquery.tables.list",
+    "bigquery.transfers.get",
     "cloudsql.backupRuns.create",
     "cloudsql.backupRuns.delete",
     "cloudsql.backupRuns.get",
