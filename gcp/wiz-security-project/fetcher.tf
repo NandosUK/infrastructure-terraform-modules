@@ -17,6 +17,7 @@ locals {
   ROLE_PERMISSIONS = [
     "firebaserules.rulesets.get",
     "firebaserules.rulesets.list",
+    "appengine.applications.get",
     "storage.buckets.get",
     "storage.objects.get"
   ]
