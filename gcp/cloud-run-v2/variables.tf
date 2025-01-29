@@ -83,7 +83,11 @@ variable "repository_name" {
   description = "Repo name where the service is located (in GitHub)"
   type        = string
 }
-
+variable "repository_owner"{
+    description = "Repo owner where the service is located (in GitHub)"
+    type        = string
+    default = "NandosUK"
+}
 variable "create_trigger" {
   description = "Create a cloudbuild trigger for this service"
   type        = bool
