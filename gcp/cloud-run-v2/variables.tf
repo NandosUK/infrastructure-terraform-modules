@@ -8,7 +8,7 @@ variable "name" {
   type        = string
 
   validation {
-    condition     = can(regex("^[a-zA-Z0-9-_]+$", var.name))
+    condition = can(regex("^[a-zA-Z0-9-_]+$", var.name))
     error_message = "The name can only contain alphanumeric characters, hyphens, and underscores."
   }
 }
@@ -67,11 +67,10 @@ variable "environment" {
   description = "Environment that can be preview, preprod, dev or prod"
 
   validation {
-    condition     = contains(["preview", "preprod", "prod", "dev"], var.environment)
+    condition = contains(["preview", "preprod", "prod", "dev"], var.environment)
     error_message = "The environment must be one of: preview, preprod, dev or prod."
   }
 }
-
 
 
 variable "artifact_repository" {
@@ -83,10 +82,10 @@ variable "repository_name" {
   description = "Repo name where the service is located (in GitHub)"
   type        = string
 }
-variable "repository_owner"{
-    description = "Repo owner where the service is located (in GitHub)"
-    type        = string
-    default = "NandosUK"
+variable "repository_owner" {
+  description = "Repo owner where the service is located (in GitHub)"
+  type        = string
+  default     = "NandosUK"
 }
 variable "create_trigger" {
   description = "Create a cloudbuild trigger for this service"
@@ -118,15 +117,14 @@ variable "vpc_access_egress" {
 # Declare new variables
 variable "env_vars" {
   description = "Environment variables"
-  type        = map(string)
-  default     = {}
+  type = map(string)
+  default = {}
 }
 variable "secrets" {
   description = "List of secret names from Secret Manager"
-  type        = list(string)
-  default     = []
+  type = list(string)
+  default = []
 }
-
 
 
 # Corresponding variables for startup probe and liveness probe
@@ -223,10 +221,10 @@ variable "trigger_config" {
     repository_name = string
     description     = string
     filename        = string
-    include         = list(string)
-    exclude         = list(string)
+    include = list(string)
+    exclude = list(string)
     environment     = string
-    substitutions   = map(string)
+    substitutions = map(string)
     create_trigger  = bool
   })
   default = {
@@ -234,29 +232,29 @@ variable "trigger_config" {
     repository_name = "default-repo-name"
     description     = "default-description"
     filename        = "cloudbuild.yaml"
-    include         = []
-    exclude         = []
+    include = []
+    exclude = []
     environment     = null
-    substitutions   = {}
+    substitutions = {}
     create_trigger  = true
   }
 }
 variable "alert_config" {
   description = "Configuration for alerts"
   type = object({
-    enabled               = bool
-    threshold_value       = number
-    duration              = number
-    alignment_period      = number
-    auto_close            = number
+    enabled          = bool
+    threshold_value  = number
+    duration         = number
+    alignment_period = number
+    auto_close       = number
     notification_channels = list(string)
   })
   default = {
-    enabled               = true
-    threshold_value       = 10.0
-    duration              = 300
-    alignment_period      = 60
-    auto_close            = 86400
+    enabled          = true
+    threshold_value  = 10.0
+    duration         = 300
+    alignment_period = 60
+    auto_close       = 86400
     notification_channels = []
   }
 }
@@ -275,8 +273,8 @@ variable "cloud_armor" {
 
 variable "trigger_substitutions" {
   description = "Substitution variables for Cloud Build Trigger"
-  type        = map(string)
-  default     = {}
+  type = map(string)
+  default = {}
 }
 
 variable "eventarc_triggers" {
@@ -287,7 +285,7 @@ variable "eventarc_triggers" {
     matching_criteria = list(object({
       attribute = string
       value     = string
-      operator  = optional(string)
+      operator = optional(string)
     }))
   }))
   default = []
@@ -295,8 +293,8 @@ variable "eventarc_triggers" {
 
 variable "dependencies" {
   description = "A list of glob-format dependencies for the cloudbuild trigger"
-  type        = list(string)
-  default     = []
+  type = list(string)
+  default = []
 }
 
 variable "enable_custom_domain" {
@@ -324,7 +322,7 @@ variable "additional_backend_services" {
 variable "path_rules" {
   description = "Custon path rules for the load balancer"
   type = list(object({
-    paths        = list(string)
+    paths = list(string)
     service_name = string
     route_action = optional(object({
       url_rewrite = optional(object({
