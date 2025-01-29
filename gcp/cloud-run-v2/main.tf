@@ -4,10 +4,7 @@ data "google_project" "current" {
 
 locals {
   cloud_armor_rules = var.cloud_armor.enabled ? yamldecode(file(var.cloud_armor.rules_file_path)) : []
-  domain            = var.custom_domain != null ? var.custom_domain :
-      var.environment == "prod" ? "${var.name}.${var.domain_host}" :
-        var.environment == "preview" ? "${var.name}-preview.${var.domain_host}" :
-        "${var.name}-preprod.${var.domain_host}"
+  domain            = var.custom_domain != null ? var.custom_domain : var.environment == "prod" ? "${var.name}.${var.domain_host}" : var.environment == "preview" ? "${var.name}-preview.${var.domain_host}" : "${var.name}-preprod.${var.domain_host}"
   default_backend_config = {
     description = "Backend for Cloud Run service"
     enable_cdn  = false
@@ -223,8 +220,7 @@ module "lb-http" {
   https_redirect = true # Enable HTTPS redirect
   random_certificate_suffix = true
 
-  url_map        = var.create_url_map == false ? google_compute_url_map.custom_url_map_https[count.index].self_link :
-    null
+  url_map        = var.create_url_map == false ? google_compute_url_map.custom_url_map_https[count.index].self_link : null
   create_url_map = var.create_url_map
 
   backends = merge(
@@ -235,8 +231,7 @@ module "lb-http" {
             group = google_compute_region_network_endpoint_group.cloudrun_neg[0].id
           }
         ]
-        security_policy = var.cloud_armor.enabled ? google_compute_security_policy.cloud_armor_policy[0].self_link :
-          null
+        security_policy = var.cloud_armor.enabled ? google_compute_security_policy.cloud_armor_policy[0].self_link : null
       })
     },
     {
@@ -271,15 +266,12 @@ resource "google_compute_url_map" "custom_url_map_https" {
       for_each = var.path_rules
       content {
         paths   = length(path_rule.value.paths) > 0 ? path_rule.value.paths : ["/*"]
-        service = path_rule.value.service_name != null ?
-          module.lb-http[0].backend_services["${path_rule.value.service_name}"].self_link :
-          module.lb-http[0].backend_services["default"].self_link
+        service = path_rule.value.service_name != null ? module.lb-http[0].backend_services["${path_rule.value.service_name}"].self_link : module.lb-http[0].backend_services["default"].self_link
         dynamic "route_action" {
           for_each = path_rule.value.route_action != null ? [1] : []
           content {
             url_rewrite {
-              path_prefix_rewrite = path_rule.value.route_action.url_rewrite.path_prefix_rewrite != null ?
-                path_rule.value.route_action.url_rewrite.path_prefix_rewrite : null
+              path_prefix_rewrite = path_rule.value.route_action.url_rewrite.path_prefix_rewrite != null ? path_rule.value.route_action.url_rewrite.path_prefix_rewrite : null
             }
           }
 
