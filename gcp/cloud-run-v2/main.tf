@@ -6,9 +6,9 @@ locals {
   cloud_armor_rules = var.cloud_armor.enabled ? yamldecode(file(var.cloud_armor.rules_file_path)) : []
   domain            = var.custom_domain != null ? var.custom_domain : var.environment == "prod" ? "${var.name}.${var.domain_host}" : var.environment == "preview" ? "${var.name}-preview.${var.domain_host}" : "${var.name}-preprod.${var.domain_host}"
   default_backend_config = {
-    description = "Backend for Cloud Run service"
-    enable_cdn  = false
-    custom_request_headers = ["X-Client-Geo-Location: {client_region_subdivision}, {client_city}"]
+    description             = "Backend for Cloud Run service"
+    enable_cdn              = false
+    custom_request_headers  = ["X-Client-Geo-Location: {client_region_subdivision}, {client_city}"]
     custom_response_headers = ["X-Cache-Hit: {cdn_cache_status}"]
     log_config = {
       enable      = var.enable_lb_logging
@@ -22,9 +22,9 @@ locals {
 
 # Resource configuration for deploying a Google Cloud Run service
 resource "google_cloud_run_v2_service" "default" {
-  name = var.name           # Service name
+  name     = var.name           # Service name
   location = var.project_region # Deployment location
-  ingress = "INGRESS_TRAFFIC_ALL"
+  ingress  = var.ingress
 
   template {
     timeout = var.timeout
@@ -78,7 +78,7 @@ resource "google_cloud_run_v2_service" "default" {
         }
       }
       dynamic "env" {
-        for_each = length(var.secrets) > 0 ? tomap({for s in var.secrets : s => s}) : {}
+        for_each = length(var.secrets) > 0 ? tomap({ for s in var.secrets : s => s }) : {}
         content {
           name = env.key
           value_source {
@@ -147,20 +147,20 @@ resource "google_cloud_run_v2_service" "default" {
 
 # Resource to allow public access to the Cloud Run service
 resource "google_cloud_run_service_iam_binding" "noauth" {
-  count = var.allow_public_access == true ? 1 : 0 # Conditionally create based on public access flag
+  count    = var.allow_public_access == true ? 1 : 0 # Conditionally create based on public access flag
   location = google_cloud_run_v2_service.default.location
   project  = google_cloud_run_v2_service.default.project
   service  = google_cloud_run_v2_service.default.name
-  role = "roles/run.invoker" # Role for invoking the service
-  members = ["allUsers"]        # Allow all users
+  role     = "roles/run.invoker" # Role for invoking the service
+  members  = ["allUsers"]        # Allow all users
 }
 
 # Network Endpoint Group (NEG) for Cloud Run service
 resource "google_compute_region_network_endpoint_group" "cloudrun_neg" {
-  count  = var.enable_custom_domain ? 1 : 0
-  name   = "${var.name}-neg"
+  count                 = var.enable_custom_domain ? 1 : 0
+  name                  = "${var.name}-neg"
   network_endpoint_type = "SERVERLESS"       # Serverless NEG
-  region = var.project_region # Region
+  region                = var.project_region # Region
   cloud_run {
     service = google_cloud_run_v2_service.default.name # Associated Cloud Run service
   }
@@ -217,7 +217,7 @@ module "lb-http" {
   managed_ssl_certificate_domains = [local.domain]
 
   ssl                       = true
-  https_redirect = true # Enable HTTPS redirect
+  https_redirect            = true # Enable HTTPS redirect
   random_certificate_suffix = true
 
   url_map        = var.create_url_map == false ? google_compute_url_map.custom_url_map_https[count.index].self_link : null
@@ -237,13 +237,13 @@ module "lb-http" {
     {
       for key, value in var.additional_backend_services :
       key => merge(local.default_backend_config, {
-      groups = [
-        {
-          group = value.group
-        }
-      ]
-      security_policy = value.cloud_armor ? google_compute_security_policy.cloud_armor_policy[0].self_link : null
-    })
+        groups = [
+          {
+            group = value.group
+          }
+        ]
+        security_policy = value.cloud_armor ? google_compute_security_policy.cloud_armor_policy[0].self_link : null
+      })
     }
   )
 }
@@ -256,7 +256,7 @@ resource "google_compute_url_map" "custom_url_map_https" {
   default_service = module.lb-http[0].backend_services["default"].self_link
 
   host_rule {
-    hosts = [local.domain]
+    hosts        = [local.domain]
     path_matcher = "allpaths"
   }
   path_matcher {
@@ -282,7 +282,7 @@ resource "google_compute_url_map" "custom_url_map_https" {
 }
 
 resource "google_eventarc_trigger" "default" {
-  for_each = {for i, trigger in var.eventarc_triggers : i => trigger}
+  for_each = { for i, trigger in var.eventarc_triggers : i => trigger }
 
   name     = "trigger-${google_cloud_run_v2_service.default.name}"
   location = var.project_region
@@ -328,8 +328,8 @@ module "trigger_provision" {
   location         = var.location
   description      = "Provision ${var.name} Service (CI/CD)"
   filename         = "${var.service_path}/cloudbuild.yaml"
-  include = concat(["${var.service_path}/**"], var.dependencies)
-  exclude = ["${var.service_path}/functions/**", "${var.service_path}/jobs/**", "${var.service_path}/src/jobs/**"]
+  include          = concat(["${var.service_path}/**"], var.dependencies)
+  exclude          = ["${var.service_path}/functions/**", "${var.service_path}/jobs/**", "${var.service_path}/src/jobs/**"]
   environment      = var.environment
   project_id       = var.project_id
 
@@ -344,7 +344,7 @@ module "trigger_provision" {
     _SERVICE_PATH             = var.service_path
     _LOCATION                 = var.project_region
     _SERVICE_ACCOUNT          = var.cloud_run_service_account
-  },
+    },
     var.trigger_substitutions
   )
 }
