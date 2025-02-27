@@ -20,7 +20,7 @@ locals {
       source_archive_object_name   = "node-default.zip"
       source_archive_object_source = "../../utils/default-node-function/default.zip"
       default_entry_point          = "helloWorld"
-      default_runtime              = "nodejs16"
+      default_runtime              = "nodejs20"
     }
     go = {
       source_archive_object_name   = "go-default.zip"
