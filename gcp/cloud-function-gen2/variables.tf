@@ -199,3 +199,7 @@ variable "trigger_service_account" {
   description = "Service account to use for the Cloud Build trigger."
   default     = ""
 }
+variable "node_version" {
+  description = "Default Node.js runtime version for deployed functions"
+  default = "nodejs16"
+}
