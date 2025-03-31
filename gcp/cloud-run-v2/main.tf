@@ -211,7 +211,7 @@ module "lb-http" {
   source  = "GoogleCloudPlatform/lb-http/google//modules/serverless_negs"
   project = var.project_id
   name    = "${var.name}-lb"
-  version = "~> 9.0"
+  version = "~> 12.0"
 
   # SSL and domain configuration
   managed_ssl_certificate_domains = [local.domain]
