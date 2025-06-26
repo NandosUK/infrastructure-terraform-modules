@@ -22,9 +22,10 @@ locals {
 
 # Resource configuration for deploying a Google Cloud Run service
 resource "google_cloud_run_v2_service" "default" {
-  name     = var.name           # Service name
-  location = var.project_region # Deployment location
-  ingress  = var.ingress
+  name                = var.name           # Service name
+  location            = var.project_region # Deployment location
+  ingress             = var.ingress
+  deletion_protection = var.deletion_protection
 
   template {
     timeout = var.timeout

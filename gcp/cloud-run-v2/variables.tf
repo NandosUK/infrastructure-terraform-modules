@@ -366,3 +366,9 @@ variable "ingress" {
     error_message = "The ingress must be one of: INGRESS_TRAFFIC_ALL, INGRESS_TRAFFIC_INTERNAL_ONLY, INGRESS_TRAFFIC_INTERNAL_LOAD_BALANCER."
   }
 }
+
+variable "deletion_protection" {
+  description = "Whether Terraform will be prevented from destroying the service. Defaults to true"
+  type        = bool
+  default     = true
+}
