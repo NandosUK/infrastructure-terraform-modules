@@ -149,9 +149,14 @@ variable "attempt_deadline" {
   default     = "360s"
 }
 
-
 variable "retry_count" {
   description = "The number of times to retry the execution of the job if the previous execution fails."
   type        = number
   default     = 3
+}
+
+variable "trigger_service_account" {
+  description = "The service account to be used for the Cloud Scheduler job to trigger the Cloud Run job."
+  type        = string
+  default     = ""
 }
