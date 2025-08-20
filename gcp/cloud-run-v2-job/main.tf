@@ -78,6 +78,8 @@ module "trigger_provision" {
   environment     = var.environment
   project_id      = var.project_id
 
+  trigger_service_account = var.trigger_service_account
+
   # Substitution variables for Cloud Build Trigger
   substitutions = merge({
     _STAGE                    = "provision"
