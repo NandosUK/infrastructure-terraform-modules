@@ -56,7 +56,18 @@ variable "sql_connection" {
   default     = null
 
   validation {
-    condition     = var.sql_connection == null || can(tostring(var.sql_connection)) || (can(tolist(var.sql_connection)) && alltrue([for conn in var.sql_connection : can(tostring(conn))]))
+    condition = (
+      # checks if it's null OR
+      var.sql_connection == null ||
+      # checks if it's a string OR
+      can(tostring(var.sql_connection)) ||
+      (
+        # checks if it's a list of strings AND
+        can(tolist(var.sql_connection)) &&
+        # all items in the list are strings
+        alltrue([for conn in var.sql_connection : can(tostring(conn))])
+      )
+    )
     error_message = "The sql_connection variable must be null, a string, or a list of strings."
   }
 }

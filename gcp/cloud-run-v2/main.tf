@@ -128,7 +128,7 @@ resource "google_cloud_run_v2_service" "default" {
       content {
         name = "cloudsql"
         cloud_sql_instance {
-          instances = try(tolist(var.sql_connection), [var.sql_connection])
+          instances = flatten([var.sql_connection])
         }
       }
     }
