@@ -51,9 +51,14 @@ variable "allow_public_access" {
 }
 
 variable "sql_connection" {
-  description = "(Optional) Connection to sql database"
-  type        = string
+  description = "(Optional) Connection to sql database. Can be a string or list of strings."
+  type        = any
   default     = null
+
+  validation {
+    condition     = var.sql_connection == null || can(tostring(var.sql_connection)) || (can(tolist(var.sql_connection)) && alltrue([for conn in var.sql_connection : can(tostring(conn))]))
+    error_message = "The sql_connection variable must be null, a string, or a list of strings."
+  }
 }
 
 variable "sharedVpcConnector" {

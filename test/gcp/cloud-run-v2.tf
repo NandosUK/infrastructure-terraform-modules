@@ -71,3 +71,41 @@ module "cloud-run-api-my-awesome-api-no-triggers" {
   }
 }
 
+module "cloud-run-api-my-awesome-api-single-sql" {
+  source              = "../../gcp/cloud-run-v2"
+  project_id          = "mgt-build-56d2ff6b"
+  name                = "my-awesome-api-single-sql"
+  project_region      = "europe-west2"
+  allow_public_access = false
+  create_trigger      = false
+  environment         = "preview"
+  repository_name     = "my-repo-in-github"
+  service_path        = "/services/my-awesome-api"
+  sql_connection      = "my-project:europe-west2:my-instance"
+
+  env_vars = {
+    "ENVIRONMENT" = "preview"
+    "DEBUG"       = "true"
+    # ... add more as needed
+  }
+}
+
+module "cloud-run-api-my-awesome-api-multi-sql" {
+  source              = "../../gcp/cloud-run-v2"
+  project_id          = "mgt-build-56d2ff6b"
+  name                = "my-awesome-api-multi-sql"
+  project_region      = "europe-west2"
+  allow_public_access = false
+  create_trigger      = false
+  environment         = "preview"
+  repository_name     = "my-repo-in-github"
+  service_path        = "/services/my-awesome-api"
+  sql_connection      = ["my-project:europe-west2:my-instance", "my-project:europe-west2:my-instance-2"]
+
+  env_vars = {
+    "ENVIRONMENT" = "preview"
+    "DEBUG"       = "true"
+    # ... add more as needed
+  }
+}
+
