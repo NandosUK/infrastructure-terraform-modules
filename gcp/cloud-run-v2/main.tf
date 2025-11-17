@@ -139,9 +139,10 @@ resource "google_cloud_run_v2_service" "default" {
   }
 
   lifecycle {
-    ignore_changes = [
-      template[0].containers[0].image
-    ]
+    ignore_changes = concat(
+      [template[0].containers[0].image],
+      var.ignore_env ? [template[0].containers[0].env] : [],
+    )
   }
 }
 
