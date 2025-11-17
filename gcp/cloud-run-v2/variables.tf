@@ -388,8 +388,3 @@ variable "deletion_protection" {
   type        = bool
   default     = true
 }
-
-variable "ignore_env" {
-  type    = bool
-  default = false
-}
