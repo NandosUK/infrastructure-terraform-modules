@@ -5,12 +5,6 @@ data "google_project" "current" {
 locals {
   cloud_armor_rules = var.cloud_armor.enabled ? yamldecode(file(var.cloud_armor.rules_file_path)) : []
   domain            = var.custom_domain != null ? var.custom_domain : var.environment == "prod" ? "${var.name}.${var.domain_host}" : var.environment == "preview" ? "${var.name}-preview.${var.domain_host}" : "${var.name}-preprod.${var.domain_host}"
-  ignore_changes_list = var.ignore_env ? [
-    "template[0].containers[0].image",
-    "template[0].containers[0].env",
-  ] : [
-    "template[0].containers[0].image",
-  ]
   default_backend_config = {
     description             = "Backend for Cloud Run service"
     enable_cdn              = false
@@ -145,7 +139,9 @@ resource "google_cloud_run_v2_service" "default" {
   }
 
   lifecycle {
-    ignore_changes = local.ignore_changes_list
+    ignore_changes = [
+      template[0].containers[0].image
+    ]
   }
 }
 
