@@ -1,3 +1,11 @@
+locals {
+  resource_label = {
+    "cloud_function"     = "function_name"
+    "cloud_run_revision" = "service_name"
+    "cloud_run_job"      = "job_name"
+  }
+}
+
 resource "google_monitoring_alert_policy" "error" {
   display_name = "Error Rate Alert for ${var.service_name}"
   enabled      = var.enabled
@@ -17,9 +25,12 @@ resource "google_monitoring_alert_policy" "error" {
       }
       duration        = "${var.duration}s"
       comparison      = "COMPARISON_GT"
-      filter          = "resource.type = \"${var.resource_type}\" AND resource.labels.service_name = \"${var.service_name}\" AND metric.type = \"logging.googleapis.com/log_entry_count\" AND metric.labels.severity = \"ERROR\""
       threshold_value = var.threshold_value
 
+      filter = "resource.type = \"${var.resource_type}\" \
+        AND resource.labels.${local.resource_label[var.resource_type]} = \"${var.service_name}\" \
+        AND metric.type = \"logging.googleapis.com/log_entry_count\" \
+        AND metric.labels.severity = \"ERROR\""
     }
   }
   alert_strategy {
@@ -28,4 +39,3 @@ resource "google_monitoring_alert_policy" "error" {
 
   notification_channels = var.notification_channels
 }
-

@@ -42,4 +42,9 @@ variable "resource_type" {
   description = "The resource type for the alert filter"
   type        = string
   default     = "cloud_run_revision"
+
+  validation {
+    condition     = contains(["cloud_function", "cloud_run_revision", "cloud_run_job"], var.resource_type)
+    error_message = "Invalid resource_type. Must be one of: cloud_function, cloud_run_revision, cloud_run_job."
+  }
 }
