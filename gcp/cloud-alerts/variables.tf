@@ -37,3 +37,9 @@ variable "notification_channels" {
   type        = list(string)
   default     = []
 }
+
+variable "resource_type" {
+  description = "The resource type for the alert filter"
+  type        = string
+  default     = "cloud_run_revision"
+}
