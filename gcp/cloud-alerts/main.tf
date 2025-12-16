@@ -27,10 +27,12 @@ resource "google_monitoring_alert_policy" "error" {
       comparison      = "COMPARISON_GT"
       threshold_value = var.threshold_value
 
-      filter = "resource.type = \"${var.resource_type}\" \
-        AND resource.labels.${local.resource_label[var.resource_type]} = \"${var.service_name}\" \
-        AND metric.type = \"logging.googleapis.com/log_entry_count\" \
-        AND metric.labels.severity = \"ERROR\""
+      filter = <<EOT
+      resource.type = "${var.resource_type}"
+      AND resource.labels.${local.resource_label[var.resource_type]} = "${var.service_name}"
+      AND metric.type = "logging.googleapis.com/log_entry_count"
+      AND metric.labels.severity = "ERROR"
+      EOT
     }
   }
   alert_strategy {
