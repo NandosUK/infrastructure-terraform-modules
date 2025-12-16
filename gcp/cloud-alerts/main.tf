@@ -17,7 +17,7 @@ resource "google_monitoring_alert_policy" "error" {
       }
       duration        = "${var.duration}s"
       comparison      = "COMPARISON_GT"
-      filter          = "resource.type = \"cloud_run_revision\" AND resource.labels.service_name = \"${var.service_name}\" AND metric.type = \"logging.googleapis.com/log_entry_count\" AND metric.labels.severity = \"ERROR\""
+      filter          = "resource.type = \"${var.resource_type}\" AND resource.labels.service_name = \"${var.service_name}\" AND metric.type = \"logging.googleapis.com/log_entry_count\" AND metric.labels.severity = \"ERROR\""
       threshold_value = var.threshold_value
 
     }
@@ -28,3 +28,4 @@ resource "google_monitoring_alert_policy" "error" {
 
   notification_channels = var.notification_channels
 }
+
