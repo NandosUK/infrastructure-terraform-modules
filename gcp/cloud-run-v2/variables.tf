@@ -108,6 +108,15 @@ variable "create_trigger" {
   type        = bool
   default     = true
 }
+variable "trigger_invocation_event" {
+  description = "Invocation event for the trigger"
+  type        = string
+  default     = "INVOCATION_EVENT_PUSH"
+  validation {
+    condition     = contains(["INVOCATION_EVENT_PUSH", "INVOCATION_EVENT_MANUAL"], var.trigger_invocation_event)
+    error_message = "trigger_invocation_event must be one of: INVOCATION_EVENT_PUSH or INVOCATION_EVENT_MANUAL."
+  }
+}
 
 variable "min_scale" {
   description = "Minimum number of instances for autoscaling"
