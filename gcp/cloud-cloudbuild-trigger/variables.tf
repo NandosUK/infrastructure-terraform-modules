@@ -124,11 +124,20 @@ variable "trigger_invocation_event" {
   type        = string
   default     = "INVOCATION_EVENT_PUSH"
   validation {
-    condition     = contains(["INVOCATION_EVENT_PUSH", "INVOCATION_EVENT_MANUAL"], var.trigger_invocation_event)
-    error_message = "trigger_invocation_event must be one of: INVOCATION_EVENT_PUSH or INVOCATION_EVENT_MANUAL."
+    condition     = contains(["INVOCATION_EVENT_PUSH", "INVOCATION_EVENT_TAG", "INVOCATION_EVENT_MANUAL"], var.trigger_invocation_event)
+    error_message = "trigger_invocation_event must be one of: INVOCATION_EVENT_PUSH, INVOCATION_EVENT_TAG or INVOCATION_EVENT_MANUAL."
   }
 }
 
+variable "trigger_invocation_commit_tag" {
+  description = "Optionally used if the trigger is invoked by a commit tag"
+  type        = string
+  default     = null
+  validation {
+    condition     = var.trigger_invocation_event == "INVOCATION_EVENT_TAG" && (var.trigger_invocation_commit_tag == null || can(regex("^[a-zA-Z0-9-_]+$", var.trigger_invocation_commit_tag)))
+    error_message = "var.trigger_invocation_commit_tag must be specified if var.trigger_invocation_event = INVOCATION_EVENT_TAG."
+  }
+}
 
 # Tags
 variable "tags" {

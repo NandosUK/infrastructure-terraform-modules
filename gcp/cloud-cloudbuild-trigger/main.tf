@@ -12,9 +12,10 @@ resource "google_cloudbuild_trigger" "trigger_main" {
     name  = var.repository_name
 
     dynamic "push" {
-      for_each = var.trigger_invocation_event == "INVOCATION_EVENT_PUSH" ? [1] : []
+      for_each = var.trigger_invocation_event == "INVOCATION_EVENT_PUSH" || var.trigger_invocation_event == "INVOCATION_EVENT_TAG" ? [1] : []
       content {
         branch       = var.branching_strategy[var.environment]["provision"]["branch"]
+        tag          = var.trigger_invocation_event == "INVOCATION_EVENT_TAG" ? var.trigger_invocation_commit_tag : null
         invert_regex = var.branching_strategy[var.environment]["provision"]["invert_regex"]
       }
     }
