@@ -118,6 +118,15 @@ variable "trigger_invocation_event" {
   }
 }
 
+variable "trigger_invocation_commit_tag" {
+  description = "Optionally used if the trigger is invoked by a commit tag"
+  type        = string
+  default     = null
+  validation {
+    condition     = var.trigger_invocation_event == "INVOCATION_EVENT_TAG" && (var.trigger_invocation_commit_tag == null || can(regex("^[a-zA-Z0-9-_]+$", var.trigger_invocation_commit_tag)))
+    error_message = "var.trigger_invocation_commit_tag must be specified if var.trigger_invocation_event = INVOCATION_EVENT_TAG."
+  }
+}
 variable "min_scale" {
   description = "Minimum number of instances for autoscaling"
   default     = 1
