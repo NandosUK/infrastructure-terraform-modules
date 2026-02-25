@@ -71,54 +71,23 @@ variable "environment" {
   }
 }
 
-
 variable "branching_strategy" {
   description = "Branching strategy for different environments"
-  type        = map(any)
-  default = {
-    dev = {
-      validate = {
-        branch       = "^NOT_USED_PREVIEW$"
-        invert_regex = false
-      }
-      provision = {
-        branch       = ".*"
-        invert_regex = false
-      }
-    },
-    preview = {
-      validate = {
-        branch       = "^NOT_USED_PREVIEW$"
-        invert_regex = false
-      }
-      provision = {
-        branch       = ".*"
-        invert_regex = false
-      }
-    },
-    preprod = {
-      validate = {
-        branch       = "^main$|^preprod$|^release/(.*)$"
-        invert_regex = true
-      }
-      provision = {
-        branch       = "^main$|^preprod$|^release/(.*)$"
-        invert_regex = false
-      }
-    },
-    prod = {
-      validate = {
-        branch       = "^main$"
-        invert_regex = true
-      }
-      provision = {
-        branch       = "^main$"
-        invert_regex = false
-      }
-    }
-  }
-}
 
+  type = map(object({
+    validate = object({
+      branch       = string
+      invert_regex = bool
+    })
+    provision = object({
+      branch       = string
+      invert_regex = bool
+    })
+  }))
+
+  default  = null
+  nullable = true
+}
 
 # Tags
 variable "tags" {
