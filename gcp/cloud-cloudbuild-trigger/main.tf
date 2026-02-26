@@ -10,8 +10,8 @@ resource "google_cloudbuild_trigger" "trigger_main" {
     owner = var.repository_owner
     name  = var.repository_name
     push {
-      branch       = var.branching_strategy[var.environment]["provision"]["branch"]
-      invert_regex = var.branching_strategy[var.environment]["provision"]["invert_regex"]
+      branch       = local.branching_strategy[var.environment]["provision"]["branch"]
+      invert_regex = local.branching_strategy[var.environment]["provision"]["invert_regex"]
     }
   }
   service_account = var.trigger_service_account != "" ? "projects/${data.google_project.current.project_id}/serviceAccounts/${var.trigger_service_account}" : null
@@ -21,4 +21,49 @@ resource "google_cloudbuild_trigger" "trigger_main" {
   included_files = var.include
   ignored_files  = var.exclude
   disabled       = var.disabled
+}
+
+locals {
+  branching_strategy = coalesce(var.branching_strategy, {
+    dev = {
+      validate = {
+        branch       = "^NOT_USED_PREVIEW$"
+        invert_regex = false
+      }
+      provision = {
+        branch       = ".*"
+        invert_regex = false
+      }
+    },
+    preview = {
+      validate = {
+        branch       = "^NOT_USED_PREVIEW$"
+        invert_regex = false
+      }
+      provision = {
+        branch       = ".*"
+        invert_regex = false
+      }
+    },
+    preprod = {
+      validate = {
+        branch       = "^main$|^preprod$|^release/(.*)$"
+        invert_regex = true
+      }
+      provision = {
+        branch       = "^main$|^preprod$|^release/(.*)$"
+        invert_regex = false
+      }
+    },
+    prod = {
+      validate = {
+        branch       = "^main$"
+        invert_regex = true
+      }
+      provision = {
+        branch       = "^main$"
+        invert_regex = false
+      }
+    }
+  })
 }
