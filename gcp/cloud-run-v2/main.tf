@@ -314,6 +314,7 @@ resource "google_project_iam_member" "eventarc_cloud_run" {
 }
 
 resource "google_project_iam_member" "eventarc_pubsub" {
+  count   = length(var.eventarc_triggers) > 0 ? 1 : 0
   project = var.project_id
   role    = "roles/iam.serviceAccountTokenCreator"
   member  = "serviceAccount:service-${data.google_project.current.number}@gcp-sa-pubsub.iam.gserviceaccount.com"
