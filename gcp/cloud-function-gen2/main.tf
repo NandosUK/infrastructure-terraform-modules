@@ -203,4 +203,5 @@ module "cloud_function_alerts" {
   alignment_period      = var.alert_config.alignment_period
   auto_close            = var.alert_config.auto_close
   notification_channels = var.alert_config.notification_channels
+  resource_type         = "cloud_function"
 }

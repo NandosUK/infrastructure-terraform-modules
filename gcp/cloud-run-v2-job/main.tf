@@ -66,17 +66,19 @@ resource "google_project_iam_member" "sa_run_invoke" {
 
 # Cloud Build trigger configuration
 module "trigger_provision" {
-  count           = var.create_trigger == true ? 1 : 0
-  source          = "../cloud-cloudbuild-trigger"
-  name            = "service-${var.name}-job-provision"
-  repository_name = var.repository_name
-  location        = var.location
-  description     = "Provision ${var.name} Job (CI/CD)"
-  filename        = "${var.service_path}/cloudbuild.yaml"
-  include         = concat(["${var.service_path}/**"], var.dependencies)
-  exclude         = ["${var.service_path}/functions/**"]
-  environment     = var.environment
-  project_id      = var.project_id
+  count                   = var.create_trigger == true ? 1 : 0
+  source                  = "../cloud-cloudbuild-trigger"
+  name                    = "service-${var.name}-job-provision"
+  repository_name         = var.repository_name
+  location                = var.location
+  description             = "Provision ${var.name} Job (CI/CD)"
+  filename                = "${var.service_path}/cloudbuild.yaml"
+  include                 = concat(["${var.service_path}/**"], var.dependencies)
+  exclude                 = ["${var.service_path}/functions/**"]
+  environment             = var.environment
+  project_id              = var.project_id
+  branching_strategy      = var.trigger_branching_strategy
+  trigger_service_account = var.trigger_service_account
 
   # Substitution variables for Cloud Build Trigger
   substitutions = merge({
@@ -103,6 +105,7 @@ module "cloud_run_alerts" {
   alignment_period      = var.alert_config.alignment_period
   auto_close            = var.alert_config.auto_close
   notification_channels = var.alert_config.notification_channels
+  resource_type         = "cloud_run_job"
 }
 
 resource "google_cloud_scheduler_job" "scheduler_job" {

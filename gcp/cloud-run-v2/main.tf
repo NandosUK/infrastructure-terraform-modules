@@ -22,9 +22,10 @@ locals {
 
 # Resource configuration for deploying a Google Cloud Run service
 resource "google_cloud_run_v2_service" "default" {
-  name     = var.name           # Service name
-  location = var.project_region # Deployment location
-  ingress  = var.ingress
+  name                = var.name           # Service name
+  location            = var.project_region # Deployment location
+  ingress             = var.ingress
+  deletion_protection = var.deletion_protection
 
   template {
     timeout = var.timeout
@@ -127,7 +128,7 @@ resource "google_cloud_run_v2_service" "default" {
       content {
         name = "cloudsql"
         cloud_sql_instance {
-          instances = [var.sql_connection]
+          instances = flatten([var.sql_connection])
         }
       }
     }
@@ -211,7 +212,7 @@ module "lb-http" {
   source  = "GoogleCloudPlatform/lb-http/google//modules/serverless_negs"
   project = var.project_id
   name    = "${var.name}-lb"
-  version = "~> 9.0"
+  version = "~> 12.0"
 
   # SSL and domain configuration
   managed_ssl_certificate_domains = [local.domain]
@@ -329,7 +330,7 @@ module "trigger_provision" {
   description      = "Provision ${var.name} Service (CI/CD)"
   filename         = "${var.service_path}/cloudbuild.yaml"
   include          = concat(["${var.service_path}/**"], var.dependencies)
-  exclude          = ["${var.service_path}/functions/**", "${var.service_path}/jobs/**", "${var.service_path}/src/jobs/**"]
+  exclude          = ["${var.service_path}/functions/**"]
   environment      = var.environment
   project_id       = var.project_id
   repository       = var.repository
@@ -360,4 +361,5 @@ module "cloud_run_alerts" {
   alignment_period      = var.alert_config.alignment_period
   auto_close            = var.alert_config.auto_close
   notification_channels = var.alert_config.notification_channels
+  resource_type         = "cloud_run_revision"
 }

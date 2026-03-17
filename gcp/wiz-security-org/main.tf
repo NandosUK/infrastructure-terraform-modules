@@ -6,9 +6,6 @@ locals {
 
   fetcher_roles_standard = {
     wiz_security_role               = google_organization_iam_custom_role.wiz_security_role.id
-    viewer                          = "roles/viewer"
-    browser                         = "roles/browser"
-    iam_securityReviewer            = "roles/iam.securityReviewer"
     cloudasset_viewer               = "roles/cloudasset.viewer"
     serviceusage_serviceUsageViewer = "roles/serviceusage.serviceUsageViewer"
   }

@@ -15,10 +15,10 @@ resource "google_organization_iam_member" "wiz_worker_security_role_data_scannin
 }
 
 resource "google_organization_iam_member" "wiz_worker_category_reader" {
-  count      = var.data_scanning ? 1 : 0
-  org_id     = var.org_id
-  role       = "roles/datacatalog.categoryFineGrainedReader"
-  member     = "serviceAccount:${local.disk_analysis_service_account_id}"
+  count  = var.data_scanning ? 1 : 0
+  org_id = var.org_id
+  role   = "roles/datacatalog.categoryFineGrainedReader"
+  member = "serviceAccount:${local.disk_analysis_service_account_id}"
 }
 
 locals {

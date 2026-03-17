@@ -51,9 +51,25 @@ variable "allow_public_access" {
 }
 
 variable "sql_connection" {
-  description = "(Optional) Connection to sql database"
-  type        = string
+  description = "(Optional) Connection to sql database. Can be a string or list of strings."
+  type        = any
   default     = null
+
+  validation {
+    condition = (
+      # checks if it's null OR
+      var.sql_connection == null ||
+      # checks if it's a string OR
+      can(tostring(var.sql_connection)) ||
+      (
+        # checks if it's a list AND
+        can(tolist(var.sql_connection)) &&
+        # all items in the list are strings (if sql_connection is null, default to empty list)
+        alltrue([for conn in coalesce(var.sql_connection, []) : can(tostring(conn))])
+      )
+    )
+    error_message = "The sql_connection variable must be null, a string, or a list of strings."
+  }
 }
 
 variable "sharedVpcConnector" {
@@ -365,6 +381,12 @@ variable "ingress" {
     condition     = contains(["INGRESS_TRAFFIC_ALL", "INGRESS_TRAFFIC_INTERNAL_ONLY", "INGRESS_TRAFFIC_INTERNAL_LOAD_BALANCER"], var.ingress)
     error_message = "The ingress must be one of: INGRESS_TRAFFIC_ALL, INGRESS_TRAFFIC_INTERNAL_ONLY, INGRESS_TRAFFIC_INTERNAL_LOAD_BALANCER."
   }
+}
+
+variable "deletion_protection" {
+  description = "Whether Terraform will be prevented from destroying the service. Defaults to true"
+  type        = bool
+  default     = true
 }
 
 variable "repository" {

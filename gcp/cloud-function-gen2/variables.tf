@@ -201,5 +201,5 @@ variable "trigger_service_account" {
 }
 variable "node_version" {
   description = "Default Node.js runtime version for deployed functions"
-  default = "nodejs16"
+  default     = "nodejs16"
 }
