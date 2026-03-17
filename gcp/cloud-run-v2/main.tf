@@ -332,6 +332,7 @@ module "trigger_provision" {
   exclude          = ["${var.service_path}/functions/**", "${var.service_path}/jobs/**", "${var.service_path}/src/jobs/**"]
   environment      = var.environment
   project_id       = var.project_id
+  repository       = var.repository
 
   trigger_service_account = var.trigger_service_account
 

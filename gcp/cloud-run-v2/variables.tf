@@ -366,3 +366,9 @@ variable "ingress" {
     error_message = "The ingress must be one of: INGRESS_TRAFFIC_ALL, INGRESS_TRAFFIC_INTERNAL_ONLY, INGRESS_TRAFFIC_INTERNAL_LOAD_BALANCER."
   }
 }
+
+variable "repository" {
+  type        = string
+  default     = null
+  description = "Full resource ID of a google_cloudbuildv2_repository. Passed through to the trigger module."
+}
