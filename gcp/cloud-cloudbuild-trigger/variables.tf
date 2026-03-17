@@ -42,8 +42,8 @@ variable "repository_owner" {
 
 # Github Repository Name
 variable "repository_name" {
-  type = string
-
+  type        = string
+  default     = null
   description = "The name of the GitHub repository where the service is located"
 }
 
