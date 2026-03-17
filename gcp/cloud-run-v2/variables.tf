@@ -97,6 +97,7 @@ variable "artifact_repository" {
 variable "repository_name" {
   description = "Repo name where the service is located (in GitHub)"
   type        = string
+  default     = null
 }
 variable "repository_owner" {
   description = "Repo owner where the service is located (in GitHub)"
