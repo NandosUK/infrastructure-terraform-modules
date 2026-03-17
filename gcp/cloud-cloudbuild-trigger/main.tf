@@ -6,14 +6,29 @@ resource "google_cloudbuild_trigger" "trigger_main" {
   tags        = var.tags
   name        = var.name
   location    = var.location
-  github {
-    owner = var.repository_owner
-    name  = var.repository_name
-    push {
-      branch       = local.branching_strategy[var.environment]["provision"]["branch"]
-      invert_regex = local.branching_strategy[var.environment]["provision"]["invert_regex"]
+  dynamic "github" {
+    for_each = var.repository == null ? [1] : []
+    content {
+      owner = var.repository_owner
+      name  = var.repository_name
+      push {
+        branch       = local.branching_strategy[var.environment]["provision"]["branch"]
+        invert_regex = local.branching_strategy[var.environment]["provision"]["invert_regex"]
+      }
     }
   }
+
+  dynamic "repository_event_config" {
+    for_each = var.repository != null ? [1] : []
+    content {
+      repository = var.repository
+      push {
+        branch       = local.branching_strategy[var.environment]["provision"]["branch"]
+        invert_regex = local.branching_strategy[var.environment]["provision"]["invert_regex"]
+      }
+    }
+  }
+
   service_account = var.trigger_service_account != "" ? "projects/${data.google_project.current.project_id}/serviceAccounts/${var.trigger_service_account}" : null
 
   substitutions  = var.substitutions

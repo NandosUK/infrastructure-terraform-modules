@@ -97,6 +97,7 @@ variable "artifact_repository" {
 variable "repository_name" {
   description = "Repo name where the service is located (in GitHub)"
   type        = string
+  default     = null
 }
 variable "repository_owner" {
   description = "Repo owner where the service is located (in GitHub)"
@@ -387,4 +388,10 @@ variable "deletion_protection" {
   description = "Whether Terraform will be prevented from destroying the service. Defaults to true"
   type        = bool
   default     = true
+}
+
+variable "repository" {
+  type        = string
+  default     = null
+  description = "Full resource ID of a google_cloudbuildv2_repository. Passed through to the trigger module."
 }

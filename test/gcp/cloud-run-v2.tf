@@ -112,3 +112,36 @@ module "cloud-run-api-example-api-multi-sql" {
   }
 }
 
+module "cloud-run-api-github-connection-v2" {
+  source              = "../../gcp/cloud-run-v2"
+  project_id          = "mgt-build-56d2ff6b"
+  name                = "my-awesome-api-github-connection-v2"
+  project_region      = "europe-west2"
+  allow_public_access = true
+  create_trigger      = true
+  environment         = "preview"
+  service_path        = "/services/my-awesome-api"
+  repository          = "projects/mgt-build-56d2ff6b/locations/europe-west2/connections/my-connection/repositories/my-repo"
+
+  env_vars = {
+    "ENVIRONMENT" = "preview"
+    "DEBUG"       = "true"
+  }
+}
+
+module "cloud-run-api-github-connection-v1" {
+  source              = "../../gcp/cloud-run-v2"
+  project_id          = "mgt-build-56d2ff6b"
+  name                = "my-awesome-api-github-connection-v1"
+  project_region      = "europe-west2"
+  allow_public_access = true
+  create_trigger      = true
+  environment         = "preview"
+  repository_name     = "my-repo-in-github"
+  service_path        = "/services/my-awesome-api"
+
+  env_vars = {
+    "ENVIRONMENT" = "preview"
+    "DEBUG"       = "true"
+  }
+}

@@ -42,8 +42,8 @@ variable "repository_owner" {
 
 # Github Repository Name
 variable "repository_name" {
-  type = string
-
+  type        = string
+  default     = null
   description = "The name of the GitHub repository where the service is located"
 }
 
@@ -112,4 +112,10 @@ variable "trigger_service_account" {
 variable "project_id" {
   description = "The ID of the project in which the resource belongs."
   type        = string
+}
+
+variable "repository" {
+  type        = string
+  default     = null
+  description = "Full resource ID of a google_cloudbuildv2_repository. If set, uses repository_event_config instead of github block."
 }
