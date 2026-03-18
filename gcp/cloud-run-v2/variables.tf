@@ -395,3 +395,9 @@ variable "repository" {
   default     = null
   description = "Full resource ID of a google_cloudbuildv2_repository. Passed through to the trigger module."
 }
+
+variable "approval_required" {
+  type        = bool
+  default     = false
+  description = "If true, Cloud Build trigger will require manual approval before executing."
+}

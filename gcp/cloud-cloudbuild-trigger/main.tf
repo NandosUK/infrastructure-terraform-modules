@@ -36,13 +36,9 @@ resource "google_cloudbuild_trigger" "trigger_main" {
   included_files = var.include
   ignored_files  = var.exclude
   disabled       = var.disabled
-
-  dynamic "approval_config" {
-    for_each = var.approval_required ? [1] : []
-    
-    content {
-      approval_required = true
-    }
+  
+  approval_config {
+    approval_required = var.approval_required
   }
 }
 

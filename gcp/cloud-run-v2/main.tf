@@ -336,6 +336,7 @@ module "trigger_provision" {
   repository       = var.repository
 
   trigger_service_account = var.trigger_service_account
+  approval_required       = var.approval_required
 
   # Substitution variables for Cloud Build Trigger
   substitutions = merge({
