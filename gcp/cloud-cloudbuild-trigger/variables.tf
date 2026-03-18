@@ -119,3 +119,9 @@ variable "repository" {
   default     = null
   description = "Full resource ID of a google_cloudbuildv2_repository. If set, uses repository_event_config instead of github block."
 }
+
+variable "approval_required" {
+  type        = bool
+  default     = false
+  description = "If true, builds will require manual approval before executing."
+}
