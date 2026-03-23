@@ -203,3 +203,9 @@ variable "node_version" {
   description = "Default Node.js runtime version for deployed functions"
   default     = "nodejs16"
 }
+
+variable "approval_required" {
+  type        = bool
+  default     = false
+  description = "If true, Cloud Build trigger will require manual approval before executing."
+}

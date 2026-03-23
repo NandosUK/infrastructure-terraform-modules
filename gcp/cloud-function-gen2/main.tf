@@ -178,6 +178,7 @@ module "trigger_provision" {
   name                    = "function-${var.function_name}-provision"
   description             = "Provision ${var.function_name} Service (CI/CD)"
   source                  = "../cloud-cloudbuild-trigger"
+  approval_required       = var.approval_required
   trigger_service_account = var.trigger_service_account
   location                = var.location
   filename                = var.function_path == "" ? "services/${var.service_name}/functions/${var.function_name}/cloudbuild.yaml" : "${var.function_path}/cloudbuild.yaml"
