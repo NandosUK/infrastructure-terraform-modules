@@ -11,9 +11,21 @@ resource "google_cloudbuild_trigger" "trigger_main" {
     content {
       owner = var.repository_owner
       name  = var.repository_name
-      push {
-        branch       = local.branching_strategy[var.environment]["provision"]["branch"]
-        invert_regex = local.branching_strategy[var.environment]["provision"]["invert_regex"]
+
+      dynamic "push" {
+        for_each = var.trigger_type == "push" ? [1] : []
+        content {
+          branch       = local.branching_strategy[var.environment]["provision"]["branch"]
+          invert_regex = local.branching_strategy[var.environment]["provision"]["invert_regex"]
+        }
+      }
+      
+      dynamic "pull_request" {
+        for_each = var.trigger_type == "pull_request" ? [1] : []
+        content {
+          branch       = local.branching_strategy[var.environment]["provision"]["branch"]
+          invert_regex = local.branching_strategy[var.environment]["provision"]["invert_regex"]
+        }
       }
     }
   }
@@ -22,9 +34,21 @@ resource "google_cloudbuild_trigger" "trigger_main" {
     for_each = var.repository != null ? [1] : []
     content {
       repository = var.repository
-      push {
-        branch       = local.branching_strategy[var.environment]["provision"]["branch"]
-        invert_regex = local.branching_strategy[var.environment]["provision"]["invert_regex"]
+
+      dynamic "push" {
+        for_each = var.trigger_type == "push" ? [1] : []
+        content {
+          branch       = local.branching_strategy[var.environment]["provision"]["branch"]
+          invert_regex = local.branching_strategy[var.environment]["provision"]["invert_regex"]
+        }
+      }
+      
+      dynamic "pull_request" {
+        for_each = var.trigger_type == "pull_request" ? [1] : []
+        content {
+          branch       = local.branching_strategy[var.environment]["provision"]["branch"]
+          invert_regex = local.branching_strategy[var.environment]["provision"]["invert_regex"]
+        }
       }
     }
   }
@@ -36,7 +60,7 @@ resource "google_cloudbuild_trigger" "trigger_main" {
   included_files = var.include
   ignored_files  = var.exclude
   disabled       = var.disabled
-  
+
   approval_config {
     approval_required = var.approval_required
   }

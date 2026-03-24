@@ -120,6 +120,17 @@ variable "repository" {
   description = "Full resource ID of a google_cloudbuildv2_repository. If set, uses repository_event_config instead of github block."
 }
 
+variable "trigger_type" {
+  type        = string
+  default     = "push"
+  description = "The repository event that invokes trigger."
+
+  validation {
+    condition     = contains(["push", "pull_request"], var.trigger_type)
+    error_message = "The trigger_type must be either 'push' or 'pull_request'."
+  }
+}
+
 variable "approval_required" {
   type        = bool
   default     = false
