@@ -42,7 +42,8 @@ Key elements description:
 
 ## New Variables
 
-- `var.cloud_run_service_account`: The service account to use for the Cloud Run service.
+- `var.cloud_run_service_account`: The service account used as the Eventarc trigger invoker, and as the Cloud Run service identity when `use_custom_service_account` is `true`.
+- `var.use_custom_service_account`: When `true`, the Cloud Run service runs as `cloud_run_service_account` instead of the default Compute Engine SA. Defaults to `false` to avoid changing existing deployments.
 - `var.sharedVpcConnector`: Shared VPC connection string for internal network access.
 - `var.environment`: The current environment.
 - `var.artifact_repository`: The artifact repository for the service.

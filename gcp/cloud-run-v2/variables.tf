@@ -44,6 +44,12 @@ variable "cloud_run_service_account" {
   default     = null
 }
 
+variable "use_custom_service_account" {
+  description = "(Optional) When true, the Cloud Run service will run as cloud_run_service_account instead of the default Compute Engine SA."
+  type        = bool
+  default     = false
+}
+
 variable "allow_public_access" {
   description = "(Optional) Enable/disable public access to the service's original run url."
   type        = bool
