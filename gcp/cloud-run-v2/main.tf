@@ -28,8 +28,9 @@ resource "google_cloud_run_v2_service" "default" {
   deletion_protection = var.deletion_protection
 
   template {
-    timeout         = var.timeout
-    service_account = var.use_custom_service_account ? var.cloud_run_service_account : null
+    timeout                          = var.timeout
+    service_account                  = var.use_custom_service_account ? var.cloud_run_service_account : null
+    max_instance_request_concurrency = var.max_instance_request_concurrency
     containers {
       image = "gcr.io/cloudrun/hello"
 

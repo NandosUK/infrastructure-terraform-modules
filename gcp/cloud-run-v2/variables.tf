@@ -126,6 +126,12 @@ variable "max_scale" {
   default     = 100
 }
 
+variable "max_instance_request_concurrency" {
+  description = "Maximum number of concurrent requests per instance. Null leaves the Cloud Run default (80)."
+  type        = number
+  default     = null
+}
+
 variable "vpc_access_connector" {
   description = "(Optional) The VPC Access Connector to use for this service"
   type        = string
