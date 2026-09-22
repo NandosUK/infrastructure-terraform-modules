@@ -9,6 +9,9 @@ locals {
     _FUNCTION_NAME = var.function_name,
     _FUNCTION_PATH = var.function_path == "" ? "services/${var.service_name}/functions/${var.function_name}" : var.function_path
     _LOCATION      = var.region
+    // Deploys re-assert Terraform's runtime instead of competing with it. Call
+    // sites can still override via trigger_substitutions.
+    _RUNTIME = local.runtime
   }
   default_environment_variables = {}
   service_account               = var.service_account_email != "" ? var.service_account_email : "${data.google_project.current.project_id}@appspot.gserviceaccount.com"
@@ -26,9 +29,13 @@ locals {
       source_archive_object_name   = "go-default.zip"
       source_archive_object_source = "../../utils/default-go-function/default.zip"
       default_entry_point          = "Entrypoint"
-      default_runtime              = "go116"
+      default_runtime              = var.go_version
     }
   }[var.function_type]
+
+  // The runtime Terraform owns. Exposed as an output and as the _RUNTIME
+  // substitution so a bump here applies everywhere instead of per call site.
+  runtime = var.function_runtime != "" ? var.function_runtime : local.language_config.default_runtime
 }
 
 /******************************************
@@ -116,7 +123,7 @@ resource "google_cloudfunctions2_function" "function" {
   }
 
   build_config {
-    runtime     = var.function_runtime != "" ? var.function_runtime : local.language_config.default_runtime
+    runtime     = local.runtime
     entry_point = var.function_entry_point != "" ? var.function_entry_point : local.language_config.default_entry_point
     source {
       storage_source {
@@ -127,7 +134,20 @@ resource "google_cloudfunctions2_function" "function" {
   }
 
   lifecycle {
-    ignore_changes = [build_config]
+    // Everything the cloudbuild deploy owns, but *not* runtime -- that stays
+    // reconciled so a bump applies on apply rather than on each function's next
+    // deploy. build_config is separate from service_config, so un-ignoring the
+    // runtime touches nothing else.
+    ignore_changes = [
+      build_config[0].source,
+      build_config[0].entry_point,
+      build_config[0].docker_repository,
+      build_config[0].service_account,
+      build_config[0].environment_variables,
+      build_config[0].worker_pool,
+      build_config[0].automatic_update_policy,
+      build_config[0].on_deploy_update_policy,
+    ]
   }
 }
 
@@ -160,13 +180,17 @@ resource "google_cloud_scheduler_job" "job" {
 }
 
 
-# IAM entry for all users to invoke the function
-resource "google_cloudfunctions_function_iam_member" "invoker" {
-  count          = var.public ? 1 : 0
-  project        = google_cloudfunctions2_function.function.project
-  cloud_function = google_cloudfunctions2_function.function.name
+# IAM entry for all users to invoke the function.
+# Gen 2 functions are fronted by Cloud Run, so invocation is authorised with
+# roles/run.invoker on the underlying service -- not the gen 1
+# roles/cloudfunctions.invoker.
+resource "google_cloud_run_service_iam_member" "invoker" {
+  count    = var.public ? 1 : 0
+  project  = google_cloudfunctions2_function.function.project
+  location = google_cloudfunctions2_function.function.location
+  service  = basename(google_cloudfunctions2_function.function.service_config[0].service)
 
-  role   = "roles/cloudfunctions.invoker"
+  role   = "roles/run.invoker"
   member = "allUsers"
 }
 
@@ -204,5 +228,5 @@ module "cloud_function_alerts" {
   alignment_period      = var.alert_config.alignment_period
   auto_close            = var.alert_config.auto_close
   notification_channels = var.alert_config.notification_channels
-  resource_type         = "cloud_function"
+  resource_type         = "cloud_run_revision"
 }

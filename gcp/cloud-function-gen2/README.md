@@ -18,11 +18,25 @@ This updated Terraform module provides a comprehensive set of reusable configura
 
 - **google_cloud_scheduler_job Resource:** This resource defines a Google Cloud Scheduler job. It schedules the execution of a Cloud Function using HTTP requests, specifying details like schedule, time zone, and retry settings.
 
-- **google_cloudfunctions_function_iam_member Resource:** This resource grants IAM permissions to invoke the Cloud Function. It is conditional based on the `var.public` flag and grants the `cloudfunctions.invoker` role to `allUsers` if `var.public` is true.
+- **google_cloud_run_service_iam_member Resource:** This resource grants IAM permissions to invoke the Cloud Function. It is conditional based on the `var.public` flag and grants the `run.invoker` role to `allUsers` if `var.public` is true. Gen 2 functions are fronted by Cloud Run, so invocation is authorised there rather than via the gen 1 `cloudfunctions.invoker` role.
 
 - **module "trigger_provision":** This module configures a Cloud Build trigger for provisioning the Cloud Function. It includes settings for the trigger's name, description, source, and environment variables.
 
 - **module "cloud_function_alerts":** This module sets up alerts and notifications for the Cloud Function. It includes configurations for alert thresholds, duration, and notification channels.
+
+## Runtime
+
+Terraform owns the runtime. `var.function_runtime` (or, when unset, `var.node_version` /
+`var.go_version` depending on `var.function_type`) is used for the function's `build_config`,
+exposed as the `runtime` output, and passed to the provisioning trigger as the `_RUNTIME`
+substitution.
+
+Have each `cloudbuild.yaml` deploy with `--runtime ${_RUNTIME}` so deploys re-assert Terraform's
+value instead of competing with it. `runtime` is deliberately left out of the resource's
+`ignore_changes`, so a bump applies on the next `terraform apply` rather than waiting for each
+function's next deploy.
+
+Defaults track the latest GA gen 2 runtimes (`nodejs24`, `go127`). `nodejs26` is preview.
 
 ## Specific Variables
 
@@ -39,6 +53,9 @@ This updated Terraform module provides a comprehensive set of reusable configura
 - `var.event_type`: This variable defines the type of event trigger for the function (e.g., "PUBSUB," "STORAGE," "SCHEDULER").
 - `var.schedule`: This variable holds scheduling information for the function, including cron schedules and time zones.
 - `var.public`: It determines whether the Cloud Function is publicly accessible, and if true, grants permissions to "allUsers" to invoke the function.
+- `var.function_runtime`: Overrides the language default runtime for this function.
+- `var.node_version`: Default runtime for `function_type = "node"` when `var.function_runtime` is unset.
+- `var.go_version`: Default runtime for `function_type = "go"` when `var.function_runtime` is unset.
 
 ## Usage
 
