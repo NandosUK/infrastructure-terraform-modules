@@ -155,7 +155,13 @@ variable "schedule" {
 }
 
 variable "secret_keys" {
-  default = []
+  description = <<-EOT
+    Secrets mounted as environment variables where the environment variable name
+    and the Secret Manager secret name are identical, in var.project_id, at
+    version "latest". Use var.secret_environment_variables when any of those
+    differ; the two are merged.
+  EOT
+  default     = []
 }
 
 variable "http_headers" {
@@ -245,4 +251,74 @@ variable "approval_required" {
   type        = bool
   default     = false
   description = "If true, Cloud Build trigger will require manual approval before executing."
+}
+
+variable "secret_environment_variables" {
+  description = <<-EOT
+    Secrets mounted as environment variables, for the common case where the
+    environment variable name differs from the Secret Manager secret name --
+    which var.secret_keys cannot express, since it uses one string for both.
+
+      secret_environment_variables = [
+        { key = "AUTH_KEY", secret = "DISABLE_EXPIRED_JOBS_AUTH_KEY" },
+        { key = "OKTA_API_KEY", secret = "PROFILE_API_OKTA_API_KEY", version = "3" },
+        { key = "SHARED", secret = "SHARED", project_id = "other-project" },
+      ]
+
+    secret defaults to key, version to "latest", and project_id to
+    var.project_id. Merged with var.secret_keys, which remains supported.
+  EOT
+  type = list(object({
+    key        = string
+    secret     = optional(string)
+    version    = optional(string, "latest")
+    project_id = optional(string)
+  }))
+  default = []
+}
+
+variable "max_instance_request_concurrency" {
+  description = "Maximum concurrent requests per instance. Null leaves the API default in place."
+  type        = number
+  default     = null
+}
+
+variable "ingress_settings" {
+  description = "Ingress settings for the function. Null leaves the API default (ALLOW_ALL) in place."
+  type        = string
+  default     = null
+
+  validation {
+    condition = var.ingress_settings == null ? true : contains(
+      ["ALLOW_ALL", "ALLOW_INTERNAL_ONLY", "ALLOW_INTERNAL_AND_GCLB"],
+      var.ingress_settings
+    )
+    error_message = "ingress_settings must be ALLOW_ALL, ALLOW_INTERNAL_ONLY or ALLOW_INTERNAL_AND_GCLB."
+  }
+}
+
+variable "vpc_connector" {
+  description = "Serverless VPC Access connector to route egress through. Null for no connector."
+  type        = string
+  default     = null
+}
+
+variable "vpc_connector_egress_settings" {
+  description = "Which egress traffic uses the VPC connector. Only meaningful when vpc_connector is set."
+  type        = string
+  default     = null
+
+  validation {
+    condition = var.vpc_connector_egress_settings == null ? true : contains(
+      ["PRIVATE_RANGES_ONLY", "ALL_TRAFFIC"],
+      var.vpc_connector_egress_settings
+    )
+    error_message = "vpc_connector_egress_settings must be PRIVATE_RANGES_ONLY or ALL_TRAFFIC."
+  }
+}
+
+variable "labels" {
+  description = "Labels applied to the function."
+  type        = map(string)
+  default     = {}
 }
