@@ -41,6 +41,29 @@ locals {
   // The runtime Terraform owns. Exposed as an output and as the _RUNTIME
   // substitution so a bump here applies everywhere instead of per call site.
   runtime = var.function_runtime != "" ? var.function_runtime : local.language_config.default_runtime
+
+  // The two secret inputs normalised into one shape. secret_keys is the
+  // shorthand for "env var name == secret name, in this project, at latest";
+  // secret_environment_variables spells out the cases where that does not hold.
+  // Keyed by env var name so an explicit entry wins over a shorthand one.
+  secret_environment_variables = values(merge(
+    {
+      for key in var.secret_keys : key => {
+        key        = key
+        secret     = key
+        version    = "latest"
+        project_id = var.project_id
+      }
+    },
+    {
+      for secret in var.secret_environment_variables : secret.key => {
+        key        = secret.key
+        secret     = coalesce(secret.secret, secret.key)
+        version    = secret.version
+        project_id = coalesce(secret.project_id, var.project_id)
+      }
+    },
+  ))
 }
 
 /******************************************
@@ -62,6 +85,7 @@ resource "google_cloudfunctions2_function" "function" {
   name        = var.function_name
   description = var.function_description
   location    = var.region
+  labels      = var.labels
 
   service_config {
     max_instance_count    = var.max_instance_count
@@ -71,14 +95,19 @@ resource "google_cloudfunctions2_function" "function" {
     available_cpu         = var.cpu_limit
     service_account_email = local.service_account
     environment_variables = merge(local.default_environment_variables, var.environment_variables)
-    dynamic "secret_environment_variables" {
-      for_each = var.secret_keys
-      content {
-        key        = secret_environment_variables.value
-        project_id = var.project_id
 
-        secret  = secret_environment_variables.value
-        version = "latest"
+    max_instance_request_concurrency = var.max_instance_request_concurrency
+    ingress_settings                 = var.ingress_settings
+    vpc_connector                    = var.vpc_connector
+    vpc_connector_egress_settings    = var.vpc_connector_egress_settings
+
+    dynamic "secret_environment_variables" {
+      for_each = { for secret in local.secret_environment_variables : secret.key => secret }
+      content {
+        key        = secret_environment_variables.value.key
+        secret     = secret_environment_variables.value.secret
+        version    = secret_environment_variables.value.version
+        project_id = secret_environment_variables.value.project_id
       }
     }
   }
@@ -139,6 +168,18 @@ resource "google_cloudfunctions2_function" "function" {
   }
 
   lifecycle {
+    precondition {
+      condition = var.event_trigger == null || contains(
+        ["PUBSUB", "STORAGE", "EVENTARC"], coalesce(var.event_type, "")
+      )
+      error_message = <<-EOT
+        event_trigger is set but event_type is ${coalesce(var.event_type, "null")}.
+        The trigger blocks are selected by event_type, so the function would be
+        created with no trigger at all. Set event_type to PUBSUB, STORAGE or
+        EVENTARC.
+      EOT
+    }
+
     // Everything the cloudbuild deploy owns, but *not* runtime -- that stays
     // reconciled so a bump applies on apply rather than on each function's next
     // deploy. build_config is separate from service_config, so un-ignoring the
@@ -234,4 +275,36 @@ module "cloud_function_alerts" {
   auto_close            = var.alert_config.auto_close
   notification_channels = var.alert_config.notification_channels
   resource_type         = "cloud_run_revision"
+}
+
+
+/******************************************
+	Guards against silently-ignored inputs
+ *****************************************/
+
+// Warnings rather than preconditions: existing callers pass these and their
+// applies must keep working. The point is to make the alert routing visible at
+// plan time instead of discovering it when an incident fails to page.
+check "alert_notification_channels_are_wired" {
+  assert {
+    condition     = length(var.notification_channels) == 0 || length(var.alert_config.notification_channels) > 0
+    error_message = <<-EOT
+      ${var.function_name}: notification_channels is set but unused, and
+      alert_config.notification_channels is empty, so this function's alert
+      policy will not notify anyone. Move the channels into alert_config.
+    EOT
+  }
+}
+
+// The literals below mirror the defaults of var.threshold_value and
+// var.alert_config.threshold_value -- Terraform cannot reference a variable's
+// own default, so they must be kept in sync by hand if either default changes.
+check "alert_threshold_is_wired" {
+  assert {
+    condition     = var.threshold_value == 60 || var.alert_config.threshold_value != 10.0
+    error_message = <<-EOT
+      ${var.function_name}: threshold_value is set but unused, and alert_config
+      is at its default threshold of 10. Move the threshold into alert_config.
+    EOT
+  }
 }
