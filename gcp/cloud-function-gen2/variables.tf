@@ -11,7 +11,15 @@ variable "service_name" {
   description = "Name of the service wrapping this function (you must have functions folder in it)"
 }
 
-variable "branching_strategy" {}
+variable "branching_strategy" {
+  default     = ""
+  description = <<-EOT
+    Unused. Retained for backwards compatibility with existing callers.
+    The cloud-cloudbuild-trigger submodule derives push branches from its own
+    per-environment defaults keyed off var.environment, so nothing passed here
+    has any effect.
+  EOT
+}
 
 variable "trigger_substitutions" {
   description = "Substitution variable for the trigger, think about Buckets names, pubsub names, service accounts, etc. Anything dynamic you will need to deploy this function (via Yaml file)"
@@ -61,7 +69,16 @@ variable "cpu_limit" {
   default = null
 }
 
-variable "notification_channels" {}
+variable "notification_channels" {
+  default     = []
+  description = <<-EOT
+    Unused. Retained for backwards compatibility with existing callers.
+    Alert routing is read from var.alert_config.notification_channels instead.
+    This is deliberately not wired up as a fallback: callers that set this but
+    leave alert_config unset currently get non-notifying alert policies, and
+    silently turning their alerts on is not a backwards-compatible change.
+  EOT
+}
 
 variable "function_runtime" {
   default = ""
@@ -76,6 +93,19 @@ variable "function_source_archive_object" {
 }
 
 variable "function_type" {}
+
+variable "cloudbuild_yaml_suffix" {
+  type        = string
+  default     = ""
+  description = <<-EOT
+    Suffix inserted into the Cloud Build config filename, as
+    "cloudbuild<suffix>.yaml". Defaults to "" for "cloudbuild.yaml".
+    Use when several functions share one source directory and each needs its own
+    build config, e.g. "-collector" and "-pubsub" for a service that for_each-es
+    over {collector, pubsub} against cloudbuild-collector.yaml and
+    cloudbuild-pubsub.yaml.
+  EOT
+}
 
 variable "threshold_value" {
   default = 60

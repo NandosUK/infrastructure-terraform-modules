@@ -53,9 +53,46 @@ Defaults track the latest GA gen 2 runtimes (`nodejs24`, `go127`). `nodejs26` is
 - `var.event_type`: This variable defines the type of event trigger for the function (e.g., "PUBSUB," "STORAGE," "SCHEDULER").
 - `var.schedule`: This variable holds scheduling information for the function, including cron schedules and time zones.
 - `var.public`: It determines whether the Cloud Function is publicly accessible, and if true, grants permissions to "allUsers" to invoke the function.
+- `var.cloudbuild_yaml_suffix`: Suffix inserted into the Cloud Build config filename, as `cloudbuild<suffix>.yaml`. Defaults to `""`, i.e. `cloudbuild.yaml`.
 - `var.function_runtime`: Overrides the language default runtime for this function.
 - `var.node_version`: Default runtime for `function_type = "node"` when `var.function_runtime` is unset.
 - `var.go_version`: Default runtime for `function_type = "go"` when `var.function_runtime` is unset.
+
+## Multiple functions from one source directory
+
+By default the trigger looks for `cloudbuild.yaml` in the function's source directory. Set
+`var.cloudbuild_yaml_suffix` when several functions share a directory and each needs its own build
+config:
+
+```hcl
+module "cloud_function" {
+  for_each = toset(["collector", "pubsub"])
+
+  source                 = "github.com/NandosUK/infrastructure-terraform-modules//gcp/cloud-function-gen2"
+  function_name          = "${local.service_name}-${each.key}"
+  function_path          = "services/${local.service_name}"
+  cloudbuild_yaml_suffix = "-${each.key}"
+  # ...
+}
+```
+
+That resolves to `services/<service>/cloudbuild-collector.yaml` and
+`services/<service>/cloudbuild-pubsub.yaml`. The suffix applies whether or not `function_path` is
+set. `included_files` is unaffected — it still watches the whole directory, so a change to shared
+code fires every function's trigger.
+
+## Retained-for-compatibility variables
+
+`var.branching_strategy` and `var.notification_channels` are declared but unused. Both now have
+defaults, so new call sites can omit them; they are kept rather than removed because existing
+callers pass them.
+
+- **`branching_strategy`** — the [cloud-cloudbuild-trigger](../cloud-cloudbuild-trigger) submodule
+  derives push branches from its own per-environment defaults keyed off `var.environment`.
+- **`notification_channels`** — alert routing comes from `var.alert_config.notification_channels`.
+  This is deliberately *not* wired up as a fallback: callers that set the top-level variable while
+  leaving `alert_config` at its default currently get alert policies with no notification channels,
+  and silently switching their alerts on would not be backwards compatible.
 
 ## Usage
 
