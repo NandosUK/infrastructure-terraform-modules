@@ -17,7 +17,6 @@ module "cloud-function-my-awesome-cf" {
   project_id            = "mgt-build-56d2ff6b"
   timeout_seconds       = 60
   trigger_substitutions = {
-    _RUNTIME               = "nodejs16"
     _ENTRYPOINT            = "helloWorld"
     _FUNCTION_SA           = "test-service-account-email"
     _FUNCTION_PATH         = "services/my-awesome-cf/functions/my-awesome-cf"

@@ -200,8 +200,15 @@ variable "trigger_service_account" {
   default     = ""
 }
 variable "node_version" {
-  description = "Default Node.js runtime version for deployed functions"
-  default     = "nodejs16"
+  description = "Default Node.js runtime version for deployed functions. Latest GA on gen 2 is nodejs24 (nodejs26 is preview)."
+  default     = "nodejs24"
+  nullable    = false
+}
+
+variable "go_version" {
+  description = "Default Go runtime version for deployed functions. Latest GA on gen 2 is go127."
+  default     = "go127"
+  nullable    = false
 }
 
 variable "approval_required" {
