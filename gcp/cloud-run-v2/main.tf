@@ -323,19 +323,20 @@ resource "google_project_iam_member" "eventarc_pubsub" {
 
 # Cloud Build trigger configuration
 module "trigger_provision" {
-  count            = var.create_trigger == true ? 1 : 0
-  source           = "../cloud-cloudbuild-trigger"
-  name             = "service-${var.name}-provision"
-  repository_name  = var.repository_name
-  repository_owner = var.repository_owner
-  location         = var.location
-  description      = "Provision ${var.name} Service (CI/CD)"
-  filename         = "${var.service_path}/cloudbuild.yaml"
-  include          = concat(["${var.service_path}/**"], var.dependencies)
-  exclude          = ["${var.service_path}/functions/**"]
-  environment      = var.environment
-  project_id       = var.project_id
-  repository       = var.repository
+  count              = var.create_trigger == true ? 1 : 0
+  source             = "../cloud-cloudbuild-trigger"
+  name               = "service-${var.name}-provision"
+  repository_name    = var.repository_name
+  repository_owner   = var.repository_owner
+  location           = var.location
+  description        = "Provision ${var.name} Service (CI/CD)"
+  filename           = "${var.service_path}/cloudbuild.yaml"
+  include            = concat(["${var.service_path}/**"], var.dependencies)
+  exclude            = ["${var.service_path}/functions/**"]
+  environment        = var.environment
+  project_id         = var.project_id
+  repository         = var.repository
+  branching_strategy = var.trigger_branching_strategy
 
   trigger_service_account = var.trigger_service_account
   approval_required       = var.approval_required

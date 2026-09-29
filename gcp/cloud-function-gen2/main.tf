@@ -212,6 +212,7 @@ module "trigger_provision" {
   environment             = var.environment
   repository_name         = var.repository_name
   project_id              = var.project_id
+  branching_strategy      = var.trigger_branching_strategy
 }
 
 /******************************************
