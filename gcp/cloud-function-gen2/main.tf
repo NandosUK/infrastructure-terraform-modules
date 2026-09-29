@@ -14,7 +14,12 @@ locals {
     _RUNTIME = local.runtime
   }
   default_environment_variables = {}
-  service_account               = var.service_account_email != "" ? var.service_account_email : "${data.google_project.current.project_id}@appspot.gserviceaccount.com"
+
+  // Built once so both branches of the filename ternary below stay in sync. With
+  // the default suffix of "" this is exactly "cloudbuild.yaml".
+  cloudbuild_yaml = "cloudbuild${var.cloudbuild_yaml_suffix}.yaml"
+
+  service_account = var.service_account_email != "" ? var.service_account_email : "${data.google_project.current.project_id}@appspot.gserviceaccount.com"
 
   // Default values for each cloud function language.
   // These are chosen by the 'function_type' variable.
@@ -205,7 +210,7 @@ module "trigger_provision" {
   approval_required       = var.approval_required
   trigger_service_account = var.trigger_service_account
   location                = var.location
-  filename                = var.function_path == "" ? "services/${var.service_name}/functions/${var.function_name}/cloudbuild.yaml" : "${var.function_path}/cloudbuild.yaml"
+  filename                = var.function_path == "" ? "services/${var.service_name}/functions/${var.function_name}/${local.cloudbuild_yaml}" : "${var.function_path}/${local.cloudbuild_yaml}"
   include                 = var.function_path == "" ? ["services/${var.service_name}/functions/${var.function_name}/**"] : ["${var.function_path}/**"]
   tags                    = ["function"]
   substitutions           = merge(local.default_substitution_vars, var.trigger_substitutions)
