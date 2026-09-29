@@ -216,3 +216,22 @@ variable "approval_required" {
   default     = false
   description = "If true, Cloud Build trigger will require manual approval before executing."
 }
+
+variable "trigger_branching_strategy" {
+  description = "Branching strategy for the Cloud Build trigger."
+
+  type = map(object({
+    validate = object({
+      branch       = string
+      invert_regex = bool
+    })
+    provision = object({
+      branch       = string
+      invert_regex = bool
+    })
+  }))
+
+  default  = null
+  nullable = true
+}
+
