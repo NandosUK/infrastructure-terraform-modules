@@ -169,8 +169,9 @@ resource "google_cloudfunctions2_function" "function" {
 
   lifecycle {
     precondition {
-      condition = var.event_trigger == null || contains(
-        ["PUBSUB", "STORAGE", "EVENTARC"], coalesce(var.event_type, "")
+      condition = var.event_trigger == null ? true : contains(
+        ["PUBSUB", "STORAGE", "EVENTARC"],
+        var.event_type == null ? "" : var.event_type
       )
       error_message = <<-EOT
         event_trigger is set but event_type is ${coalesce(var.event_type, "null")}.
