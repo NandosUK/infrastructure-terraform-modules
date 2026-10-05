@@ -52,8 +52,20 @@ and trigger, and nothing else:
 gcloud functions deploy ${_FUNCTION_NAME} \
   --gen2 --region ${_LOCATION} --runtime ${_RUNTIME} \
   --source gs://${_SOURCE_BUCKET_NAME}/${_ZIP_FILE_NAME}.zip \
-  --entry-point ${_ENTRY_POINT} --trigger-topic ${_TRIGGER_TOPIC}
+  --entry-point ${_ENTRY_POINT} <trigger flag>
 ```
+
+The trigger flag depends on `var.event_type`, which selects the trigger block Terraform creates.
+The two must agree — a deploy that passes a different trigger from the one Terraform configured
+replaces it.
+
+| `var.event_type` | trigger flag |
+| --- | --- |
+| unset | `--trigger-http` |
+| `SCHEDULER` | `--trigger-http` — the function is HTTP; the module adds a Cloud Scheduler job that calls it with an OIDC token |
+| `PUBSUB` | `--trigger-topic ${_TRIGGER_TOPIC}` |
+| `STORAGE` | `--trigger-bucket ${_TRIGGER_BUCKET}` |
+| `EVENTARC` | `--trigger-event-filters` once per filter, plus `--trigger-location` |
 
 A deploy that also passes `--set-env-vars`, `--update-secrets`, `--memory`, `--timeout` or
 `--min-instances` will fight Terraform: the next `apply` reverts what the deploy set, and the next
