@@ -43,16 +43,22 @@ module "cloud-function-suffixed" {
   function_type          = "node"
   function_description   = "My awesome ${each.key} cloud function"
   cloudbuild_yaml_suffix = "-${each.key}"
-  environment            = "preview"
-  region                 = "europe-west2"
-  service_name           = "my-awesome-cf"
-  bucket_functions       = "test-bucket-functions"
-  service_account_email  = "test-service-account-email"
-  max_instance_count     = 3
-  min_instance_count     = 1
-  repository_name        = "my-awesome-cf"
-  project_id             = "mgt-build-56d2ff6b"
-  timeout_seconds        = 60
+  // Shared source directory, so both resolve from it:
+  // services/my-awesome-cf/cloudbuild-{collector,pubsub}.yaml.
+  function_path = "services/my-awesome-cf"
+  environment   = "preview"
+  // Distinct archive object per instance: every module here shares
+  // bucket_functions, and the name otherwise defaults to node-default.zip.
+  function_source_archive_object = "my-awesome-cf-${each.key}.zip"
+  region                         = "europe-west2"
+  service_name                   = "my-awesome-cf"
+  bucket_functions               = "test-bucket-functions"
+  service_account_email          = "test-service-account-email"
+  max_instance_count             = 3
+  min_instance_count             = 1
+  repository_name                = "my-awesome-cf"
+  project_id                     = "mgt-build-56d2ff6b"
+  timeout_seconds                = 60
   trigger_substitutions = {
     _ENTRYPOINT            = "helloWorld"
     _FUNCTION_SA           = "test-service-account-email"
@@ -78,6 +84,8 @@ module "cloud-function-adoption-gaps" {
   repository_name      = "my-awesome-cf"
   project_id           = "mgt-build-56d2ff6b"
   function_entry_point = "helloWorld"
+
+  function_source_archive_object = "adoption-gaps-cf.zip"
 
   trigger_substitutions = {
     _FUNCTION_SA = "test-service-account-email"
