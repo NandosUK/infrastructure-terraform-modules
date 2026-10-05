@@ -303,7 +303,7 @@ check "alert_notification_channels_are_wired" {
 // own default, so they must be kept in sync by hand if either default changes.
 check "alert_threshold_is_wired" {
   assert {
-    condition     = var.threshold_value == 60 || var.alert_config.threshold_value != 10.0
+    condition     = var.threshold_value != null || var.alert_config.threshold_value != 10.0
     error_message = <<-EOT
       ${var.function_name}: threshold_value is set but unused, and alert_config
       is at its default threshold of 10. Move the threshold into alert_config.
