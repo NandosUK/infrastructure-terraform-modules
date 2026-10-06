@@ -414,6 +414,34 @@ variable "approval_required" {
   description = "If true, Cloud Build trigger will require manual approval before executing."
 }
 
+variable "build_config" {
+  description = "(Optional) Build config for Cloud Run functions (gen2). When set, enables source-based deployment via Cloud Build."
+  type = object({
+    base_image               = optional(string)
+    enable_automatic_updates = optional(bool)
+    function_target          = optional(string)
+    image_uri                = optional(string)
+    worker_pool              = optional(string)
+    source = optional(object({
+      repo_source = optional(object({
+        branch_name  = optional(string)
+        commit_sha   = optional(string)
+        dir          = optional(string)
+        invert_regex = optional(bool)
+        project_id   = optional(string)
+        repo_name    = string
+        tag_name     = optional(string)
+      }))
+      storage_source = optional(object({
+        bucket     = string
+        generation = optional(string)
+        object     = string
+      }))
+    }))
+  })
+  default = null
+}
+
 variable "trigger_branching_strategy" {
   description = "Branching strategy for the Cloud Build trigger."
 
