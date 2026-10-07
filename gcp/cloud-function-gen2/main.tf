@@ -26,17 +26,21 @@ locals {
   language_config = {
     node = {
       source_archive_object_name   = "node-default.zip"
-      source_archive_object_source = "../../utils/default-node-function/default.zip"
+      source_archive_object_source = "${path.module}/default-functions/node.zip"
       default_entry_point          = "helloWorld"
       default_runtime              = var.node_version
     }
     go = {
       source_archive_object_name   = "go-default.zip"
-      source_archive_object_source = "../../utils/default-go-function/default.zip"
+      source_archive_object_source = "${path.module}/default-functions/go.zip"
       default_entry_point          = "Entrypoint"
       default_runtime              = var.go_version
     }
   }[var.function_type]
+
+  // Vendored with the module so it resolves for remote sources too: a bare
+  // relative path resolves from the caller's working directory, not from here.
+  source_archive_path = coalesce(var.function_source_archive_path, local.language_config.source_archive_object_source)
 
   // The runtime Terraform owns. Exposed as an output and as the _RUNTIME
   // substitution so a bump here applies everywhere instead of per call site.
@@ -73,7 +77,7 @@ locals {
 resource "google_storage_bucket_object" "cloud_functions_bucket_archive" {
   name   = var.function_source_archive_object != "" ? var.function_source_archive_object : local.language_config.source_archive_object_name
   bucket = var.bucket_functions
-  source = local.language_config.source_archive_object_source
+  source = local.source_archive_path
 }
 
 /******************************************

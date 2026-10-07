@@ -92,6 +92,12 @@ variable "function_source_archive_object" {
   default = ""
 }
 
+variable "function_source_archive_path" {
+  description = "Local path to the archive uploaded as the bootstrap placeholder. Defaults to the archive vendored with this module. Callers overriding it should anchor on their own path.module, since relative paths resolve from the Terraform working directory."
+  type        = string
+  default     = null
+}
+
 variable "function_type" {}
 
 variable "cloudbuild_yaml_suffix" {
