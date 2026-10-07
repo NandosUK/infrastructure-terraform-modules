@@ -116,3 +116,26 @@ module "cloud-function-adoption-gaps" {
     notification_channels = ["projects/mgt-build-56d2ff6b/notificationChannels/123"]
   }
 }
+
+// Exercises function_source_archive_path on a go function: the caller supplies
+// its own placeholder archive, anchored on path.module rather than the working
+// directory. The other modules here cover the vendored default.
+module "cloud-function-custom-archive" {
+  source               = "../../gcp/cloud-function-gen2"
+  function_name        = "custom-archive-cf"
+  function_type        = "go"
+  function_description = "Covers a caller-supplied placeholder archive"
+  environment          = "preview"
+  region               = "europe-west2"
+  service_name         = "custom-archive-cf"
+  bucket_functions     = "test-bucket-functions"
+  repository_name      = "my-awesome-cf"
+  project_id           = "mgt-build-56d2ff6b"
+
+  function_source_archive_object = "custom-archive-cf.zip"
+  function_source_archive_path   = "${path.module}/../../gcp/cloud-function-gen2/default-functions/go.zip"
+
+  trigger_substitutions = {
+    _FUNCTION_SA = "test-service-account-email"
+  }
+}

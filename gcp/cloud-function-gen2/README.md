@@ -115,12 +115,22 @@ A precondition errors when `event_trigger` is set but `event_type` is not one of
 `STORAGE` or `EVENTARC`, since the trigger blocks are selected by `event_type` and the function
 would otherwise be created with no trigger at all.
 
+## Placeholder Archive
+
+Terraform creates the function from a placeholder "hello world" archive; CI/CD deploys the real
+source afterwards, and `build_config[0].source` is in `ignore_changes`. The placeholders ship with
+the module in `default-functions/` and are referenced via `path.module`, so they resolve when the
+module is sourced remotely. Earlier versions read `../../utils/default-<type>-function/default.zip`
+relative to the caller's working directory; set `function_source_archive_path` to keep using a
+local archive.
+
 ## Specific Variables
 
 - `var.function_name`: This variable holds the name of the Google Cloud Function.
 - `var.function_path`: It defines the path to the function's source code within the repository.
 - `var.bucket_functions`: This variable specifies the name of the Google Cloud Storage bucket where function source code is stored.
 - `var.function_source_archive_object`: It represents the name of the Cloud Storage object containing the function's source code archive.
+- `var.function_source_archive_path`: Local path to the archive uploaded as the bootstrap placeholder. Defaults to the archive vendored with this module in `default-functions/` (`node.zip` exports `helloWorld`, `go.zip` exports `Entrypoint`). Anchor overrides on your own `path.module`, e.g. `"${path.module}/../utils/default-go-function/default.zip"`, since relative paths resolve from the Terraform working directory.
 - `var.max_instance_count`: This variable defines the maximum number of instances for the Google Cloud Function.
 - `var.min_instance_count`: It sets the minimum number of instances for the Google Cloud Function.
 - `var.available_memory_mb`: This variable specifies the amount of memory allocated to each function instance.
