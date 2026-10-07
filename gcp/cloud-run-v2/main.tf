@@ -135,6 +135,46 @@ resource "google_cloud_run_v2_service" "default" {
       }
     }
   }
+
+  dynamic "build_config" {
+    for_each = var.build_config != null ? [var.build_config] : []
+    content {
+      base_image               = build_config.value.base_image
+      enable_automatic_updates = build_config.value.enable_automatic_updates
+      function_target          = build_config.value.function_target
+      image_uri                = build_config.value.image_uri
+      worker_pool              = build_config.value.worker_pool
+
+      dynamic "source" {
+        for_each = build_config.value.source != null ? [build_config.value.source] : []
+        content {
+          dynamic "repo_source" {
+            for_each = source.value.repo_source != null ? [source.value.repo_source] : []
+            content {
+              branch_name  = repo_source.value.branch_name
+              commit_sha   = repo_source.value.commit_sha
+              dir          = repo_source.value.dir
+              invert_regex = repo_source.value.invert_regex
+              project_id   = repo_source.value.project_id
+              repo_name    = repo_source.value.repo_name
+              tag_name     = repo_source.value.tag_name
+            }
+          }
+
+          dynamic "storage_source" {
+            for_each = source.value.storage_source != null ? [source.value.storage_source] : []
+            content {
+              bucket     = storage_source.value.bucket
+              generation = storage_source.value.generation
+              object     = storage_source.value.object
+            }
+          }
+        }
+      }
+    }
+  }
+
+
   traffic {
     type    = "TRAFFIC_TARGET_ALLOCATION_TYPE_LATEST"
     percent = 100
