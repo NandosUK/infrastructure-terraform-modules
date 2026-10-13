@@ -130,7 +130,7 @@ variable "include_build_logs" {
   type        = string
   default     = "INCLUDE_BUILD_LOGS_WITH_STATUS"
   nullable    = true
-  description = "Whether build logs are sent back to GitHub as part of the check run result. Set to null to omit (e.g. for non-GitHub repositories)."
+  description = "Whether build logs are sent back to GitHub as part of the check run result. Only applied to github triggers (ignored when repository is set). Set to null to omit."
 
   validation {
     condition     = var.include_build_logs == null || contains(["INCLUDE_BUILD_LOGS_UNSPECIFIED", "INCLUDE_BUILD_LOGS_WITH_STATUS"], var.include_build_logs)
