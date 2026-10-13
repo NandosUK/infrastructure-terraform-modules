@@ -179,3 +179,9 @@ variable "trigger_branching_strategy" {
   nullable = true
 }
 
+
+variable "deletion_protection" {
+  description = "Whether Terraform will be prevented from destroying the job. Defaults to true"
+  type        = bool
+  default     = true
+}

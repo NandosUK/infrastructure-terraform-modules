@@ -10,6 +10,8 @@ resource "google_cloud_run_v2_job" "default" {
   name     = local.job_name
   location = var.project_region
 
+  deletion_protection = var.deletion_protection
+
   template {
     template {
       timeout         = var.timeout
