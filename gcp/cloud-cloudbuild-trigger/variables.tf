@@ -133,7 +133,7 @@ variable "include_build_logs" {
   description = "Set to INCLUDE_BUILD_LOGS_WITH_STATUS to send build logs back to GitHub as part of the check run result. Only supported for GitHub triggers. Omitted by default."
 
   validation {
-    condition     = var.include_build_logs == null || contains(["INCLUDE_BUILD_LOGS_UNSPECIFIED", "INCLUDE_BUILD_LOGS_WITH_STATUS"], var.include_build_logs)
-    error_message = "The include_build_logs value must be null, INCLUDE_BUILD_LOGS_UNSPECIFIED or INCLUDE_BUILD_LOGS_WITH_STATUS."
+    condition     = var.include_build_logs == null || var.include_build_logs == "INCLUDE_BUILD_LOGS_WITH_STATUS"
+    error_message = "The include_build_logs value must be null or INCLUDE_BUILD_LOGS_WITH_STATUS."
   }
 }
