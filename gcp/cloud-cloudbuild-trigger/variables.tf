@@ -125,3 +125,15 @@ variable "approval_required" {
   default     = false
   description = "If true, builds will require manual approval before executing."
 }
+
+variable "include_build_logs" {
+  type        = string
+  default     = "INCLUDE_BUILD_LOGS_WITH_STATUS"
+  nullable    = true
+  description = "Whether build logs are sent back to GitHub as part of the check run result. Set to null to omit (e.g. for non-GitHub repositories)."
+
+  validation {
+    condition     = var.include_build_logs == null || contains(["INCLUDE_BUILD_LOGS_UNSPECIFIED", "INCLUDE_BUILD_LOGS_WITH_STATUS"], var.include_build_logs)
+    error_message = "The include_build_logs value must be null, INCLUDE_BUILD_LOGS_UNSPECIFIED or INCLUDE_BUILD_LOGS_WITH_STATUS."
+  }
+}

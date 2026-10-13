@@ -36,7 +36,9 @@ resource "google_cloudbuild_trigger" "trigger_main" {
   included_files = var.include
   ignored_files  = var.exclude
   disabled       = var.disabled
-  
+
+  include_build_logs = var.include_build_logs
+
   approval_config {
     approval_required = var.approval_required
   }
