@@ -128,9 +128,9 @@ variable "approval_required" {
 
 variable "include_build_logs" {
   type        = string
-  default     = "INCLUDE_BUILD_LOGS_WITH_STATUS"
+  default     = null
   nullable    = true
-  description = "Whether build logs are sent back to GitHub as part of the check run result. Only applied to github triggers (ignored when repository is set). Set to null to omit."
+  description = "Set to INCLUDE_BUILD_LOGS_WITH_STATUS to send build logs back to GitHub as part of the check run result. Only supported for GitHub triggers. Omitted by default."
 
   validation {
     condition     = var.include_build_logs == null || contains(["INCLUDE_BUILD_LOGS_UNSPECIFIED", "INCLUDE_BUILD_LOGS_WITH_STATUS"], var.include_build_logs)
