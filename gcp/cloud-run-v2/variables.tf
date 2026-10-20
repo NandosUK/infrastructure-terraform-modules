@@ -332,6 +332,19 @@ variable "enable_custom_domain" {
   default     = true
 }
 
+variable "lb_address" {
+  description = "(Optional) An existing global IPv4 address for the load balancer, as { address = \"<ip>\" }. Managing the address outside the module keeps it stable if the load balancer is recreated. When null, the load balancer creates its own."
+  type = object({
+    address = string
+  })
+  default = null
+
+  validation {
+    condition     = var.lb_address == null || try(var.lb_address.address != null && var.lb_address.address != "", false)
+    error_message = "lb_address.address must be set when lb_address is provided."
+  }
+}
+
 variable "create_url_map" {
   description = "Create a URL map for the load balancer. If false, the URL map must be created manually"
   type        = bool
