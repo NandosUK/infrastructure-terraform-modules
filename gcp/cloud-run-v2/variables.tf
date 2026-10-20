@@ -338,6 +338,11 @@ variable "lb_address" {
     address = string
   })
   default = null
+
+  validation {
+    condition     = var.lb_address == null || try(var.lb_address.address != null && var.lb_address.address != "", false)
+    error_message = "lb_address.address must be set when lb_address is provided."
+  }
 }
 
 variable "create_url_map" {
