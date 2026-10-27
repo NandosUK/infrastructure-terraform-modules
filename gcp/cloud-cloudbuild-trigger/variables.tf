@@ -137,3 +137,15 @@ variable "include_build_logs" {
     error_message = "The include_build_logs value must be null or INCLUDE_BUILD_LOGS_WITH_STATUS."
   }
 }
+
+# Build Logging Mode
+variable "logging" {
+  type        = string
+  default     = "CLOUD_LOGGING_ONLY"
+  description = "Where build logs are stored. CLOUD_LOGGING_ONLY sends logs to Cloud Logging and writes nothing to Cloud Storage. The legacy default (LEGACY: a global Google-owned bucket) is deprecated by Google and builds that don't declare a logging destination are being rejected, so this trigger declares one explicitly. Set to LEGACY to keep the old behaviour or NONE to store logs nowhere. Note the trigger value overrides any logging set in the service repo's build config file."
+
+  validation {
+    condition     = contains(["LEGACY", "CLOUD_LOGGING_ONLY", "NONE"], var.logging)
+    error_message = "The logging must be one of: LEGACY, CLOUD_LOGGING_ONLY or NONE."
+  }
+}

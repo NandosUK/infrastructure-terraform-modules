@@ -39,6 +39,12 @@ resource "google_cloudbuild_trigger" "trigger_main" {
 
   include_build_logs = var.include_build_logs
 
+  # Build logs go to Cloud Logging only: the legacy global default bucket is
+  # deprecated by Google and builds without a declared destination are being
+  # rejected. The trigger setting overrides whatever the service repo's
+  # cloudbuild.yaml sets.
+  logging = var.logging
+
   approval_config {
     approval_required = var.approval_required
   }
