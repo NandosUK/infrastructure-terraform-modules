@@ -301,17 +301,30 @@ variable "cloud_armor" {
     # Preview matches are only written to Cloud Logging when enable_lb_logging = true
     # (it defaults to false), so preview mode requires enable_lb_logging = true.
     waf_preview = optional(bool, true)
-    # Preconfigured WAF sensitivity level (1-4). Only signatures at this level or lower are
+    # Preconfigured WAF sensitivity level (0-4). Only signatures at this level or lower are
     # evaluated, so a higher level catches more but raises the risk of false positives.
+    # 0 enables no signatures by itself: it must be paired with waf_opt_in_rule_ids, which turns on
+    # only the named signatures (e.g. a canary set or a single higher-level signature).
     waf_sensitivity = optional(number, 1)
+    # Signature IDs to enable when waf_sensitivity = 0 (Google's opt_in_rule_ids). Signature IDs
+    # belong to one rule set, so use a single entry in waf_rules with them.
+    waf_opt_in_rule_ids = optional(list(string), [])
   })
   default = {
     enabled         = false
     rules_file_path = ""
   }
   validation {
-    condition     = contains([1, 2, 3, 4], var.cloud_armor.waf_sensitivity)
-    error_message = "cloud_armor.waf_sensitivity must be an integer between 1 and 4 (0 enables no signatures, so the WAF would block nothing)."
+    condition     = contains([0, 1, 2, 3, 4], var.cloud_armor.waf_sensitivity)
+    error_message = "cloud_armor.waf_sensitivity must be an integer between 0 and 4."
+  }
+  validation {
+    condition     = var.cloud_armor.waf_sensitivity != 0 || length(var.cloud_armor.waf_opt_in_rule_ids) > 0
+    error_message = "cloud_armor.waf_sensitivity = 0 enables no signatures, so it needs waf_opt_in_rule_ids; otherwise the WAF would block nothing."
+  }
+  validation {
+    condition     = length(var.cloud_armor.waf_opt_in_rule_ids) == 0 || (var.cloud_armor.waf_sensitivity == 0 && length(var.cloud_armor.waf_rules) == 1)
+    error_message = "cloud_armor.waf_opt_in_rule_ids needs waf_sensitivity = 0 and exactly one entry in waf_rules (signature IDs belong to one rule set)."
   }
 }
 

@@ -5,8 +5,10 @@ data "google_project" "current" {
 locals {
   cloud_armor_rules = var.cloud_armor.enabled && var.cloud_armor.rules_file_path != "" ? yamldecode(file(var.cloud_armor.rules_file_path)) : []
   # Preconfigured WAF rules take priorities 900-999, below the 1000+ range used by IP rules files
-  cloud_armor_waf_rules = var.cloud_armor.enabled ? { for i, r in var.cloud_armor.waf_rules : r => 900 + i } : {}
-  domain                = var.custom_domain != null ? var.custom_domain : var.environment == "prod" ? "${var.name}.${var.domain_host}" : var.environment == "preview" ? "${var.name}-preview.${var.domain_host}" : "${var.name}-preprod.${var.domain_host}"
+  # {'sensitivity': N}, or {'sensitivity': 0, 'opt_in_rule_ids': [...]} when opting in individual signatures
+  cloud_armor_waf_options = var.cloud_armor.waf_sensitivity == 0 ? "{'sensitivity': 0, 'opt_in_rule_ids': [${join(", ", [for id in var.cloud_armor.waf_opt_in_rule_ids : "'${id}'"])}]}" : "{'sensitivity': ${var.cloud_armor.waf_sensitivity}}"
+  cloud_armor_waf_rules   = var.cloud_armor.enabled ? { for i, r in var.cloud_armor.waf_rules : r => 900 + i } : {}
+  domain                  = var.custom_domain != null ? var.custom_domain : var.environment == "prod" ? "${var.name}.${var.domain_host}" : var.environment == "preview" ? "${var.name}-preview.${var.domain_host}" : "${var.name}-preprod.${var.domain_host}"
   default_backend_config = {
     description             = "Backend for Cloud Run service"
     enable_cdn              = false
@@ -215,7 +217,7 @@ resource "google_compute_security_policy" "cloud_armor_policy" {
       description = "Preconfigured WAF rule: ${rule.key}"
       match {
         expr {
-          expression = "evaluatePreconfiguredWaf('${rule.key}', {'sensitivity': ${var.cloud_armor.waf_sensitivity}})"
+          expression = "evaluatePreconfiguredWaf('${rule.key}', ${local.cloud_armor_waf_options})"
         }
       }
     }
