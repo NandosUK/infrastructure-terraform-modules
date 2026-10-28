@@ -293,13 +293,16 @@ variable "cloud_armor" {
   type = object({
     enabled         = bool
     rules_file_path = optional(string, "")
-    # Google preconfigured WAF rule sets, e.g. ["sqli-v33-stable", "xss-v33-stable"].
+    # Google preconfigured WAF rule sets, e.g. ["sqli-v33-stable", "xss-v33-stable"]. Use the
+    # *-stable sets; canary sets and individual signatures can sit at a higher sensitivity level
+    # than waf_sensitivity and would then not be evaluated.
     waf_rules = optional(list(string), [])
     # WAF rules log matches without blocking while true; set false to enforce.
     # Preview matches are only written to Cloud Logging when enable_lb_logging = true
     # (it defaults to false), so preview mode requires enable_lb_logging = true.
     waf_preview = optional(bool, true)
-    # Preconfigured WAF sensitivity level (1-4).
+    # Preconfigured WAF sensitivity level (1-4). Only signatures at this level or lower are
+    # evaluated, so a higher level catches more but raises the risk of false positives.
     waf_sensitivity = optional(number, 1)
   })
   default = {
