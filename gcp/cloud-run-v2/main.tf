@@ -177,6 +177,21 @@ resource "google_compute_security_policy" "cloud_armor_policy" {
   count       = var.cloud_armor.enabled ? 1 : 0
   name        = "${var.name}-armor-policy"
   description = "A security policy for Cloud Armor."
+
+  lifecycle {
+    # IP rules keep the priority set in the rules file. If one sits below the WAF range
+    # (e.g. an allow rule at 100) it is evaluated first and bypasses the WAF entirely.
+    precondition {
+      condition     = length(var.cloud_armor.waf_rules) == 0 || alltrue([for r in local.cloud_armor_rules : r.priority >= 1000])
+      error_message = "cloud_armor.waf_rules is set, so every IP rule in the rules file must have priority >= 1000 (WAF rules use 900-999 and must be evaluated first). Offending priorities: ${join(", ", [for r in local.cloud_armor_rules : tostring(r.priority) if r.priority < 1000])}."
+    }
+    # Preview matches only reach Cloud Logging when load balancer request logging is on.
+    precondition {
+      condition     = length(var.cloud_armor.waf_rules) == 0 || !var.cloud_armor.waf_preview || var.enable_lb_logging
+      error_message = "cloud_armor.waf_preview = true needs enable_lb_logging = true, otherwise preview matches are never logged. Enable LB logging, or set waf_preview = false to enforce."
+    }
+  }
+
   dynamic "rule" {
     for_each = local.cloud_armor_rules
     content {
