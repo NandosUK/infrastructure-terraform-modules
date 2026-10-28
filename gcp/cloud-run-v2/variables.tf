@@ -292,7 +292,13 @@ variable "cloud_armor" {
   description = "Configuration for Google Cloud Armor integration"
   type = object({
     enabled         = bool
-    rules_file_path = string
+    rules_file_path = optional(string, "")
+    # Google preconfigured WAF rule sets, e.g. ["sqli-v33-stable", "xss-v33-stable"].
+    waf_rules = optional(list(string), [])
+    # WAF rules log matches without blocking while true; set false to enforce.
+    waf_preview = optional(bool, true)
+    # Preconfigured WAF sensitivity level (0-4).
+    waf_sensitivity = optional(number, 1)
   })
   default = {
     enabled         = false

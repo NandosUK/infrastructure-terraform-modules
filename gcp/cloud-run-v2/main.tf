@@ -3,8 +3,10 @@ data "google_project" "current" {
 }
 
 locals {
-  cloud_armor_rules = var.cloud_armor.enabled ? yamldecode(file(var.cloud_armor.rules_file_path)) : []
-  domain            = var.custom_domain != null ? var.custom_domain : var.environment == "prod" ? "${var.name}.${var.domain_host}" : var.environment == "preview" ? "${var.name}-preview.${var.domain_host}" : "${var.name}-preprod.${var.domain_host}"
+  cloud_armor_rules = var.cloud_armor.enabled && var.cloud_armor.rules_file_path != "" ? yamldecode(file(var.cloud_armor.rules_file_path)) : []
+  # Preconfigured WAF rules take priorities 900-999, below the 1000+ range used by IP rules files
+  cloud_armor_waf_rules = var.cloud_armor.enabled ? { for i, r in var.cloud_armor.waf_rules : r => 900 + i } : {}
+  domain                = var.custom_domain != null ? var.custom_domain : var.environment == "prod" ? "${var.name}.${var.domain_host}" : var.environment == "preview" ? "${var.name}-preview.${var.domain_host}" : "${var.name}-preprod.${var.domain_host}"
   default_backend_config = {
     description             = "Backend for Cloud Run service"
     enable_cdn              = false
@@ -187,6 +189,20 @@ resource "google_compute_security_policy" "cloud_armor_policy" {
         }
       }
       description = rule.value.description
+    }
+  }
+  dynamic "rule" {
+    for_each = local.cloud_armor_waf_rules
+    content {
+      action      = "deny(403)"
+      priority    = rule.value
+      preview     = var.cloud_armor.waf_preview
+      description = "Preconfigured WAF rule: ${rule.key}"
+      match {
+        expr {
+          expression = "evaluatePreconfiguredWaf('${rule.key}', {'sensitivity': ${var.cloud_armor.waf_sensitivity}})"
+        }
+      }
     }
   }
   # Default rule (do not remove)

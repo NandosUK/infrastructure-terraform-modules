@@ -50,7 +50,7 @@ Key elements description:
 - `var.repository_name`: GitHub repository name where the service is located.
 - `var.trigger_config`: Cloud Build Trigger configuration.
 - `var.alert_config`: Custom alert configuration.
-- `var.cloud_armor`: Cloud Armor configuration settings.
+- `var.cloud_armor`: Cloud Armor configuration settings. `rules_file_path` (optional) points to a YAML file of IP-range rules. `waf_rules` (optional, default none) lists Google preconfigured WAF rule sets, e.g. `["sqli-v33-stable", "xss-v33-stable"]`, evaluated before the IP rules. `waf_preview` (default `true`) logs matches without blocking; set it to `false` to enforce. `waf_sensitivity` (default `1`) sets the sensitivity level.
 
 ### Startup and Liveness Probe Variables
 
