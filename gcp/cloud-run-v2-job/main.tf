@@ -47,8 +47,26 @@ resource "google_cloud_run_v2_job" "default" {
             }
           }
         }
+
+        # Mount the Cloud SQL unix socket at /cloudsql (same as cloud-run-v2)
+        dynamic "volume_mounts" {
+          for_each = var.sql_connection != null ? [1] : []
+          content {
+            name       = "cloudsql"
+            mount_path = "/cloudsql"
+          }
+        }
       }
 
+      dynamic "volumes" {
+        for_each = var.sql_connection != null ? [1] : []
+        content {
+          name = "cloudsql"
+          cloud_sql_instance {
+            instances = flatten([var.sql_connection])
+          }
+        }
+      }
     }
   }
 

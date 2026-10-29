@@ -71,6 +71,28 @@ variable "secrets" {
   default     = []
 }
 
+variable "sql_connection" {
+  description = "(Optional) Connection to sql database. Can be a string or list of strings."
+  type        = any
+  default     = null
+
+  validation {
+    condition = (
+      # checks if it's null OR
+      var.sql_connection == null ||
+      # checks if it's a string OR
+      can(tostring(var.sql_connection)) ||
+      (
+        # checks if it's a list AND
+        can(tolist(var.sql_connection)) &&
+        # all items in the list are strings
+        alltrue(try([for conn in tolist(var.sql_connection) : can(tostring(conn))], [false]))
+      )
+    )
+    error_message = "The sql_connection variable must be null, a string, or a list of strings."
+  }
+}
+
 variable "timeout" {
   description = "Max allowed time duration the task may be active before the system will actively try to mark it failed and kill associated containers."
   type        = string

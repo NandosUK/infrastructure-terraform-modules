@@ -33,6 +33,7 @@ This updated Terraform module is designed for deploying jobs to Google Cloud Run
 - `var.timeout`: Maximum allowed time duration the job may be active before being terminated.
 - `var.cpu_limit`, `var.memory_limit`: Resource limits for the job's container.
 - `var.max_retries`: Maximum number of retries for failed job executions.
+- `var.sql_connection`: Cloud SQL instance connection name(s) (string or list). When set, the Cloud SQL socket is mounted at `/cloudsql`.
 - `var.alert_config`: Configuration settings for alerts based on job execution and status.
 
 ### Job Execution and Retry Policy Variables
