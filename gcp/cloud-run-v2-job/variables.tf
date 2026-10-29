@@ -86,7 +86,7 @@ variable "sql_connection" {
         # checks if it's a list AND
         can(tolist(var.sql_connection)) &&
         # all items in the list are strings
-        alltrue([for conn in coalesce(var.sql_connection, []) : can(tostring(conn))])
+        alltrue(try([for conn in tolist(var.sql_connection) : can(tostring(conn))], [false]))
       )
     )
     error_message = "The sql_connection variable must be null, a string, or a list of strings."
