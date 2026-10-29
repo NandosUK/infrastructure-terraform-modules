@@ -309,6 +309,10 @@ variable "cloud_armor" {
     # Signature IDs to enable when waf_sensitivity = 0 (Google's opt_in_rule_ids). Signature IDs
     # belong to one rule set, so use a single entry in waf_rules with them.
     waf_opt_in_rule_ids = optional(list(string), [])
+    # Set true when enable_custom_domain = false and you attach the policy yourself to your own
+    # backend service (see the cloud_armor_policy_self_link output). Without it, waf_rules needs
+    # enable_custom_domain = true so the policy is attached to the module's load balancer.
+    external_attachment = optional(bool, false)
   })
   default = {
     enabled         = false

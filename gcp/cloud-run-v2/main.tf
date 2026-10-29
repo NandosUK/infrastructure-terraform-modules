@@ -188,10 +188,11 @@ resource "google_compute_security_policy" "cloud_armor_policy" {
       error_message = "cloud_armor.waf_rules is set, so every IP rule in the rules file must have priority >= 1000 (WAF rules use 900-999 and must be evaluated first). Offending priorities: ${join(", ", [for r in local.cloud_armor_rules : tostring(r.priority) if r.priority < 1000])}."
     }
     # The policy is only attached to the load balancer backend that enable_custom_domain creates.
-    # Without it the WAF rules would exist but protect nothing.
+    # Without it the WAF rules protect nothing, unless the caller attaches the exposed policy to
+    # their own backend and says so with cloud_armor.external_attachment.
     precondition {
-      condition     = length(var.cloud_armor.waf_rules) == 0 || var.enable_custom_domain
-      error_message = "cloud_armor.waf_rules needs enable_custom_domain = true: the Cloud Armor policy is only attached to the load balancer backend, so without it the WAF rules would not apply to any traffic."
+      condition     = length(var.cloud_armor.waf_rules) == 0 || var.enable_custom_domain || var.cloud_armor.external_attachment
+      error_message = "cloud_armor.waf_rules needs enable_custom_domain = true: the Cloud Armor policy is only attached to the module's load balancer backend, so without it the WAF rules would not apply to any traffic. If you attach the policy to your own backend (output cloud_armor_policy_self_link), set cloud_armor.external_attachment = true."
     }
     # Preview matches only reach Cloud Logging when load balancer request logging is on.
     precondition {
